@@ -10,6 +10,7 @@ import Login from "./components/login.component";
 import ExpenseTracker from "./components/expense-tracker.component";
 import Register from "./components/register.component";
 import CryptoDashboard from "./components/crypto-dashboard.component";
+import Watchlist from "./components/watchlist.component";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -48,8 +49,7 @@ checkLoggedIn();
           <Route path="/register" exact component={Register} />
           <Route path="/app" exact component={ExpenseTracker} />
           <Route path="/crypto" exact component={CryptoDashboard} />
-
-
+          <Route path="/watchlist" exact component={Watchlist} />
         </Switch>
       </div>
     </Router>

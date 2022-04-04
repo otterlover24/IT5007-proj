@@ -37,3 +37,17 @@ and displayed using chartjs
 ### How To Deploy?
 Create a .env file in the backend folder and add your own MongoDB key which links to your own MongoDB database.
 Also create and add a secret key to the .env file used for password hashing by bcrypt. This is also where your api key will be stored.
+
+
+### TS notes
+- Users
+	- abc / abc12345
+
+### TS TODO
+- Create watchlist
+- Get quotes as at historical point
+	- Chart up to time point
+- Transactions
+	- Buy
+	- Sell
+- Compute P&L
