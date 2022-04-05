@@ -129,23 +129,15 @@ export default function Watchlist() {
 
       await Axios({
         method: "post",
-        url: "http://localhost:5000/api/protected/income/addTransaction",
+        url: "http://localhost:5000/api/protected/watchlist/addTicker",
         headers: {
           Authorization: localStorage.getItem("jwt"),
         },
         data: {
-          transactionTitle,
-          transactionAmount,
-          transactionDate,
-          transactionType,
+          ticker
         },
       }).then(res => {
-        setTransactions([res.data, ...transactions]);
-        calculateNetworth(transactions);
-        setTransactionAmount(undefined);
-        setTransactionTitle(undefined);
-        setTransactionDate(undefined);
-        setTransactionType(undefined);
+        console.log(`Sent ticker to /api/protected/watchlist/addTicker`);
       });
     } catch (err) {
       setError(err.response.data.Error);
@@ -236,73 +228,11 @@ export default function Watchlist() {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="inputExpenseTitle">Transaction Title</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Title"
-                    onChange={e => setTransactionTitle(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="inputAmount">Amount</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    step="any"
-                    min="0"
-                    placeholder="Amount"
-                    onChange={e => setTransactionAmount(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  {[DropdownButton].map((DropdownType, idx) => (
-                    <DropdownType
-                      as={ButtonGroup}
-                      key={idx}
-                      id={`dropdown-button-drop-${idx}`}
-                      size="sm"
-                      variant="secondary"
-                      title="Transaction Type"
-                      className="sort-drop-down"
-                    >
-                      <Dropdown.Item
-                        eventKey="1"
-                        onClick={() => setTransactionType("EXPENSE")}
-                      >
-                        Expense
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        eventKey="2"
-                        onClick={() => setTransactionType("INCOME")}
-                      >
-                        Income
-                      </Dropdown.Item>
-                    </DropdownType>
-                  ))}
-                  <input
-                    type="text"
-                    className="form-control"
-                    readOnly={true}
-                    defaultValue={transactionType}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="inputDate">Date</label>
-                  <div>
-                    <DatePicker
-                      selected={transactionDate}
-                      onChange={onChangeDate}
-                    />
-                  </div>
-                </div>
-
                 <button
                   className="btn btn-lg btn-primary btn-block text-uppercase input-expense-btn"
                   type="submit"
                 >
-                  Submit
+                  Add to Watchlist
                 </button>
               </form>
             </div>

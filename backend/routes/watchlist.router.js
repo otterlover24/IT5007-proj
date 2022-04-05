@@ -1,8 +1,33 @@
 // let Transaction = require('../models/transaction.model');
-let Portfolio = require('../models/portfolio.model');
+let Ticker = require('../models/ticker.model');
 
 const router = require('express').Router();
 
+router.post('/addTicker', async (req, res) => {
+  try {
+    let { ticker } = req.body;
+    if (!ticker) {
+      return res.status(400).json({ Error: "Not all fields have been entered" });
+    }
+
+    const newTicker = new Ticker({
+      userId: req.user._id,
+      tickerSymbol: ticker,
+    });
+
+    newTicker
+      .save()
+      .then(tickerSymbol => {
+        res.json(tickerSymbol);
+        console.log(tickerSymbol);
+      })
+      .catch(err => res.status(400).json({ Error: err }));
+  } catch (err) {
+    return res.status(500).json({ Error: err });
+
+  }
+
+});
 
 router.get('/getHistory', async (req, res) => {
   const transactions = await Transaction.find({ userId: req.user._id });
