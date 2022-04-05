@@ -45,6 +45,9 @@ Also create and add a secret key to the .env file used for password hashing by b
 
 ### TS TODO
 - Create watchlist
+	- {DONE} Add ticker to watchlist of user
+	- Check that ticker is valid
+	- Delete ticker from watchlist of user
 - Get quotes as at historical point
 	- Chart up to time point
 - Transactions

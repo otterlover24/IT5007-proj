@@ -75,54 +75,8 @@ export default function Watchlist() {
       // calculateNetworth(res.data);
     });
   };
-  const calculateNetworth = () => {
-    var incomeTotal = 0;
-    var expenseTotal = 0;
-    for (
-      var transactionIndex = 0;
-      transactionIndex < transactions.length;
-      transactionIndex++
-    ) {
-      if (transactions[transactionIndex].transactionType === "INCOME") {
-        incomeTotal += transactions[transactionIndex].transactionAmount;
-        // setIncome(income=>income + transactions[transactionIndex].transactionAmount);
-      } else {
-        expenseTotal += transactions[transactionIndex].transactionAmount;
-
-        // setExpense(expense=>expense + transactions[transactionIndex].transactionAmount)
-      }
-    }
-    return (
-      <Doughnut
-        data={{
-          labels: ["Expense", "Income"],
-          datasets: [
-            {
-              backgroundColor: ["#8e5ea2", "#c45850"],
-
-              data: [expenseTotal, incomeTotal],
-            },
-          ],
-        }}
-        options={{
-          title: {
-            display: true,
-            text: "Transactions",
-            fontSize: 20,
-          },
-          legend: {
-            display: true,
-            position: "top",
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-        }}
-        width={400}
-        height={400}
-      />
-    );
-  };
-  const onSubmit = async e => {
+  
+  const onAddTickerSubmit = async e => {
     try {
       e.preventDefault();
       e.target.reset();
@@ -211,13 +165,10 @@ export default function Watchlist() {
       />
       <Row>
         <Col xs="12" md="6">
-          <div className="networth-chart">{calculateNetworth()}</div>
-        </Col>
-        <Col xs="12" md="6">
           <div className="card expense-input-card">
             <div className="card-body">
               <h5 className="card-title text-center">Watchlist</h5>
-              <form onSubmit={onSubmit} className="form-signin">
+              <form onSubmit={onAddTickerSubmit} className="form-signin">
                 <div className="form-group">
                   <label htmlFor="inputExpenseTitle">Ticker</label>
                   <input
