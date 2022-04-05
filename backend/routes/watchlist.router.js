@@ -26,7 +26,26 @@ router.post('/addTicker', async (req, res) => {
     return res.status(500).json({ Error: err });
 
   }
+});
 
+router.post('/deleteTicker', async (req, res) => {
+  try {
+    let { ticker } = req.body;
+    if (!ticker) {
+      return res.status(400).json({ Error: "Not all fields have been entered" });
+    }
+
+    Ticker
+      .deleteOne({ userID: req.user._id, tickerSymbol: req.body.ticker})
+      .then(tickerSymbol => {
+        res.json(tickerSymbol);
+        console.log(`Deleted from MongoDB ${tickerSymbol}.`);
+      })
+      .catch(err => res.status(400).json({ Error: err }));
+  } catch (err) {
+    return res.status(500).json({ Error: err });
+
+  }
 });
 
 router.get('/getHistory', async (req, res) => {

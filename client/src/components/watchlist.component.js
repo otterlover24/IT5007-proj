@@ -32,7 +32,8 @@ export default function Watchlist() {
 
   const [transactionType, setTransactionType] = useState();
 
-  const [ticker, setTicker] = useState();
+  const [tickerToAdd, setTickerToAdd] = useState();
+  const [tickerToDelete, setTickerToDelete] = useState();
 
   const [error, setError] = useState();
   const [editModalShow, setEditModalShow] = useState(false);
@@ -88,16 +89,40 @@ export default function Watchlist() {
           Authorization: localStorage.getItem("jwt"),
         },
         data: {
-          ticker
+          ticker: tickerToAdd
         },
       }).then(res => {
-        console.log(`Sent ticker to /api/protected/watchlist/addTicker`);
+        console.log(`Sent ${res} to /api/protected/watchlist/addTicker`);
       });
     } catch (err) {
       setError(err.response.data.Error);
       setErrorModalShow(true);
     }
   };
+
+  const onDeleteTickerSubmit = async e => {
+    try {
+      e.preventDefault();
+      e.target.reset();
+
+      await Axios({
+        method: "post",
+        url: "http://localhost:5000/api/protected/watchlist/deleteTicker",
+        headers: {
+          Authorization: localStorage.getItem("jwt"),
+        },
+        data: {
+          ticker: tickerToDelete
+        },
+      }).then(res => {
+        console.log(`Sent ${res} to /api/protected/watchlist/deleteTicker`);
+      });
+    } catch (err) {
+      setError(err.response.data.Error);
+      setErrorModalShow(true);
+    }
+  };
+
   const onChangeDate = date => {
     setTransactionDate(date);
   };
@@ -167,7 +192,8 @@ export default function Watchlist() {
         <Col xs="12" md="6">
           <div className="card expense-input-card">
             <div className="card-body">
-              <h5 className="card-title text-center">Watchlist</h5>
+              <h5 className="card-title text-center">Add Ticker To Watchlist</h5>
+
               <form onSubmit={onAddTickerSubmit} className="form-signin">
                 <div className="form-group">
                   <label htmlFor="inputExpenseTitle">Ticker</label>
@@ -175,7 +201,7 @@ export default function Watchlist() {
                     type="text"
                     className="form-control"
                     placeholder="Ticker"
-                    onChange={e => setTicker(e.target.value)}
+                    onChange={e => setTickerToAdd(e.target.value)}
                   />
                 </div>
 
@@ -186,6 +212,26 @@ export default function Watchlist() {
                   Add to Watchlist
                 </button>
               </form>
+
+              <form onSubmit={onDeleteTickerSubmit} className="form-signin">
+                <div className="form-group">
+                  <label htmlFor="inputExpenseTitle">Ticker</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Ticker"
+                    onChange={e => setTickerToDelete(e.target.value)}
+                  />
+                </div>
+
+                <button
+                  className="btn btn-lg btn-primary btn-block text-uppercase input-expense-btn"
+                  type="submit"
+                >
+                  Remove from Watchlist
+                </button>
+              </form>
+
             </div>
           </div>
         </Col>
