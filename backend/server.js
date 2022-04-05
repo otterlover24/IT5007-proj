@@ -34,6 +34,9 @@ app.use('/api/protected/vantage-api',passport.authenticate('jwt',{session:false}
 const incomeRouter=require('./routes/transaction.router');
 app.use('/api/protected/income',passport.authenticate('jwt',{session:false}),incomeRouter);
 
+const portfolioRouter = require('./routes/portfolio.router');
+app.use('/api/protected/portfolio', passport.authenticate('jwt', {session:false}), portfolioRouter);
+
 
 app.listen(port,()=>{
     console.log('Server is running on port: '+port);
