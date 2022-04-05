@@ -1,4 +1,4 @@
-// let Transaction = require('../models/transaction.model');
+const axios = require('axios');
 let Ticker = require('../models/ticker.model');
 
 const router = require('express').Router();
@@ -47,6 +47,25 @@ router.post('/deleteTicker', async (req, res) => {
 
   }
 });
+    
+router.get('/getWatchlist', async (req, res) => {
+  const tickers = await Ticker.find({userId: req.user._id}).select('tickerSymbol -_id');
+  console.log(tickers);
+  for (let ticker of tickers) {
+    console.log(ticker);
+    const apiRes = await axios
+    .get(
+      'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' + 
+      ticker.tickerSymbol + 
+      '&datatype=json' + 
+      '&apikey=' + 
+      process.env.VANTAGE_KEY
+    )
+    .then(res => { return res });
+    console.log(apiRes);
+  }
+  return res.json(tickers);
+})
 
 router.get('/getHistory', async (req, res) => {
   const transactions = await Transaction.find({ userId: req.user._id });

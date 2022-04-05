@@ -34,6 +34,7 @@ export default function Watchlist() {
 
   const [tickerToAdd, setTickerToAdd] = useState();
   const [tickerToDelete, setTickerToDelete] = useState();
+  const [watchlist, setWatchlist] = useState();
 
   const [error, setError] = useState();
   const [editModalShow, setEditModalShow] = useState(false);
@@ -41,6 +42,7 @@ export default function Watchlist() {
   const [errorModalShow, setErrorModalShow] = useState(false);
 
   const [transactionToEdit, setTransactionToEdit] = useState([]);
+  
   useEffect(() => {
     const checkLoggedIn = async () => {
       if (localStorage.getItem("jwt")) {
@@ -61,8 +63,26 @@ export default function Watchlist() {
     checkLoggedIn();
 
     readTransactions();
+    displayWatchlist();
     console.log("test");
   }, []);
+  
+  const displayWatchlist = async () => {
+    console.log(`in displayWatchlist`);
+
+    /* Get watchlist from server */
+    await Axios({
+      method: "get",
+      url: "http://localhost:5000/api/protected/watchlist/getWatchlist",
+      headers: {
+        Authorization: localStorage.getItem("jwt"),
+      },
+    }).then(res => {
+      console.log(res);
+      setWatchlist(res.data);
+    });
+  };
+
   const readTransactions = async () => {
     setEditModalShow(false);
     await Axios({

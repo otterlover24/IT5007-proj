@@ -1,4 +1,24 @@
-# MERN Stack Finance Tool
+# Time-travel Stock Picking Simulator
+
+### TS notes
+- Users
+	- abc / abc12345
+
+### TS TODO
+- Create watchlist
+	- {PARTLY DONE} Get rid of unessential components in `watchlist.component.js`
+	- {DONE} Add ticker to watchlist of user
+	- Check that ticker is valid
+	- {DONE} Delete ticker from watchlist of user
+	- **Display current price of stocks on watchlist** 
+		- {DONE} Get watchlist for user from server to client
+		- Fetch quote from AlphaVantage API
+-  Get quotes as at historical point
+	- Chart up to time point
+- Transactions
+	- Buy
+	- Sell
+- Compute P&L
 
 ## Description
 A finance tool made using the MERN stack
@@ -27,7 +47,7 @@ Transactions are visualized using chartjs
 ### Edit/Delete Transaction Demo
 ![Edit/Delete Transaction Demo](demo/edit-transactions.gif)
 
-### Crypto Currency Dashboard Demo
+### Crypto Currency Dashboard DemToAddo
 Coin data is from the [Alpha Vantage API](https://www.alphavantage.co/)
 and displayed using chartjs
 ![Crypto Currency Dashboard Demo](demo/crypto.gif)
@@ -39,18 +59,3 @@ Create a .env file in the backend folder and add your own MongoDB key which link
 Also create and add a secret key to the .env file used for password hashing by bcrypt. This is also where your api key will be stored.
 
 
-### TS notes
-- Users
-	- abc / abc12345
-
-### TS TODO
-- Create watchlist
-	- {DONE} Add ticker to watchlist of user
-	- Check that ticker is valid
-	- Delete ticker from watchlist of user
-- Get quotes as at historical point
-	- Chart up to time point
-- Transactions
-	- Buy
-	- Sell
-- Compute P&L
