@@ -1,8 +1,12 @@
 # Time-travel Stock Picking Simulator
 
 ### TS notes
+- AlphaVantage API limits
+	- 5 calls per minute, 500 calls per day
+		- Restrict player to 5 securities
 - Users
 	- abc / abc12345
+	- cde / cde12345
 
 ### TS TODO
 - Create watchlist
@@ -12,7 +16,9 @@
 	- {DONE} Delete ticker from watchlist of user
 	- **Display current price of stocks on watchlist** 
 		- {DONE} Get watchlist for user from server to client
-		- Fetch quote from AlphaVantage API
+		- {DONE} Fetch quote from AlphaVantage API
+		- {DONE} Send API results to client at specific time point
+		- Display in table on client end in `watchlist.component.js`
 -  Get quotes as at historical point
 	- Chart up to time point
 - Transactions

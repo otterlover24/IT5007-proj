@@ -1,7 +1,7 @@
 const axios = require('axios');
 let Ticker = require('../models/ticker.model');
-
 const router = require('express').Router();
+const currMonth = '2022-03';
 
 router.post('/addTicker', async (req, res) => {
   try {
@@ -50,10 +50,11 @@ router.post('/deleteTicker', async (req, res) => {
     
 router.get('/getWatchlist', async (req, res) => {
   const tickers = await Ticker.find({userId: req.user._id}).select('tickerSymbol -_id');
-  console.log(tickers);
+  console.log(`tickers: ${tickers}`);
+  let processedRes = [];
   for (let ticker of tickers) {
-    console.log(ticker);
-    const apiRes = await axios
+    console.log(`ticker: ${ticker}`);
+    let filteredRes = await axios
     .get(
       'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' + 
       ticker.tickerSymbol + 
@@ -61,10 +62,19 @@ router.get('/getWatchlist', async (req, res) => {
       '&apikey=' + 
       process.env.VANTAGE_KEY
     )
-    .then(res => { return res });
-    console.log(apiRes);
+    .then(apiRes => { 
+      const filteredRes = {}
+      for (const property in apiRes.data['Monthly Adjusted Time Series']) {
+        if (property.slice(0, 7) === currMonth) {
+          filteredRes[ticker.tickerSymbol] = apiRes.data['Monthly Adjusted Time Series'][property]['5. adjusted close'];
+        }
+      }
+      return filteredRes;
+    });
+    console.log(`filteredRes: ${filteredRes}`);
+    processedRes.push(filteredRes);
   }
-  return res.json(tickers);
+  return res.json(processedRes);
 })
 
 router.get('/getHistory', async (req, res) => {
