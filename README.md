@@ -18,7 +18,8 @@
 		- {DONE} Get watchlist for user from server to client
 		- {DONE} Fetch quote from AlphaVantage API
 		- {DONE} Send API results to client at specific time point
-		- Display in table on client end in `watchlist.component.js`
+		- {DONE} Display in table on client end in `watchlist.component.js`
+
 -  Get quotes as at historical point
 	- Chart up to time point
 - Transactions

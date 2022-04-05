@@ -78,10 +78,14 @@ export default function Watchlist() {
         Authorization: localStorage.getItem("jwt"),
       },
     }).then(res => {
-      console.log(res);
+      console.log(res.data);
       setWatchlist(res.data);
     });
   };
+
+  useEffect(() => {
+    console.log(watchlist);
+  }, [watchlist])
 
   const readTransactions = async () => {
     setEditModalShow(false);
@@ -254,6 +258,34 @@ export default function Watchlist() {
 
             </div>
           </div>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col xs="12">
+          <Table className="watchlisttable" striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Ticker Symbol</th>
+                <th>Adjusted Monthly Closing Price</th>
+
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Edit/Delete</th>
+              </tr>
+            </thead>
+            
+            <tbody>
+              
+              {watchlist ? watchlist.map(currentTicker => (
+                <tr>
+                  <td>{Object.keys(currentTicker)[0]}</td>
+                  <td>{currentTicker[Object.keys(currentTicker)[0]]}</td>
+                </tr>
+              )) : <></>}
+            </tbody>
+
+          </Table>
         </Col>
       </Row>
 
