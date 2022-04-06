@@ -14,6 +14,26 @@
 	- aaa / aaa12345
 
 ### TS TODO
+- Components / pages
+	- Navbar
+		- Responsive
+		- Change page
+		- Widget to change month
+	- /
+		- Landing page describing how to simulation works
+	- /watchlist
+		- Quotation of security as at `viewingMonth`
+	- /porfolio
+		- Table of P&L for each security and total
+		- Line chart for net worth
+	- /trade
+		- Form to buy or sell a specific ticker at market price
+	- /news
+		- Form to edit subscription
+		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
+		- See list of headlines, which link to articles
+			- Articles may be new report, or data such as earnings, analyst rating etc
+  
 - Create watchlist
 	- {PARTLY DONE} Get rid of unessential components in `watchlist.component.js`
 	- {DONE} Add ticker to watchlist of user

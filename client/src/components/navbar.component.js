@@ -135,8 +135,7 @@ export default function Login(props) {
     } catch (err) {
       console.error(err);
     }
-  }
-
+  };
 
   return (
     <Navbar
@@ -146,9 +145,7 @@ export default function Login(props) {
       variant="dark"
       className="nav-bar"
     >
-      <Navbar.Brand href={"/"}>
-        Finance
-      </Navbar.Brand>
+      <Navbar.Brand href={"/"}>Finance</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
@@ -165,14 +162,26 @@ export default function Login(props) {
           )}
 
           {props.isAuthenticated && (
-            <Link to="/Portfolio" className="nav-link">
-              Portfolio
+            <Link to="/News" className="nav-link">
+              News
+            </Link>
+          )}
+
+          {props.isAuthenticated && (
+            <Link to="/Trade" className="nav-link">
+              Trade
             </Link>
           )}
 
           {props.isAuthenticated && (
             <Link to="/watchlist" className="nav-link">
               Watchlist
+            </Link>
+          )}
+
+          {props.isAuthenticated && (
+            <Link to="/Portfolio" className="nav-link">
+              Portfolio
             </Link>
           )}
 

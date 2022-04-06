@@ -10,6 +10,8 @@ import Login from "./components/login.component";
 import Register from "./components/register.component";
 import Portfolio from "./components/portfolio.component";
 import Watchlist from "./components/watchlist.component";
+import Trade from "./components/trade.component";
+import News from "./components/news.component";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -46,8 +48,10 @@ checkLoggedIn();
           <Route path="/" exact component={LandingPage} />
           <Route path="/login" exact component={Login} />
           <Route path="/register" exact component={Register} />
+          <Route path="/trade" exact component={Trade} />
           <Route path="/portfolio" exact component={Portfolio} />
           <Route path="/watchlist" exact component={Watchlist} />
+          <Route path="/news" exact component={News} />
         </Switch>
       </div>
     </Router>
