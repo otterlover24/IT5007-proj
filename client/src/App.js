@@ -7,7 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import LandingPage from "./components/landing-page.component";
 import Login from "./components/login.component";
-import ExpenseTracker from "./components/expense-tracker.component";
 import Register from "./components/register.component";
 import Portfolio from "./components/portfolio.component";
 import Watchlist from "./components/watchlist.component";
@@ -47,7 +46,6 @@ checkLoggedIn();
           <Route path="/" exact component={LandingPage} />
           <Route path="/login" exact component={Login} />
           <Route path="/register" exact component={Register} />
-          <Route path="/app" exact component={ExpenseTracker} />
           <Route path="/portfolio" exact component={Portfolio} />
           <Route path="/watchlist" exact component={Watchlist} />
         </Switch>

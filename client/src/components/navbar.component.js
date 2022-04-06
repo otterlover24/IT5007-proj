@@ -146,7 +146,7 @@ export default function Login(props) {
       variant="dark"
       className="nav-bar"
     >
-      <Navbar.Brand href={props.isAuthenticated ? "/app" : "/"}>
+      <Navbar.Brand href={"/"}>
         Finance
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
