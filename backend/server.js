@@ -25,10 +25,10 @@ connection.once('open',()=>{
 });
 
 
-const usersRouter=require('./routes/users');
+const usersRouter = require('./routes/users');
 app.use('/api/users',usersRouter);
 
-const vantageApiRouter=require('./routes/vantage-api.router');
+const vantageApiRouter = require('./routes/vantage-api.router');
 app.use('/api/protected/vantage-api',passport.authenticate('jwt',{session:false}),vantageApiRouter);
 
 const incomeRouter=require('./routes/transaction.router');

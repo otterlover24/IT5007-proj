@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-
 import "../App.css";
 import Axios from "axios";
 import "../components/component.css";
 import "react-datepicker/dist/react-datepicker.css";
-
 import {
   Container,
   Col,
@@ -59,7 +57,7 @@ export default function Watchlist() {
 
   useEffect(() => {
     console.log(watchlist);
-  }, [watchlist])
+  }, [watchlist]);
 
 
   

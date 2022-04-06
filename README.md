@@ -7,6 +7,11 @@
 - Users
 	- abc / abc12345
 	- cde / cde12345
+	- ace / ace12345
+	- asd / asd12345
+	- sdf / sdf12345
+	- aes / aes12345
+	- aaa / aaa12345
 
 ### TS TODO
 - Create watchlist
@@ -19,13 +24,43 @@
 		- {DONE} Fetch quote from AlphaVantage API
 		- {DONE} Send API results to client at specific time point
 		- {DONE} Display in table on client end in `watchlist.component.js`
+		- {TODO} Buttons for adding or deleting to watchlist should also edit `watchlist` via setState and re-render table.
 
--  Get quotes as at historical point
-	- Chart up to time point
+- Simulate time step
+	- Month saved in MongoDB for each account.
+	- Can view for past months, but only act on current month.
+	- Range depends on max history from AlphaVantage.
+		- 8 years + current date
+		- Earliest is latest EOM - 8 years + 1 month
+		- Set start of simulation to 2014-06-30 to be safe
+			- When creating account, set month to 2014-06
+		- Each account has 3 time variables, to be stored in users collection.
+			- `beginMonth`: Beginning of simulation
+			- `latestMonth`: Latest month
+			- `viewingMonth`: Viewing month
+	- Add widget with current month, back 1 month, back to beginning, forward 1 month, forward to most recent month to navbar.
+		- {DONE} Navbar to get `beginMonth`, `latestMonth`, `viewingMonth` from server.
+			- {FIXED} Why all undefined?
+				- {SYMPTOM} MongoError: FieldPath cannot be constructed with empty string.
+					- {HYPOTHESIS} Maybe sent over request when user was not yet logged in and therefore req._id variable was empty, and then MongoDB crashed.
+						- {DONE, SOLUTION} navbar.component to only send request when logged in.
+					- {HYPOTHESIS} _id not in user.model
+						- {SOLUTION} search using uersname 
+		- Buttons to forward `latestMonth` and to alter `viewingMonth` on navbar
+	- /watchlist page display adjusted monthly closing price as at month
 - Transactions
 	- Buy
 	- Sell
+
+- Porfolio
+	- Similar to watchlist
+		- Compute P&L
+		- Chart securities over time
+  
 - Compute P&L
+
+- Fetch News
+	- Find free financial news API
 
 ## Description
 A finance tool made using the MERN stack

@@ -63,6 +63,7 @@ router.get('/getWatchlist', async (req, res) => {
       process.env.VANTAGE_KEY
     )
     .then(apiRes => { 
+      console.log(apiRes);
       const filteredRes = {}
       for (const property in apiRes.data['Monthly Adjusted Time Series']) {
         if (property.slice(0, 7) === currMonth) {
