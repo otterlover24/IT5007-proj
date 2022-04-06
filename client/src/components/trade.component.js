@@ -3,19 +3,13 @@ import "../App.css";
 import Axios from "axios";
 import "../components/component.css";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  Container,
-  Col,
-  Row,
-  Table,
-} from "react-bootstrap";
+import { Container, Col, Row, Table } from "react-bootstrap";
 
 export default function Trade() {
-
   const [tickerToAdd, setTickerToAdd] = useState();
   const [tickerToDelete, setTickerToDelete] = useState();
   const [watchlist, setWatchlist] = useState();
-  
+
   useEffect(() => {
     const checkLoggedIn = async () => {
       if (localStorage.getItem("jwt")) {
@@ -38,7 +32,7 @@ export default function Trade() {
     displayWatchlist();
     console.log("test");
   }, []);
-  
+
   const displayWatchlist = async () => {
     console.log(`in displayWatchlist`);
 
@@ -59,8 +53,6 @@ export default function Trade() {
     console.log(watchlist);
   }, [watchlist]);
 
-
-  
   const onAddTickerSubmit = async e => {
     try {
       e.preventDefault();
@@ -73,7 +65,7 @@ export default function Trade() {
           Authorization: localStorage.getItem("jwt"),
         },
         data: {
-          ticker: tickerToAdd
+          ticker: tickerToAdd,
         },
       }).then(res => {
         console.log(`Sent ${res} to /api/protected/watchlist/addTicker`);
@@ -95,7 +87,7 @@ export default function Trade() {
           Authorization: localStorage.getItem("jwt"),
         },
         data: {
-          ticker: tickerToDelete
+          ticker: tickerToDelete,
         },
       }).then(res => {
         console.log(`Sent ${res} to /api/protected/watchlist/deleteTicker`);
@@ -104,19 +96,22 @@ export default function Trade() {
       console.error(err);
     }
   };
-  
+
   return (
     <Container>
       <Row>
         <Col xs="12" md="6">
           <div className="card expense-input-card">
             <div className="card-body">
-              <h5 className="card-title text-center">Add Ticker To Watchlist</h5>
+              <h5 className="card-title text-center">
+                Buy or Sell a Security by Ticker
+              </h5>
 
               <form onSubmit={onAddTickerSubmit} className="form-signin">
                 <div className="form-group">
-                  <label htmlFor="inputExpenseTitle">Ticker</label>
+                  <label htmlFor="inputTicker">Ticker</label>
                   <input
+                    id="inputTicker"
                     type="text"
                     className="form-control"
                     placeholder="Ticker"
@@ -124,62 +119,33 @@ export default function Trade() {
                   />
                 </div>
 
-                <button
-                  className="btn btn-lg btn-primary btn-block text-uppercase input-expense-btn"
-                  type="submit"
-                >
-                  Add to Watchlist
-                </button>
-              </form>
-
-              <form onSubmit={onDeleteTickerSubmit} className="form-signin">
                 <div className="form-group">
-                  <label htmlFor="inputExpenseTitle">Ticker</label>
+                  <label htmlFor="inputQuantity">Quantity</label>
                   <input
-                    type="text"
+                    id="inputQuantity"
+                    type="number"
                     className="form-control"
-                    placeholder="Ticker"
-                    onChange={e => setTickerToDelete(e.target.value)}
+                    placeholder="Quantity"
+                    onChange={e => setTickerToAdd(e.target.value)}
                   />
+                </div>
+
+                <div className="form-group">
+                  <input type="radio" name="tradeDirection" value="Buy" /> Buy
+                  <input type="radio" name="tradeDirection" value="Sell" /> Sell
                 </div>
 
                 <button
                   className="btn btn-lg btn-primary btn-block text-uppercase input-expense-btn"
                   type="submit"
                 >
-                  Remove from Watchlist
+                  Trade
                 </button>
               </form>
-
             </div>
           </div>
         </Col>
       </Row>
-
-      <Row>
-        <Col xs="12">
-          <Table className="watchlistTable" striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>Ticker Symbol</th>
-                <th>Adjusted Monthly Closing Price</th>
-              </tr>
-            </thead>
-            
-            <tbody>
-              
-              {watchlist ? watchlist.map(currentTicker => (
-                <tr>
-                  <td>{Object.keys(currentTicker)[0]}</td>
-                  <td>{currentTicker[Object.keys(currentTicker)[0]]}</td>
-                </tr>
-              )) : <></>}
-            </tbody>
-
-          </Table>
-        </Col>
-      </Row>
-
     </Container>
   );
 }

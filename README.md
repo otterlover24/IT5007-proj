@@ -39,7 +39,7 @@
 	- {DONE} Add ticker to watchlist of user
 	- Check that ticker is valid
 	- {DONE} Delete ticker from watchlist of user
-	- **Display current price of stocks on watchlist** 
+	- Display current price of stocks on watchlist
 		- {DONE} Get watchlist for user from server to client
 		- {DONE} Fetch quote from AlphaVantage API
 		- {DONE} Send API results to client at specific time point

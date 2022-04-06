@@ -107,73 +107,30 @@ export default function News() {
   
   return (
     <Container>
-      <Row>
-        <Col xs="12" md="6">
-          <div className="card expense-input-card">
-            <div className="card-body">
-              <h5 className="card-title text-center">Add Ticker To Watchlist</h5>
-
-              <form onSubmit={onAddTickerSubmit} className="form-signin">
-                <div className="form-group">
-                  <label htmlFor="inputExpenseTitle">Ticker</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Ticker"
-                    onChange={e => setTickerToAdd(e.target.value)}
-                  />
-                </div>
-
-                <button
-                  className="btn btn-lg btn-primary btn-block text-uppercase input-expense-btn"
-                  type="submit"
-                >
-                  Add to Watchlist
-                </button>
-              </form>
-
-              <form onSubmit={onDeleteTickerSubmit} className="form-signin">
-                <div className="form-group">
-                  <label htmlFor="inputExpenseTitle">Ticker</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Ticker"
-                    onChange={e => setTickerToDelete(e.target.value)}
-                  />
-                </div>
-
-                <button
-                  className="btn btn-lg btn-primary btn-block text-uppercase input-expense-btn"
-                  type="submit"
-                >
-                  Remove from Watchlist
-                </button>
-              </form>
-
-            </div>
-          </div>
-        </Col>
-      </Row>
 
       <Row>
         <Col xs="12">
-          <Table className="watchlistTable" striped bordered hover responsive>
+          <h5>Relevant news based on your porfolio holdings and watchlist</h5>
+          <Table className="newsTable" striped bordered hover responsive>
             <thead>
               <tr>
                 <th>Ticker Symbol</th>
-                <th>Adjusted Monthly Closing Price</th>
+                <th>Type</th>
+                <th>Title</th>
               </tr>
             </thead>
             
             <tbody>
-              
-              {watchlist ? watchlist.map(currentTicker => (
                 <tr>
-                  <td>{Object.keys(currentTicker)[0]}</td>
-                  <td>{currentTicker[Object.keys(currentTicker)[0]]}</td>
+                  <td>AAPL</td>
+                  <td>Earnings</td>
+                  <td>2020Q4 10-K statement</td>
                 </tr>
-              )) : <></>}
+                <tr>
+                  <td>AAPL</td>
+                  <td>News</td>
+                  <td>Rumors abound of new Apple car to rival Tesla.</td>
+                </tr>
             </tbody>
 
           </Table>
