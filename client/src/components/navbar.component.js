@@ -10,13 +10,19 @@ export default function Login(props) {
   const [beginMonth, setBeginMonth] = useState();
   const [latestMonth, setLatestMonth] = useState();
   const [viewingMonth, setViewingMonth] = useState();
+  const [allMonthsReady, setAllMonthsReady] = useState();
+  const [getMonthVariablesFlag, setGetMonthVariablesFlag] = useState();
+
+  useEffect(() => {
+    setGetMonthVariablesFlag(true);
+  }, []);
 
   useEffect(() => {
     const getMonthVariables = async () => {
       try {
         if (props.isAuthenticated) {
           console.log(`in getMonth`);
-  
+
           /* 
           Get `beginMonth`, `latestMonth`, `viewingMonth` from server's users route's 
           `getBeginMonth`, `getLatestMonth`, `getViewingMonth` respectively.
@@ -29,9 +35,9 @@ export default function Login(props) {
             },
           }).then(res => {
             console.log(res.data);
-            setBeginMonth(res.data);
+            setBeginMonth(res.data.beginMonth);
           });
-  
+
           await Axios({
             method: "get",
             url: "http://localhost:5000/api/users/getLatestMonth",
@@ -40,9 +46,9 @@ export default function Login(props) {
             },
           }).then(res => {
             console.log(res.data);
-            setLatestMonth(res.data);
+            setLatestMonth(res.data.latestMonth);
           });
-  
+
           await Axios({
             method: "get",
             url: "http://localhost:5000/api/users/getViewingMonth",
@@ -51,28 +57,86 @@ export default function Login(props) {
             },
           }).then(res => {
             console.log(res.data);
-            setViewingMonth(res.data);
+            setViewingMonth(res.data.viewingMonth);
           });
         }
       } catch (err) {
-        console.error('Error in getMonthVariables');
+        console.error("Error in getMonthVariables");
         console.error(err);
-      }      
+      }
     };
 
     getMonthVariables();
-  }, [props.isAuthenticated]);
+  }, [props.isAuthenticated, getMonthVariablesFlag]);
 
   useEffect(() => {
-    console.log(`beginMonth: ${beginMonth ? beginMonth.beginMonth : 'empty'}`);
-    console.log(`latestMonth: ${latestMonth ? latestMonth.latestMonth : 'empty'}`);
-    console.log(`viewingMonth: ${viewingMonth ? viewingMonth.viewingMonth : 'empty'}`);
+    console.log(`beginMonth: ${beginMonth ? beginMonth : "empty"}`);
+    console.log(`latestMonth: ${latestMonth ? latestMonth : "empty"}`);
+    console.log(`viewingMonth: ${viewingMonth ? viewingMonth : "empty"}`);
+    if (beginMonth && latestMonth && viewingMonth) {
+      setAllMonthsReady(true);
+    }
   }, [beginMonth, latestMonth, viewingMonth]);
 
   const logout = () => {
     localStorage.removeItem("jwt");
     window.location = "/";
   };
+
+  const viewPreviousMonth = async () => {
+    console.log("In viewPreviousMonth()");
+    try {
+      await Axios({
+        method: "post",
+        url: "http://localhost:5000/api/users/viewPreviousMonth",
+        headers: {
+          Authorization: localStorage.getItem("jwt"),
+        },
+      }).then(res => {
+        console.log(res.data);
+        setGetMonthVariablesFlag(!getMonthVariablesFlag);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const viewNextMonth = async () => {
+    console.log("In viewNextMonth()");
+    try {
+      await Axios({
+        method: "post",
+        url: "http://localhost:5000/api/users/viewNextMonth",
+        headers: {
+          Authorization: localStorage.getItem("jwt"),
+        },
+      }).then(res => {
+        console.log(res.data);
+        setGetMonthVariablesFlag(!getMonthVariablesFlag);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const forwardOneMonth = async () => {
+    console.log("In forwardOneMonth()");
+    try {
+      await Axios({
+        method: "post",
+        url: "http://localhost:5000/api/users/forwardOneMonth",
+        headers: {
+          Authorization: localStorage.getItem("jwt"),
+        },
+      }).then(res => {
+        console.log(res.data);
+        setGetMonthVariablesFlag(!getMonthVariablesFlag);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
 
   return (
     <Navbar
@@ -101,14 +165,14 @@ export default function Login(props) {
           )}
 
           {props.isAuthenticated && (
-            <Link to="/crypto" className="nav-link">
-              Crypto Agent
+            <Link to="/Portfolio" className="nav-link">
+              Portfolio
             </Link>
           )}
 
           {props.isAuthenticated && (
             <Link to="/watchlist" className="nav-link">
-              My Watchlist
+              Watchlist
             </Link>
           )}
 
@@ -116,6 +180,20 @@ export default function Login(props) {
             <Link to="/" className="nav-link" onClick={logout}>
               Sign Out
             </Link>
+          )}
+
+          {allMonthsReady && (
+            <button onClick={viewPreviousMonth}>View Previous Month</button>
+          )}
+
+          {allMonthsReady && <h6 style={{ color: "white" }}>{viewingMonth}</h6>}
+
+          {allMonthsReady && (
+            <button onClick={viewNextMonth}>View Next Month</button>
+          )}
+
+          {allMonthsReady && (
+            <button onClick={forwardOneMonth}>Forward One Month</button>
           )}
         </Nav>
       </Navbar.Collapse>

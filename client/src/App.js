@@ -9,7 +9,7 @@ import LandingPage from "./components/landing-page.component";
 import Login from "./components/login.component";
 import ExpenseTracker from "./components/expense-tracker.component";
 import Register from "./components/register.component";
-import CryptoDashboard from "./components/crypto-dashboard.component";
+import Portfolio from "./components/portfolio.component";
 import Watchlist from "./components/watchlist.component";
 
 function App() {
@@ -48,7 +48,7 @@ checkLoggedIn();
           <Route path="/login" exact component={Login} />
           <Route path="/register" exact component={Register} />
           <Route path="/app" exact component={ExpenseTracker} />
-          <Route path="/crypto" exact component={CryptoDashboard} />
+          <Route path="/portfolio" exact component={Portfolio} />
           <Route path="/watchlist" exact component={Watchlist} />
         </Switch>
       </div>

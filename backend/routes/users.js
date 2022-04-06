@@ -6,6 +6,38 @@ const passport = require("passport");
 
 const earliestMonth = "2014-06";
 
+const parseYearMonth = (yearMonthStr) => {
+    const year = parseInt(yearMonthStr.slice(0, 4));
+    const month = parseInt(yearMonthStr.slice(5, 7));
+    return {year: year, month: month};
+}
+
+const yearMonthToStr = (yearMonth) => {
+    return 
+}
+
+const getCurrYearMonth = () => {
+    const currYear = new Date().getFullYear();
+    const currMonth = new Date().getMonth();
+    return {year: currYear, month: currMonth};
+}
+
+const incrementMonth = (yearMonth) => {
+    if (yearMonth.month < 12) {
+        yearMonth.month += 1;
+        return yearMonth;
+    } 
+
+    if (yearMonth.month == 12) {
+        yearMonth.month = 1;
+        yearMonth.year += 1;
+    }
+}
+
+const lessThan = (yearMonth1, yearMonth2) => {
+    return yearMonth1.year * 100 + yearMonth1.month < yearMonth2.year * 100 + yearMonth2.month;
+}
+
 router.get(
   "/isAuthenticated",
   passport.authenticate("jwt", { session: false }),
@@ -105,8 +137,10 @@ router.get(
     try {
       console.log("req.user");
       console.log(req.user);
-      const beginMonth = await User.findOne({ username: req.user.username }, {beginMonth: 1, _id: 0});
-      delete beginMonth._id;
+      const beginMonth = await User.findOne(
+        { username: req.user.username },
+        { beginMonth: 1, _id: 0 }
+      );
       console.log("beginMonth");
       console.log(beginMonth);
       return res.status(200).json(beginMonth);
@@ -122,10 +156,12 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const latestMonth = await User.findOne({ username: req.user.username }, {latestMonth: 1, _id: 0});
-      delete latestMonth._id
-      console.log(latestMonth);
-      return res.status(200).json(latestMonth);
+      const mongoRes = await User.findOne(
+        { username: req.user.username },
+        { latestMonth: 1, _id: 0 }
+      );
+      console.log(mongoRes);
+      return res.status(200).json(mongoRes);
     } catch (err) {
       return res.status(500).json({ Error: err });
     }
@@ -137,8 +173,66 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const viewingMonth = await User.findOne({ username: req.user.username }, {viewingMonth: 1, _id: 0});
-      console.log(viewingMonth);
+      const mongoRes = await User.findOne(
+        { username: req.user.username },
+        { viewingMonth: 1, _id: 0 }
+      );
+      console.log(mongoRes);
+      return res.status(200).json(mongoRes);
+    } catch (err) {
+      return res.status(500).json({ Error: err });
+    }
+  }
+);
+
+router.post(
+  "/viewPreviousMonth",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const mongoRes = await User.findOne(
+        { username: req.user.username },
+        { viewingMonth: 1, _id: 0 }
+      );
+      console.log(mongoRes);
+      return res.status(200).json(mongoRes);
+    } catch (err) {
+      return res.status(500).json({ Error: err });
+    }
+  }
+);
+
+router.post(
+  "/viewNextMonth",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const mongoRes = await User.findOne(
+        { username: req.user.username },
+        { viewingMonth: 1, _id: 0 }
+      );
+      console.log(mongoRes);
+      return res.status(200).json(mongoRes);
+    } catch (err) {
+      return res.status(500).json({ Error: err });
+    }
+  }
+);
+
+router.post(
+  "/forwardOneMonth",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const mongoRes = await User.findOne(
+        { username: req.user.username },
+        { latestMonth: 1, _id: 0 }
+      );
+
+      console.log(mongoRes.latestMonth);
+      const currYearMonth = getCurrYearMonth();
+      console.log(currYearMonth);
+      console.log(parseYearMonth(earliestMonth));
       return res.status(200).json(viewingMonth);
     } catch (err) {
       return res.status(500).json({ Error: err });
