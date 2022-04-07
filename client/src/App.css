@@ -19,10 +19,7 @@
 .App-link {
   color: #61dafb;
 }
-.section-1-img{
-  margin-top:5.5rem;
-  width:50rem;
-}
+
 .text-container{
   text-align: right;
   margin-top: 9rem;
@@ -30,31 +27,19 @@
 
 /* text-shadow: 2px 2px 5px red; */
 #Header{
-color: #188977;
+color: #6848c0;
 font-size: 75px;
 font-weight: bold;
 
 }
 #Sub-Header{
-  color:#1D9A6C;
+  color:#c5ac1f;
   font-size: 50px;
   font-weight: bold;
 
 }
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-@media(max-width:768px){
-  .section-1-img{
-        margin-top: 1rem;
 
-    width:30rem;
-  }
+@media(max-width:768px){
   .text-container{
     text-align: left;
     margin-top:1rem

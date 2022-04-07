@@ -1,83 +1,54 @@
-import React, { useEffect } from 'react';
-import '../App.css';
+import React, { useEffect } from "react";
+import "../App.css";
 
-import Axios from 'axios';
-import { Container, Col, Row } from 'react-bootstrap';
+import Axios from "axios";
+import { Container, Col, Row } from "react-bootstrap";
 
 export default function HomePage() {
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      if (localStorage.getItem("jwt")) {
+        Axios({
+          method: "get",
+          url: "http://localhost:5000/api/users/isAuthenticated",
+          headers: {
+            Authorization: localStorage.getItem("jwt"),
+          },
+        }).catch(err => {
+          window.location = "/";
+          localStorage.removeItem("jwt");
+        });
+      }
+    };
+    checkLoggedIn();
+  }, []);
 
-
-    useEffect(() => {
-
-        const checkLoggedIn = async () => {
-            if (localStorage.getItem('jwt')) {
-
-                Axios({
-                    method: 'get',
-                    url: 'http://localhost:5000/api/users/isAuthenticated',
-                    headers: {
-                        'Authorization': localStorage.getItem('jwt'),
-                    }
-                }).catch(err => {
-                    window.location = '/';
-                    localStorage.removeItem('jwt');
-                });
-            }
-
-        }
-        checkLoggedIn();
-    }, []);
-
-
-
-
-    return (
-        <Container fluid>
-            <div className="section-1">
-                <Row>
-                    <Col xs={12} lg={6}>
-                        <img className="section-1-img" src={require("../components/assets/banner.jpg")} alt="saving money graphic Designed by rawpixel.com / Freepik" />
-                        <Row>
-                            <Col xs={12 }>
-                            <a href='https://www.freepik.com/vectors/people'>People vector created by pch.vector - www.freepik.com</a>
-
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Col xs={12} lg={6} >
-                    
-                <div className="text-container">
-                        <Row>
-                            <Col xs={12}>
-                            <h1 id="Header">TRACK YOUR EXPENSES!</h1>
-
-                            </Col>
-
-                        </Row>
-                        <Row>
-                            <Col xs={12}>
-                            <h2 id="Sub-Header">EXPLORE THE WORLD OF CRYPTO!</h2>
-
-                            </Col>
-
-                        </Row>
-                        <Row>
-                            <Col xs={12}>
-                                <p id="description">We bring you the ability to track all your transactions from income to expenses. All transactions are
-                                displayed in a neat table with editable features! All your information is safe and secure from unauthorized access.
-                                Not only that, you can also search hundreds of crypto-currencies and view its prices histories, health index such as its 
-                                Fundamental Score or its Market Maturity Score. We also offer a currency converter to add convenience.</p>
-                            </Col>
-                        </Row>
-                        </div>
-                    {/* </div> */}
-                    </Col>
-                </Row>
+  return (
+    <Container fluid>
+      <div className="section-1">
+        <Row>
+            <div className="text-container">
+              <Row>
+                <Col xs={12}>
+                  <h1 id="Header">Time Travelling Stock Simulator</h1>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12}>
+                  <h2 id="Sub-Header">Train your inner Warren Buffet!</h2>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12}>
+                  <p id="description">
+                    This time-travelling stock simulator aims to develop your stock picking skills by presenting to you relevant financial news at that period of time, and lets you trade on a monthly basis. We differentiate ourselves from paper trading simulators offered by stock brokers by focusing on long-term fundamentals-driven investing rather than short-term trading which from which brokers earn their fees. We also immerse you in a historical environment to hone your decision making ability based on information present at that moment in time.
+                  </p>
+                </Col>
+              </Row>
             </div>
-        </Container>
-
-
-
-
-    );
+            {/* </div> */}
+        </Row>
+      </div>
+    </Container>
+  );
 }

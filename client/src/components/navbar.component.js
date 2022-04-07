@@ -141,11 +141,11 @@ export default function Login(props) {
     <Navbar
       collapseOnSelect
       expand="lg"
-      bg="dark"
-      variant="dark"
+      bg="light"
+      variant="light"
       className="nav-bar"
     >
-      <Navbar.Brand href={"/"}>Finance</Navbar.Brand>
+      <Navbar.Brand href={"/"}>Stock Simulator</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
@@ -195,7 +195,7 @@ export default function Login(props) {
             <button onClick={viewPreviousMonth}>View Previous Month</button>
           )}
 
-          {allMonthsReady && <h6 style={{ color: "white" }}>{viewingMonth}</h6>}
+          {allMonthsReady && <h6 style={{ color: "grey" }}>{viewingMonth}</h6>}
 
           {allMonthsReady && (
             <button onClick={viewNextMonth}>View Next Month</button>
