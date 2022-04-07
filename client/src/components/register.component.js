@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 import Axios from 'axios';
-import ErrorModal from '../components/error-modal.component';
 
 export default function Register() {
     const [username, setUsername] = useState();
@@ -64,10 +63,6 @@ export default function Register() {
             <div className="col-sm-12 d-flex">
                 <div className="card signin-card">
                     <div className="card-body">
-                        <ErrorModal
-                            show={modalShow}
-                            onHide={() => setModalShow(false)}
-                            error={error} />
 
                         <h5 className="card-title text-center">Register</h5>
                         <form onSubmit={onSubmit} className="form-signin">

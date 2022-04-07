@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 import Axios from 'axios';
 
-import ErrorModal from '../components/error-modal.component';
 
 export default function Login() {
     const [username, setUsername] = useState();
@@ -63,12 +62,6 @@ export default function Login() {
 
                 <div className="card signin-card">
                     <div className="card-body">
-                        <ErrorModal
-                            show={modalShow}
-                            onHide={() => setModalShow(false)}
-                            error={error}
-
-                        />
 
                         <h5 className="card-title text-center">Sign In</h5>
                         <form onSubmit={onSubmit} className="form-signin">
