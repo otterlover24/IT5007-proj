@@ -74,7 +74,7 @@ router.post("/login", async (req, res) => {
           };
           const token =
             "Bearer " +
-            jwt.sign(payload, process.env.SECRET, { expiresIn: 43200 });
+            jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 43200 });
 
           return res.status(200).json({ token, payload });
         } else {

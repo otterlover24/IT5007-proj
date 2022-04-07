@@ -1,19 +1,37 @@
 # Time-travel Stock Picking Simulator
 
-### TS notes
+## Deployment Instructions
+- Run code in docker exposing `localhost:3000`.
+- Run `npm install` to install the necessary node packages.
+- Create a .env file in the backend folder to include the following configuration secrets (you may use the secrets I provided, but please keep the SECRET_KEY and VANTAGE_KEY confidential):
+	- MONGODB_URI: URI of MongoDB database
+	- SECRET: secret key used for password hasing 
+	- VANTAGE_KEY: API key for Alpha Vantage.
+- In `backend` folder, start the server via `node server.js`.
+- In the `client` folder, run `npm start` to compile JSX to JS.
+- Open the website in browser at URI `http://localhost:3000`.
+- In the navbar, click on `Register` link and create new user.
+- Log in as new user via the `Sign in` link on Navbar.
+- You may view the page mockups for News, Trade, Watchlist, Porfolio pages.
+- Watchlist page has been partially implemented. You may enter ticker to add to watchlist. The quotation will then be reflected in the table below. (You may have to refresh the page, I will fix this in the submission.)
+
+## Notes to Tutor
+- I had tried to learn AlphaVantage API requests, authentication, and charting but failed when I tried to put them together from scratch and that set me back by about a week. To meet this first stage submission deadline, I had to base my work off an existing working project and edit from there. The code here is modifed from a public domain Github project https://github.com/SaenthanP/Finance-Tool. You may also view the git logs to see the original and my subsequent changes.
+- I wonder how much changes I have to make to avoid running afoul of plagarism rules or to not be penalized for initially starting off from someone else's project. I think there are many elements which will make the work substantially my own, as well as several other technical changes which I can make to make my work less derivative:
+	- Element of time-travel simulation.
+	- Element of relevant news.
+	- Stock market instead of crypto.
+	- Use `fetch` instead of `Axios` for API calls.
+	- Use `HashRouter` instead of `react-router-dom`.
+	- Use single GraphQL endpoint instead of interacting with multiple endpoints.
+	- Use another charting library instead of `chart.js`.
+
+## TS notes
 - AlphaVantage API limits
 	- 5 calls per minute, 500 calls per day
 		- Restrict player to 5 securities
-- Users
-	- abc / abc12345
-	- cde / cde12345
-	- ace / ace12345
-	- asd / asd12345
-	- sdf / sdf12345
-	- aes / aes12345
-	- aaa / aaa12345
 
-### TS TODO
+## TS TODO
 - Components / pages
 	- Navbar
 		- Responsive
@@ -22,9 +40,20 @@
 	- /
 		- Landing page describing how to simulation works
 	- /watchlist
-		- Quotation of security as at `viewingMonth`
+		- {PARTLY DONE} Quotation of security as at `viewingMonth`
+			- {DONE} Add ticker to watchlist of user
+			- Check that ticker is valid
+			- {DONE} Delete ticker from watchlist of user
+			- Display current price of stocks on watchlist
+				- {DONE} Get watchlist for user from server to client
+				- {DONE} Fetch quote from AlphaVantage API
+				- {DONE} Send API results to client at specific time point
+				- {DONE} Display in table on client end in `watchlist.component.js`
+				- {TODO} Buttons for adding or deleting to watchlist should also edit `watchlist` via setState and re-render table.
 	- /porfolio
 		- Line chart for net worth over time
+			- {DONE} Mock data
+			- Real data from MongoDB
 		- Table of holdings and value for each security and total
 		- Table of transactions & overall P&L
 	- /trade
@@ -36,16 +65,7 @@
 			- Articles may be new report, or data such as earnings, analyst rating etc
   
 - Create watchlist
-	- {PARTLY DONE} Get rid of unessential components in `watchlist.component.js`
-	- {DONE} Add ticker to watchlist of user
-	- Check that ticker is valid
-	- {DONE} Delete ticker from watchlist of user
-	- Display current price of stocks on watchlist
-		- {DONE} Get watchlist for user from server to client
-		- {DONE} Fetch quote from AlphaVantage API
-		- {DONE} Send API results to client at specific time point
-		- {DONE} Display in table on client end in `watchlist.component.js`
-		- {TODO} Buttons for adding or deleting to watchlist should also edit `watchlist` via setState and re-render table.
+
 
 - Simulate time step
 	- Month saved in MongoDB for each account.
@@ -82,43 +102,4 @@
 
 - Fetch News
 	- Find free financial news API
-
-## Description
-A finance tool made using the MERN stack
-- Secure login and registration using the PassportJS JWT strategy; passwords are hashed using bcrypt
-- Keep track of all your transactions displayed clearly in a table and charts using chartjs
-- View price history and health index of hundreds of crypto coins
-and use the built in currency conversion tool
-
-
-## Demo
-
-### Login Demo
-Used the Passportjs JWT strategy for authentication
-![Login Demo](demo/login.gif)
-
-### Registration Demo
-![Registration Demo](demo/registration.gif)
-
-### Error Checking Demo
-![Error Checking Demo](demo/error-checking.gif)
-
-### Transaction Input Demo
-Transactions are visualized using chartjs
-![Transaction Input Demo](demo/input-transactions.gif)
-
-### Edit/Delete Transaction Demo
-![Edit/Delete Transaction Demo](demo/edit-transactions.gif)
-
-### Crypto Currency Dashboard DemToAddo
-Coin data is from the [Alpha Vantage API](https://www.alphavantage.co/)
-and displayed using chartjs
-![Crypto Currency Dashboard Demo](demo/crypto.gif)
-
-
-
-### How To Deploy?
-Create a .env file in the backend folder and add your own MongoDB key which links to your own MongoDB database.
-Also create and add a secret key to the .env file used for password hashing by bcrypt. This is also where your api key will be stored.
-
-
+		- AlphaVantage has fundamentals

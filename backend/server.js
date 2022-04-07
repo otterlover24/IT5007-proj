@@ -17,7 +17,7 @@ app.use(passport.initialize());
 
 require('./config/passport')(passport);
 
-const uri=process.env.ATLAS_URI;
+const uri=process.env.MONGODB_URI;
 mongoose.connect(uri,{useNewUrlParser:true, useUnifiedTopology:true ,useFindAndModify: false });
 const connection=mongoose.connection;
 connection.once('open',()=>{
