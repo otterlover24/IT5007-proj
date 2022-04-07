@@ -9,10 +9,23 @@ import {
   Row,
   Table,
 } from "react-bootstrap";
+import { Line } from "react-chartjs-2";
 
 export default function Portfolio() {
-  
+  const [netWorthData, setNetWorthData] = useState({
+    labels: ["2014-06", "2014-07", "2014-08", "2014-09"],
+    datasets: [
+      {
+        label: "Net Worth",
+        data: [10000, 20000, 40000, 35000],
+        lineTension: 0,
+      }
+    ]
+  });
+
   useEffect(() => {
+    console.log("portfolio.component.js useEffect []");
+
     const checkLoggedIn = async () => {
       if (localStorage.getItem("jwt")) {
         Axios({
@@ -31,7 +44,7 @@ export default function Portfolio() {
       }
     };
     checkLoggedIn();
-    console.log("portfolio.component.js useEffect []");
+
   }, []);
   
 
@@ -46,6 +59,9 @@ export default function Portfolio() {
           <div className="card expense-input-card">
             <div className="card-body">
               <h5>Net Worth Chart</h5>
+              <div style={{width: 500}}>
+                <Line data={netWorthData} />
+              </div>
 
 
 
