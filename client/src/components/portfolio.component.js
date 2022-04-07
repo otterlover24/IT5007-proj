@@ -11,10 +11,6 @@ import {
 } from "react-bootstrap";
 
 export default function Portfolio() {
-
-  const [tickerToAdd, setTickerToAdd] = useState();
-  const [tickerToDelete, setTickerToDelete] = useState();
-  const [watchlist, setWatchlist] = useState();
   
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -26,6 +22,7 @@ export default function Portfolio() {
             Authorization: localStorage.getItem("jwt"),
           },
         }).catch(err => {
+          console.error(err);
           window.location = "/";
           localStorage.removeItem("jwt");
         });
@@ -34,76 +31,13 @@ export default function Portfolio() {
       }
     };
     checkLoggedIn();
-
-    displayWatchlist();
-    console.log("test");
+    console.log("portfolio.component.js useEffect []");
   }, []);
   
-  const displayWatchlist = async () => {
-    console.log(`in displayWatchlist`);
-
-    /* Get watchlist from server */
-    await Axios({
-      method: "get",
-      url: "http://localhost:5000/api/protected/watchlist/getWatchlist",
-      headers: {
-        Authorization: localStorage.getItem("jwt"),
-      },
-    }).then(res => {
-      console.log(res.data);
-      setWatchlist(res.data);
-    });
-  };
-
-  useEffect(() => {
-    console.log(watchlist);
-  }, [watchlist]);
 
 
   
-  const onAddTickerSubmit = async e => {
-    try {
-      e.preventDefault();
-      e.target.reset();
 
-      await Axios({
-        method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/addTicker",
-        headers: {
-          Authorization: localStorage.getItem("jwt"),
-        },
-        data: {
-          ticker: tickerToAdd
-        },
-      }).then(res => {
-        console.log(`Sent ${res} to /api/protected/watchlist/addTicker`);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const onDeleteTickerSubmit = async e => {
-    try {
-      e.preventDefault();
-      e.target.reset();
-
-      await Axios({
-        method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/deleteTicker",
-        headers: {
-          Authorization: localStorage.getItem("jwt"),
-        },
-        data: {
-          ticker: tickerToDelete
-        },
-      }).then(res => {
-        console.log(`Sent ${res} to /api/protected/watchlist/deleteTicker`);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
   
   return (
     <Container>
@@ -111,45 +45,9 @@ export default function Portfolio() {
         <Col xs="12" md="6">
           <div className="card expense-input-card">
             <div className="card-body">
-              <h5 className="card-title text-center">Add Ticker To Watchlist</h5>
+              <h5>Net Worth Chart</h5>
 
-              <form onSubmit={onAddTickerSubmit} className="form-signin">
-                <div className="form-group">
-                  <label htmlFor="inputExpenseTitle">Ticker</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Ticker"
-                    onChange={e => setTickerToAdd(e.target.value)}
-                  />
-                </div>
 
-                <button
-                  className="btn btn-lg btn-primary btn-block text-uppercase input-expense-btn"
-                  type="submit"
-                >
-                  Add to Watchlist
-                </button>
-              </form>
-
-              <form onSubmit={onDeleteTickerSubmit} className="form-signin">
-                <div className="form-group">
-                  <label htmlFor="inputExpenseTitle">Ticker</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Ticker"
-                    onChange={e => setTickerToDelete(e.target.value)}
-                  />
-                </div>
-
-                <button
-                  className="btn btn-lg btn-primary btn-block text-uppercase input-expense-btn"
-                  type="submit"
-                >
-                  Remove from Watchlist
-                </button>
-              </form>
 
             </div>
           </div>
@@ -157,23 +55,53 @@ export default function Portfolio() {
       </Row>
 
       <Row>
+        <h5>Current Holdings</h5>
         <Col xs="12">
-          <Table className="watchlistTable" striped bordered hover responsive>
+          <Table id="holdingsTable" striped bordered hover responsive>
             <thead>
               <tr>
-                <th>Ticker Symbol</th>
-                <th>Adjusted Monthly Closing Price</th>
+                <th>Ticker</th>
+                <th>Quantity</th>
+                <th>Average Purchase Price</th>
+                <th>Current Market Price</th>
+                <th>Profit (Loss)</th>
               </tr>
             </thead>
             
             <tbody>
-              
-              {watchlist ? watchlist.map(currentTicker => (
                 <tr>
-                  <td>{Object.keys(currentTicker)[0]}</td>
-                  <td>{currentTicker[Object.keys(currentTicker)[0]]}</td>
+                  <td>AAPL</td>
+                  <td>20,000</td>
+                  <td>$134.00</td>
+                  <td>$174.00</td>
+                  <td>$800,000</td>
                 </tr>
-              )) : <></>}
+            </tbody>
+
+          </Table>
+        </Col>
+      </Row>
+
+      <Row>
+        <h5>Transaction History</h5>
+        <Col xs="12">
+          <Table id="transactionHistoryTable" striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Ticker</th>
+                <th>Direction</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            
+            <tbody>
+                <tr>
+                  <td>2014-07-30</td>
+                  <td>AAPL</td>
+                  <td>BUY</td>
+                  <td>20,000</td>
+                </tr>
             </tbody>
 
           </Table>

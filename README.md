@@ -24,8 +24,9 @@
 	- /watchlist
 		- Quotation of security as at `viewingMonth`
 	- /porfolio
-		- Table of P&L for each security and total
-		- Line chart for net worth
+		- Line chart for net worth over time
+		- Table of holdings and value for each security and total
+		- Table of transactions & overall P&L
 	- /trade
 		- Form to buy or sell a specific ticker at market price
 	- /news
