@@ -35,17 +35,17 @@ export default function News() {
     };
     checkLoggedIn();
 
-    displayWatchlist();
+    displayNews();
     console.log("test");
   }, []);
   
-  const displayWatchlist = async () => {
+  const displayNews = async () => {
     console.log(`in displayWatchlist`);
 
     /* Get watchlist from server */
     await Axios({
       method: "get",
-      url: "http://localhost:5000/api/protected/watchlist/getWatchlist",
+      url: "http://localhost:5000/api/protected/news/getNews",
       headers: {
         Authorization: localStorage.getItem("jwt"),
       },

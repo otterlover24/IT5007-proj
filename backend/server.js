@@ -37,6 +37,10 @@ app.use('/api/protected/income',passport.authenticate('jwt',{session:false}),inc
 const watchlistRouter = require('./routes/watchlist.router');
 app.use('/api/protected/watchlist', passport.authenticate('jwt', {session:false}), watchlistRouter);
 
+const newsRouter = require('./routes/news.router');
+app.use('/api/protected/news', passport.authenticate('jwt', {session:false}), newsRouter);
+
+
 
 app.listen(port,()=>{
     console.log('Server is running on port: '+port);
