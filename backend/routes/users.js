@@ -6,14 +6,15 @@ const passport = require( "passport" );
 
 const earliestMonth = "2014-06";
 
-const parseYearMonth = ( yearMonthStr ) => {
+const strToYearMonth = ( yearMonthStr ) => {
   const year = parseInt( yearMonthStr.slice( 0, 4 ) );
   const month = parseInt( yearMonthStr.slice( 5, 7 ) );
   return { year: year, month: month };
 };
 
 const yearMonthToStr = ( yearMonth ) => {
-  return;
+  const yearMonthStr = String( yearMonth.year ) + '-' + String( yearMonth.month ).padStart( 2, "0" );
+  return yearMonthStr;
 };
 
 const getCurrYearMonth = () => {
@@ -22,31 +23,16 @@ const getCurrYearMonth = () => {
   return { year: currYear, month: currMonth };
 };
 
-const incrementMonth = ( yearMonth ) => {
-  console.log( `In incrementMonth. yearMonth= ${yearMonth}, typeof(yearMonth) = ${typeof ( yearMonth )}.` );
-  const yearMonthSplit = yearMonth.split( "-" );
-  const year = parseInt( yearMonthSplit[ 0 ] );
-  const month = parseInt( yearMonthSplit[ 1 ] );
-  console.log( `year: ${year}, month: ${month}` );
+const incrementMonth = ( currYearMonth ) => {
+  console.log( `In incrementMonth. currYearMonth.year = ${currYearMonth.year}, currYearMonth.month = ${currYearMonth.month}.` );
 
-  if ( month < 12 ) {
-    const nextYearMonthMonth = month + 1;
-    const nextYearMonth = String( year ) + '-' + String( nextYearMonthMonth ).padStart( 2, '0' );
-    console.log( `nextYearMonth: ${nextYearMonth}` );
-    return nextYearMonth;
-  }
-
-  if ( month == 12 ) {
-    const nextYearMonthMonth = 1;
-    const nextYearMonthYear = year + 1;
-    const nextYearMonth = String( nextYearMonthYear ) + '-' + String( nextYearMonthMonth ).padStart( 2, '0' );
-    console.log( `nextYearMonth: ${nextYearMonth}` );
-    return nextYearMonth;
-  }
+  return ( currYearMonth.month < 12 ) ?
+    { year: currYearMonth.year, month: currYearMonth.month + 1 } :
+    { year: currYearMonth.year + 1, month: 1 };
 };
 
-const lessThan = ( yearMonth1, yearMonth2 ) => {
-  return yearMonth1.year * 100 + yearMonth1.month < yearMonth2.year * 100 + yearMonth2.month;
+const lessThanOrEqual = ( yearMonth1, yearMonth2 ) => {
+  return yearMonth1.year * 100 + yearMonth1.month <= yearMonth2.year * 100 + yearMonth2.month;
 };
 
 router.get(
@@ -220,32 +206,40 @@ router.post(
     try {
       console.log( "In router.post(viewNextMonth...)" );
 
-      /* Get current viewingMonth from MongoDB. */
+      /* Get current viewingMonth and latestMonth from MongoDB. */
       const mongoRes = await User.findOne(
         { username: req.user.username },
-        { viewingMonth: 1, _id: 0 }
+        { viewingMonth: 1, latestMonth: 1, _id: 0 }
       );
       console.log( mongoRes );
       console.log( `mongoRes.viewingMonth: ${mongoRes.viewingMonth}` );
+      console.log( `mongoRes.latestMonth: ${mongoRes.viewingMonth}` );
 
       /* Increment viewingMonth. */
-      const nextViewingMonth = incrementMonth( mongoRes.viewingMonth );
-      console.log( `In router.post(viewNextMonth, ...), nextViewingMonth = ${nextViewingMonth}` );
-      
+      const currViewingMonth = strToYearMonth( mongoRes.viewingMonth );
+      console.log( `currViewingMonth.year: ${currViewingMonth.year}, currViewingMonth.month: ${currViewingMonth.month}` );
+      const nextViewingMonth = incrementMonth( currViewingMonth );
+      console.log( `nextViewingMonth.year: ${nextViewingMonth.year}, nextViewingMonth.month: ${nextViewingMonth.month}` );
+      const latestMonth = strToYearMonth( mongoRes.latestMonth );
+      console.log( `latestMonth.year: ${latestMonth.year}, latestMonth.month: ${latestMonth.month}` );
+      const nextViewingMonthChecked = lessThanOrEqual( nextViewingMonth, latestMonth ) ? nextViewingMonth : currViewingMonth;
+      const nextViewingMonthCheckedStr = yearMonthToStr( nextViewingMonthChecked );
+      console.log( `nextViewingMonthCheckedStr: ${nextViewingMonthCheckedStr}` );
+
       /* Update viewingMonth in User MongoDB database. */
-      const mongoUpdateRes = await User.findOneAndUpdate(
-        {username: req.user.username},
-        {viewingMonth: nextViewingMonth}, 
-        (err, doc) => {
-          if (err) {
-            console.error("In router.post(/viewNextMonth, ...), failed to update viewingMonth.");
-            throw(err);
+      await User.findOneAndUpdate(
+        { username: req.user.username },
+        { viewingMonth: nextViewingMonthCheckedStr },
+        ( err, doc ) => {
+          if ( err ) {
+            console.error( "In router.post(/viewNextMonth, ...), failed to update viewingMonth." );
+            throw ( err );
           }
         }
       );
-      
+
       /* Send updated viewingMonth to client if MongoDB update successful */
-      return res.status( 200 ).json( { "nextViewingMonth": nextViewingMonth } );
+      return res.status( 200 ).json( { "nextViewingMonth": nextViewingMonthCheckedStr } );
     } catch ( err ) {
       return res.status( 500 ).json( { Error: err } );
     }
@@ -262,11 +256,30 @@ router.post(
         { latestMonth: 1, _id: 0 }
       );
 
-      console.log( mongoRes );
+      console.log( `In router.post(/forwardOneMonth, ...), mongoRes.latestMonth = ${mongoRes.latestMonth}` );
+
+      /* Try incrementing latestMonth to incLatestMonth. */
+      const latestMonth = strToYearMonth( mongoRes.latestMonth );
+      const incLatestMonth = incrementMonth( latestMonth );
+      console.log( `In router.post(/forwardOneMonth, ...), incLatestMonth = ${incLatestMonth}` );
       const currYearMonth = getCurrYearMonth();
-      console.log( currYearMonth );
-      console.log( parseYearMonth( earliestMonth ) );
-      return res.status( 200 ).json( viewingMonth );
+      const incLatestMonthChecked = lessThanOrEqual( incLatestMonth, currYearMonth ) ? incLatestMonth : latestMonth;
+      const incLatestMonthCheckedStr = yearMonthToStr( incLatestMonthChecked );
+
+      /* Update in database. */
+      await User.findOneAndUpdate(
+        { username: req.user.username },
+        { latestMonth: incLatestMonthCheckedStr },
+        ( err, doc ) => {
+          if ( err ) {
+            console.error( "In router.post(/viewNextMonth, ...), failed to update viewingMonth." );
+            throw ( err );
+          }
+        }
+      );
+
+      /* Return late */
+      return res.status( 200 ).json( incLatestMonthCheckedStr );
     } catch ( err ) {
       return res.status( 500 ).json( { Error: err } );
     }
