@@ -68,7 +68,7 @@ export default function Watchlist() {
 
       await Axios({
         method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/addTicker",
+        url: "http://localhost:5000/api/protected/watchlist/addTickerToWatchlist",
         headers: {
           Authorization: localStorage.getItem("jwt"),
         },
@@ -76,7 +76,7 @@ export default function Watchlist() {
           ticker: tickerToAdd
         },
       }).then(res => {
-        console.log(`Sent ${res} to /api/protected/watchlist/addTicker`);
+        console.log(`Sent ${res} to /api/protected/watchlist/addTickerToWatchlist`);
       });
     } catch (err) {
       console.error(err);
@@ -90,7 +90,7 @@ export default function Watchlist() {
 
       await Axios({
         method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/deleteTicker",
+        url: "http://localhost:5000/api/protected/watchlist/deleteTickerFromWatchlist",
         headers: {
           Authorization: localStorage.getItem("jwt"),
         },
@@ -98,7 +98,7 @@ export default function Watchlist() {
           ticker: tickerToDelete
         },
       }).then(res => {
-        console.log(`Sent ${res} to /api/protected/watchlist/deleteTicker`);
+        console.log(`Sent ${res} to /api/protected/watchlist/deleteTickerFromWatchlist`);
       });
     } catch (err) {
       console.error(err);

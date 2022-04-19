@@ -12,9 +12,7 @@ import {
 
 export default function News() {
 
-  const [tickerToAdd, setTickerToAdd] = useState();
-  const [tickerToDelete, setTickerToDelete] = useState();
-  const [watchlist, setWatchlist] = useState();
+  const [newsList, setNewsList] = useState();
   
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -51,59 +49,15 @@ export default function News() {
       },
     }).then(res => {
       console.log(res.data);
-      setWatchlist(res.data);
+      setNewsList(res.data);
     });
   };
 
   useEffect(() => {
-    console.log(watchlist);
-  }, [watchlist]);
+    console.log(newsList);
+  }, [newsList]);
 
 
-  
-  const onAddTickerSubmit = async e => {
-    try {
-      e.preventDefault();
-      e.target.reset();
-
-      await Axios({
-        method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/addTicker",
-        headers: {
-          Authorization: localStorage.getItem("jwt"),
-        },
-        data: {
-          ticker: tickerToAdd
-        },
-      }).then(res => {
-        console.log(`Sent ${res} to /api/protected/watchlist/addTicker`);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const onDeleteTickerSubmit = async e => {
-    try {
-      e.preventDefault();
-      e.target.reset();
-
-      await Axios({
-        method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/deleteTicker",
-        headers: {
-          Authorization: localStorage.getItem("jwt"),
-        },
-        data: {
-          ticker: tickerToDelete
-        },
-      }).then(res => {
-        console.log(`Sent ${res} to /api/protected/watchlist/deleteTicker`);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
   
   return (
     <Container>

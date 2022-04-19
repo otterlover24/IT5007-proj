@@ -42,6 +42,8 @@
 	- aaa / aaa12345
 		- Users.viewingMonth messed up
 	- bbb / bbb12345
+		- Ticker database messed up as did not have isPortfolio field.
+	- ccc / ccc11111
   
 ## TS TODO
 - Components / pages
