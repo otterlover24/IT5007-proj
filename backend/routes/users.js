@@ -31,6 +31,14 @@ const incrementMonth = ( currYearMonth ) => {
     { year: currYearMonth.year + 1, month: 1 };
 };
 
+const decrementMonth = ( currYearMonth ) => {
+  console.log( `In incrementMonth. currYearMonth.year = ${currYearMonth.year}, currYearMonth.month = ${currYearMonth.month}.` );
+
+  return ( currYearMonth.month > 1 ) ?
+    { year: currYearMonth.year, month: currYearMonth.month - 1 } :
+    { year: currYearMonth.year - 1, month: 12 };
+};
+
 const lessThanOrEqual = ( yearMonth1, yearMonth2 ) => {
   return yearMonth1.year * 100 + yearMonth1.month <= yearMonth2.year * 100 + yearMonth2.month;
 };
@@ -187,12 +195,39 @@ router.post(
   passport.authenticate( "jwt", { session: false } ),
   async ( req, res ) => {
     try {
+      console.log( "In router.post(viewPreviousMonth...)" );
+
+      /* Get current viewingMonth from MongoDB. */
       const mongoRes = await User.findOne(
         { username: req.user.username },
         { viewingMonth: 1, _id: 0 }
       );
       console.log( mongoRes );
-      return res.status( 200 ).json( mongoRes );
+      console.log( `mongoRes.viewingMonth: ${mongoRes.viewingMonth}` );
+      console.log( `earliestMonth: ${earliestMonth}` );
+
+      /* Increment viewingMonth. */
+      const currViewingMonth = strToYearMonth( mongoRes.viewingMonth );
+      const prevViewingMonth = decrementMonth( currViewingMonth );
+      console.log( `prevViewingMonth: ${prevViewingMonth.year} ${prevViewingMonth.month}` );
+      const prevViewingMonthChecked = lessThanOrEqual( strToYearMonth( earliestMonth ), prevViewingMonth ) ? prevViewingMonth : currViewingMonth;
+      const prevViewingMonthCheckedStr = yearMonthToStr( prevViewingMonthChecked );
+      console.log( `prevViewingMonthCheckedStr: ${prevViewingMonthCheckedStr}` );
+
+      /* Update viewingMonth in User MongoDB database. */
+      await User.findOneAndUpdate(
+        { username: req.user.username },
+        { viewingMonth: prevViewingMonthCheckedStr },
+        ( err, doc ) => {
+          if ( err ) {
+            console.error( "In router.post(/viewPreviousMonth, ...), failed to update viewingMonth." );
+            throw ( err );
+          }
+        }
+      );
+
+      /* Send updated viewingMonth to client if MongoDB update successful */
+      return res.status( 200 ).json( { "prevViewingMonth": prevViewingMonthCheckedStr } );
     } catch ( err ) {
       return res.status( 500 ).json( { Error: err } );
     }

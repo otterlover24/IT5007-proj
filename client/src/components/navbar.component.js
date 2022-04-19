@@ -94,7 +94,7 @@ export default function Login(props) {
         },
       }).then(res => {
         console.log(res.data);
-        setGetMonthVariablesFlag(!getMonthVariablesFlag);
+        setViewingMonth(res.data.prevViewingMonth);
       });
     } catch (err) {
       console.error(err);
@@ -113,7 +113,6 @@ export default function Login(props) {
       }).then(res => {
         console.log(res.data);
         setViewingMonth(res.data.nextViewingMonth);
-        // setGetMonthVariablesFlag(!getMonthVariablesFlag);
       });
     } catch (err) {
       console.error(err);
