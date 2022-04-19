@@ -112,7 +112,8 @@ export default function Login(props) {
         },
       }).then(res => {
         console.log(res.data);
-        setGetMonthVariablesFlag(!getMonthVariablesFlag);
+        setViewingMonth(res.data.nextViewingMonth);
+        // setGetMonthVariablesFlag(!getMonthVariablesFlag);
       });
     } catch (err) {
       console.error(err);
@@ -195,7 +196,9 @@ export default function Login(props) {
             <button onClick={viewPreviousMonth}>View Previous Month</button>
           )}
 
-          {allMonthsReady && <h6 style={{ color: "grey" }}>{viewingMonth}</h6>}
+          {allMonthsReady && <h6 style={{ color: "light-grey" }}>Viewing Month: {viewingMonth}</h6>}
+          
+          {allMonthsReady && <h6 style={{ color: "dark-grey" }}>Latest Month: {latestMonth}</h6>}
 
           {allMonthsReady && (
             <button onClick={viewNextMonth}>View Next Month</button>

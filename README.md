@@ -1,5 +1,11 @@
 # Time-travel Stock Picking Simulator
-
+- API key just remove
+- Fork off public repo, maybe even raise pull request.
+- Set up meeting between 23-30th to demo working code
+- Ideas for extension
+	- Make it a game (multiplayer leaderboard)
+		- Interface to search on google, but restrict information date.
+			- Google has such an option.
 ## Deployment Instructions
 - Run code in docker exposing `localhost:3000`.
 - Run `npm install` to install the necessary node packages.
@@ -30,7 +36,13 @@
 - AlphaVantage API limits
 	- 5 calls per minute, 500 calls per day
 		- Restrict player to 5 securities
-
+- Refer to
+	- https://github.com/prediqtiv/alpha-vantage-cookbook
+- Users
+	- aaa / aaa12345
+		- Users.viewingMonth messed up
+	- bbb / bbb12345
+  
 ## TS TODO
 - Components / pages
 	- Navbar
