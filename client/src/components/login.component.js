@@ -49,8 +49,7 @@ export default function Login() {
            
             window.location = '/app';
         } catch (err) {
-            setError(err.response.data.Error);
-            setModalShow(true);
+            alert(err);
         }
     }
 
