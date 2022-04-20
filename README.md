@@ -60,6 +60,7 @@
 	- /watchlist
 		- {PARTLY DONE} Quotation of security as at `viewingMonth`
 			- {DONE} Add ticker to watchlist of user
+				- **{TODO} Ensure no duplicates by using Mongoose `findOneAndUpdate()` using `upsert` option.**
 			- Check that ticker is valid
 			- {DONE} Delete ticker from watchlist of user
 			- Display current price of stocks on watchlist

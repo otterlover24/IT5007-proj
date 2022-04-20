@@ -20,14 +20,24 @@ router.post( '/addTickerToWatchlist', async ( req, res ) => {
       tickerSymbol: ticker,
       inPortfolio: false
     } );
+    
+    let tickerDoc = await Ticker.findOneAndUpdate(
+      {
+        userId: req.user._id,
+        tickerSymbol: ticker,
+        inPortfolio: false,
+      },
+      newTicker,
+      {
+        new: true,
+        upsert: true
+      }
+    );
+    if (LOG && LOG_WATCHLIST_ROUTER) {
+      console.log("tickerDoc: ", tickerDoc);
+    }
+    res.status(200);
 
-    newTicker
-      .save()
-      .then( tickerSymbol => {
-        res.json( tickerSymbol );
-        if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( tickerSymbol );
-      } )
-      // .catch( err => res.status( 400 ).json( { Error: err } ) );
   } catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
 
