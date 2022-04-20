@@ -44,6 +44,8 @@
 	- bbb / bbb12345
 		- Ticker database messed up as did not have isPortfolio field.
 	- ccc / ccc11111
+		- `latestMonth` not aligned to quarter
+	- ddd / ddd11111
   
 ## TS TODO
 - General
@@ -104,7 +106,8 @@
 					- {HYPOTHESIS} _id not in user.model
 						- {SOLUTION} search using uersname 
 		- Buttons to forward `latestMonth` and to alter `viewingMonth` on navbar
-		- **{TODO} Change to quarter**
+		- **{TODO} Change time-step to quarter**
+			- Change navbar buttons, function names, and API endpoints only.
 	- /watchlist page display adjusted monthly closing price as at month
 - Transactions
 	- Buy

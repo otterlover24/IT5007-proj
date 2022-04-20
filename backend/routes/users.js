@@ -34,6 +34,16 @@ const incrementMonth = ( currYearMonth ) => {
     { year: currYearMonth.year + 1, month: 1 };
 };
 
+const incrementQuarter = (currYearMonth) => {
+  return incrementMonth(
+    incrmentMonth(
+      incrementMonth(
+        currYearMonth
+      )
+    )
+  );
+}
+
 const decrementMonth = ( currYearMonth ) => {
   if ( LOG && LOG_USER ) console.log( `In incrementMonth. currYearMonth.year = ${currYearMonth.year}, currYearMonth.month = ${currYearMonth.month}.` );
 
@@ -41,6 +51,16 @@ const decrementMonth = ( currYearMonth ) => {
     { year: currYearMonth.year, month: currYearMonth.month - 1 } :
     { year: currYearMonth.year - 1, month: 12 };
 };
+
+const decrementQuarter = (currYearMonth) => {
+  return decrementMonth(
+    decrementMonth(
+      decrementMonth(
+        currYearMonth
+      )
+    )
+  );
+}
 
 const lessThanOrEqual = ( yearMonth1, yearMonth2 ) => {
   return yearMonth1.year * 100 + yearMonth1.month <= yearMonth2.year * 100 + yearMonth2.month;
@@ -195,7 +215,7 @@ router.get(
 );
 
 router.post(
-  "/viewPreviousMonth",
+  "/viewPreviousQuarter",
   passport.authenticate( "jwt", { session: false } ),
   async ( req, res ) => {
     try {
@@ -210,9 +230,9 @@ router.post(
       if ( LOG && LOG_USER ) console.log( `mongoRes.viewingMonth: ${mongoRes.viewingMonth}` );
       if ( LOG && LOG_USER ) console.log( `earliestMonth: ${earliestMonth}` );
 
-      /* Increment viewingMonth. */
+      /* Decrement viewingMonth by quarter. */
       const currViewingMonth = strToYearMonth( mongoRes.viewingMonth );
-      const prevViewingMonth = decrementMonth( currViewingMonth );
+      const prevViewingMonth = decrementQuarter( currViewingMonth );
       if ( LOG && LOG_USER ) console.log( `prevViewingMonth: ${prevViewingMonth.year} ${prevViewingMonth.month}` );
       const prevViewingMonthChecked = lessThanOrEqual( strToYearMonth( earliestMonth ), prevViewingMonth ) ? prevViewingMonth : currViewingMonth;
       const prevViewingMonthCheckedStr = yearMonthToStr( prevViewingMonthChecked );
@@ -224,7 +244,7 @@ router.post(
         { viewingMonth: prevViewingMonthCheckedStr },
         ( err, doc ) => {
           if ( err ) {
-            console.error( "In router.post(/viewPreviousMonth, ...), failed to update viewingMonth." );
+            console.error( "In router.post(/viewPreviousQuarter, ...), failed to update viewingMonth." );
             throw ( err );
           }
         }
@@ -239,7 +259,7 @@ router.post(
 );
 
 router.post(
-  "/viewNextMonth",
+  "/viewNextQuarter",
   passport.authenticate( "jwt", { session: false } ),
   async ( req, res ) => {
     try {
@@ -254,10 +274,10 @@ router.post(
       if ( LOG && LOG_USER ) console.log( `mongoRes.viewingMonth: ${mongoRes.viewingMonth}` );
       if ( LOG && LOG_USER ) console.log( `mongoRes.latestMonth: ${mongoRes.viewingMonth}` );
 
-      /* Increment viewingMonth. */
+      /* Increment viewingMonth by quarter. */
       const currViewingMonth = strToYearMonth( mongoRes.viewingMonth );
       if ( LOG && LOG_USER ) console.log( `currViewingMonth.year: ${currViewingMonth.year}, currViewingMonth.month: ${currViewingMonth.month}` );
-      const nextViewingMonth = incrementMonth( currViewingMonth );
+      const nextViewingMonth = incrementQuarter( currViewingMonth );
       if ( LOG && LOG_USER ) console.log( `nextViewingMonth.year: ${nextViewingMonth.year}, nextViewingMonth.month: ${nextViewingMonth.month}` );
       const latestMonth = strToYearMonth( mongoRes.latestMonth );
       if ( LOG && LOG_USER ) console.log( `latestMonth.year: ${latestMonth.year}, latestMonth.month: ${latestMonth.month}` );
@@ -271,7 +291,7 @@ router.post(
         { viewingMonth: nextViewingMonthCheckedStr },
         ( err, doc ) => {
           if ( err ) {
-            console.error( "In router.post(/viewNextMonth, ...), failed to update viewingMonth." );
+            console.error( "In router.post(/viewNextQuarter, ...), failed to update viewingMonth." );
             throw ( err );
           }
         }
@@ -286,7 +306,7 @@ router.post(
 );
 
 router.post(
-  "/forwardOneMonth",
+  "/forwardOneQuarter",
   passport.authenticate( "jwt", { session: false } ),
   async ( req, res ) => {
     try {
@@ -295,11 +315,11 @@ router.post(
         { latestMonth: 1, _id: 0 }
       );
 
-      console.log( `In router.post(/forwardOneMonth, ...), mongoRes.latestMonth = ${mongoRes.latestMonth}` );
+      console.log( `In router.post(/forwardOneQuarter, ...), mongoRes.latestMonth = ${mongoRes.latestMonth}` );
 
       /* Try incrementing latestMonth to incLatestMonth. */
       const latestMonth = strToYearMonth( mongoRes.latestMonth );
-      const incLatestMonth = incrementMonth( latestMonth );
+      const incLatestMonth = incrementQuarter( latestMonth );
       if ( LOG && LOG_USER ) console.log( `In router.post(/forwardOneMonth, ...), incLatestMonth = ${incLatestMonth}` );
       const currYearMonth = getCurrYearMonth();
       const incLatestMonthChecked = lessThanOrEqual( incLatestMonth, currYearMonth ) ? incLatestMonth : latestMonth;
@@ -311,7 +331,7 @@ router.post(
         { latestMonth: incLatestMonthCheckedStr },
         ( err, doc ) => {
           if ( err ) {
-            console.error( "In router.post(/viewNextMonth, ...), failed to update viewingMonth." );
+            console.error( "In router.post(/viewNextQuarter, ...), failed to update viewingMonth." );
             throw ( err );
           }
         }

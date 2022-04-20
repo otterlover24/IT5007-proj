@@ -83,12 +83,12 @@ export default function Login(props) {
     window.location = "/";
   };
 
-  const viewPreviousMonth = async () => {
+  const viewPreviousQuarter = async () => {
     console.log("In viewPreviousMonth()");
     try {
       await Axios({
         method: "post",
-        url: "http://localhost:5000/api/users/viewPreviousMonth",
+        url: "http://localhost:5000/api/users/viewPreviousQuarter",
         headers: {
           Authorization: localStorage.getItem("jwt"),
         },
@@ -101,12 +101,12 @@ export default function Login(props) {
     }
   };
 
-  const viewNextMonth = async () => {
+  const viewNextQuarter = async () => {
     console.log("In viewNextMonth()");
     try {
       await Axios({
         method: "post",
-        url: "http://localhost:5000/api/users/viewNextMonth",
+        url: "http://localhost:5000/api/users/viewNextQuarter",
         headers: {
           Authorization: localStorage.getItem("jwt"),
         },
@@ -119,12 +119,12 @@ export default function Login(props) {
     }
   };
 
-  const forwardOneMonth = async () => {
-    console.log("In forwardOneMonth()");
+  const forwardOneQuarter = async () => {
+    console.log("In forwardOneQuarter()");
     try {
       await Axios({
         method: "post",
-        url: "http://localhost:5000/api/users/forwardOneMonth",
+        url: "http://localhost:5000/api/users/forwardOneQuarter",
         headers: {
           Authorization: localStorage.getItem("jwt"),
         },
@@ -192,7 +192,7 @@ export default function Login(props) {
           )}
 
           {allMonthsReady && (
-            <button onClick={viewPreviousMonth}>View Previous Month</button>
+            <button onClick={viewPreviousQuarter}>View Previous Quarter</button>
           )}
 
           {allMonthsReady && <h6 style={{ color: "light-grey" }}>Viewing Month: {viewingMonth}</h6>}
@@ -200,11 +200,11 @@ export default function Login(props) {
           {allMonthsReady && <h6 style={{ color: "dark-grey" }}>Latest Month: {latestMonth}</h6>}
 
           {allMonthsReady && (
-            <button onClick={viewNextMonth}>View Next Month</button>
+            <button onClick={viewNextQuarter}>View Next Quarter</button>
           )}
 
           {allMonthsReady && (
-            <button onClick={forwardOneMonth}>Forward One Month</button>
+            <button onClick={forwardOneQuarter}>Forward One Quarter</button>
           )}
         </Nav>
       </Navbar.Collapse>
