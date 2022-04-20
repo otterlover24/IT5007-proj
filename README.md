@@ -46,6 +46,8 @@
 	- ccc / ccc11111
   
 ## TS TODO
+- General
+	- {DONE} Implements log levels to limit console.log output.  
 - Components / pages
 	- Navbar
 		- Responsive

@@ -1,7 +1,11 @@
 const axios = require( 'axios' );
 let Ticker = require( '../models/ticker.model' );
 const router = require( 'express' ).Router();
-const currMonth = '2022-03';
+
+const LOG = ( process.env.LOG == 'true' ) ? true : false;
+const LOG_WATCHLIST_ROUTER = ( process.env.LOG_WATCHLIST_ROUTER == 'true' ) ? true : false;
+
+const currMonth = '2022-03';  // TODO: change to dynamically request from MongoDB
 
 router.post( '/addTickerToWatchlist', async ( req, res ) => {
   try {
@@ -20,7 +24,7 @@ router.post( '/addTickerToWatchlist', async ( req, res ) => {
       .save()
       .then( tickerSymbol => {
         res.json( tickerSymbol );
-        console.log( tickerSymbol );
+        if ( LOG && LOW_WATCHLIST_ROUTER ) console.log( tickerSymbol );
       } )
       .catch( err => res.status( 400 ).json( { Error: err } ) );
   } catch ( err ) {
@@ -40,7 +44,7 @@ router.post( '/deleteTickerFromWatchlist', async ( req, res ) => {
       .deleteOne( { userID: req.user._id, tickerSymbol: req.body.ticker } )
       .then( tickerSymbol => {
         res.json( tickerSymbol );
-        console.log( `Deleted from MongoDB ${tickerSymbol}.` );
+        if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( `Deleted from MongoDB ${tickerSymbol}.` );
       } )
       .catch( err => res.status( 400 ).json( { Error: err } ) );
   } catch ( err ) {
@@ -64,7 +68,7 @@ router.get( '/getWatchlist', async ( req, res ) => {
         process.env.VANTAGE_KEY
       )
       .then( apiRes => {
-        console.log( apiRes );
+        if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( apiRes );
         const filteredRes = {};
         for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
           if ( property.slice( 0, 7 ) === currMonth ) {
@@ -73,7 +77,7 @@ router.get( '/getWatchlist', async ( req, res ) => {
         }
         return filteredRes;
       } );
-    console.log( `filteredRes: ${filteredRes}` );
+    if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( `filteredRes: ${filteredRes}` );
     processedRes.push( filteredRes );
   }
   return res.json( processedRes );

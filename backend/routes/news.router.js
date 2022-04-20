@@ -1,9 +1,12 @@
 const axios = require( 'axios' );
 let Ticker = require( '../models/ticker.model' );
+let IncomeStatement = require( '../models/incomeStatement.model' );
 const router = require( 'express' ).Router();
 var request = require( 'request' );
 const passport = require( "passport" );
 
+const LOG = ( process.env.LOG == 'true' ) ? true : false;
+const LOG_NEWS_ROUTER = ( process.env.LOG_NEWS_ROUTER == 'true' ) ? true : false;
 
 router.get(
   "/getNews",
@@ -11,48 +14,79 @@ router.get(
   async ( req, res ) => {
     try {
       console.log( `In router.get(/getNews, ...).` );
+      console.log( "req.user: ", req.user );
+
+      /* Get viewingMonth for user. */
+      const viewingMonthRes = await User.findOne(
+        { username: req.user.username },
+        { viewingMonth: 1, _id: 0 }
+      );
+      if ( LOG && LOG_NEWS_ROUTER ) console.log( "viewingMonthRes: ", viewingMonthRes );
+      const viewingMonth = viewingMonthRes.viewingMonth;
+      if ( LOG && LOG_NEWS_ROUTER ) console.log( `Got viewingMonth from MongoDB: ${viewingMonth}` );
+
 
       /* Get list of tickers that user subscribes to. */
-      console.log( `Printing req.user._id: ${req.user._id}` );
+      if ( LOG && LOG_NEWS_ROUTER ) console.log( `Printing req.user._id: ${req.user._id}` );
       const mongoRes = await Ticker.find(
         { userId: req.user._id },
       );
-      console.log( "mongoRes: ", mongoRes );
+      if ( LOG && LOG_NEWS_ROUTER ) console.log( "mongoRes: ", mongoRes );
 
       /* Iterate through results in mongoRes. */
       const tickers = [];
       mongoRes.forEach( ( ticker, i_ticker ) => {
         tickers.push( ticker[ 'tickerSymbol' ] );
       } );
-      console.log( `tickers: ${tickers}` );
+      if ( LOG && LOG_NEWS_ROUTER ) console.log( `tickers: ${tickers}` );
 
       /* 
       Check if news for ticker up to viewingMonth is available in MongoDB.
       Request from API for those that are not, 
-      sorted first by report date, 
+      sorted first by report date,  
       then by ticker symbol.
       */
       const apiRes = {};
-      const apiResRequest = {};
       for ( const ticker of tickers ) {
-        apiRes[ticker] = await axios.get(
+        if ( LOG && LOG_NEWS_ROUTER ) console.log( `Getting INCOME_STATEMENT data from AlphaVantage API for ${ticker}` );
+        apiRes[ ticker ] = await axios.get(
           `https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol=${ticker}&apikey=${process.env.VANTAGE_KEY}`
         );
-
-        console.log(`LogApiRes for ${ticker}\n`, apiRes[ticker].data.quarterlyReports);
       }
+      if ( LOG && LOG_NEWS_ROUTER ) console.log( `Done getting INCOME_STATEMENT data for all tickers. ` );
 
-      /* Sort by date up to viewingMonth. */
-      const reports = []
-      for (const ticker in apiRes) {
-        for (const quarterlyReport in apiRes[ticker]) {
-          // console.log("quarterly report");
+      /* For tickers not in MongoDB, download from API and save to MongoDB. */
+      const incomeStatementReports = [];
+      for ( const ticker of tickers ) {
+        if ( LOG && LOG_NEWS_ROUTER ) console.log( `Adding ${ticker} to incomeStatementReports.` );
+        for ( const quarterlyReport of apiRes[ ticker ].data.quarterlyReports ) {
+          if ( LOG && LOG_NEWS_ROUTER ) console.log( "quarterlyReport: ", quarterlyReport.fiscalDateEnding, quarterlyReport.grossProfit );
+          const incomeStatementReport = new IncomeStatement( {
+            tickerSymbol: ticker,
+            fiscalDateEnding: quarterlyReport.fiscalDateEnding,
+            reportedCurrency: quarterlyReport.reportedCurrency,
+            grossProfit: quarterlyReport.grossProfit,
+            totalRevenue: quarterlyReport.totalRevenue,
+            netIncome: quarterlyReport.netIncome
+          } );
+          if ( LOG && LOG_NEWS_ROUTER ) console.log( "Income statement report created: ", incomeStatementReport.tickerSymbol, incomeStatementReport.fiscalDateEnding );
+          incomeStatementReports.push( incomeStatementReport );
+          incomeStatementReport.save();
         }
       }
 
-      /* Return to data user. */
+      /* Request data from MongoDB to sort by date up to viewingMonth. */
+      const incomeStatementFromDb = await IncomeStatement.find( {
+        "tickerSymbol": {
+          "$in": tickers,
+        },
+        "fiscalDateEnding": {
+          "$lte": viewingMonth,
+        }
+      } );
+      if ( LOG && LOG_NEWS_ROUTER ) console.log( "Got tickers from IncomeStatement collection: ", incomeStatementFromDb );
 
-      /* Return late */
+      /* Return to data user. */
       return res.status( 200 ).json( "getNewsResponse" );
     } catch ( err ) {
       return res.status( 500 ).json( { Error: err } );
@@ -62,7 +96,7 @@ router.get(
 
 router.get( '/getNews', async ( req, res ) => {
   try {
-    console.log( "news.router.js:router.get:/getNews" );
+    if ( LOG && LOG_NEWS_ROUTER ) console.log( "news.router.js:router.get:/getNews" );
 
     /* Get list of tickers from watchlist and portfolio. */
 

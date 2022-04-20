@@ -10,6 +10,7 @@ import {
   Table,
 } from "react-bootstrap";
 
+
 export default function Watchlist() {
 
   const [tickerToAdd, setTickerToAdd] = useState();
