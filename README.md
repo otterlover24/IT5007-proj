@@ -104,6 +104,7 @@
 					- {HYPOTHESIS} _id not in user.model
 						- {SOLUTION} search using uersname 
 		- Buttons to forward `latestMonth` and to alter `viewingMonth` on navbar
+		- **{TODO} Change to quarter**
 	- /watchlist page display adjusted monthly closing price as at month
 - Transactions
 	- Buy

@@ -4,7 +4,10 @@ const bcrypt = require( "bcryptjs" );
 const jwt = require( "jsonwebtoken" );
 const passport = require( "passport" );
 
-const earliestMonth = "2014-06";
+const LOG = ( process.env.LOG == 'true' ) ? true : false;
+const LOG_USER = ( process.env.LOG_USER == 'true' ) ? true : false;
+
+const earliestMonth = process.env.EARLIEST_MONTH;
 
 const strToYearMonth = ( yearMonthStr ) => {
   const year = parseInt( yearMonthStr.slice( 0, 4 ) );
@@ -24,7 +27,7 @@ const getCurrYearMonth = () => {
 };
 
 const incrementMonth = ( currYearMonth ) => {
-  console.log( `In incrementMonth. currYearMonth.year = ${currYearMonth.year}, currYearMonth.month = ${currYearMonth.month}.` );
+  if ( LOG && LOG_USER ) console.log( `In incrementMonth. currYearMonth.year = ${currYearMonth.year}, currYearMonth.month = ${currYearMonth.month}.` );
 
   return ( currYearMonth.month < 12 ) ?
     { year: currYearMonth.year, month: currYearMonth.month + 1 } :
@@ -32,7 +35,7 @@ const incrementMonth = ( currYearMonth ) => {
 };
 
 const decrementMonth = ( currYearMonth ) => {
-  console.log( `In incrementMonth. currYearMonth.year = ${currYearMonth.year}, currYearMonth.month = ${currYearMonth.month}.` );
+  if ( LOG && LOG_USER ) console.log( `In incrementMonth. currYearMonth.year = ${currYearMonth.year}, currYearMonth.month = ${currYearMonth.month}.` );
 
   return ( currYearMonth.month > 1 ) ?
     { year: currYearMonth.year, month: currYearMonth.month - 1 } :
@@ -61,6 +64,7 @@ router.get( "/test", ( req, res ) => {
 
 router.post( "/login", async ( req, res ) => {
   try {
+    if (LOG && LOG_USER) {console.log("/login received req: ", req)};
     const { username, password } = req.body;
     if ( !username || !password ) {
       return res
@@ -140,17 +144,17 @@ router.get(
   passport.authenticate( "jwt", { session: false } ),
   async ( req, res ) => {
     try {
-      console.log( "req.user" );
-      console.log( req.user );
+      if ( LOG && LOG_USER ) console.log( "req.user" );
+      if ( LOG && LOG_USER ) console.log( req.user );
       const beginMonth = await User.findOne(
         { username: req.user.username },
         { beginMonth: 1, _id: 0 }
       );
-      console.log( "beginMonth" );
-      console.log( beginMonth );
+      if ( LOG && LOG_USER ) console.log( "beginMonth" );
+      if ( LOG && LOG_USER ) console.log( beginMonth );
       return res.status( 200 ).json( beginMonth );
     } catch ( err ) {
-      console.log( `Error: ${err}` );
+      if ( LOG && LOG_USER ) console.log( `Error: ${err}` );
       return res.status( 500 ).json( { Error: err } );
     }
   }
@@ -165,7 +169,7 @@ router.get(
         { username: req.user.username },
         { latestMonth: 1, _id: 0 }
       );
-      console.log( mongoRes );
+      if ( LOG && LOG_USER ) console.log( mongoRes );
       return res.status( 200 ).json( mongoRes );
     } catch ( err ) {
       return res.status( 500 ).json( { Error: err } );
@@ -182,7 +186,7 @@ router.get(
         { username: req.user.username },
         { viewingMonth: 1, _id: 0 }
       );
-      console.log( mongoRes );
+      if ( LOG && LOG_USER ) console.log( mongoRes );
       return res.status( 200 ).json( mongoRes );
     } catch ( err ) {
       return res.status( 500 ).json( { Error: err } );
@@ -195,24 +199,24 @@ router.post(
   passport.authenticate( "jwt", { session: false } ),
   async ( req, res ) => {
     try {
-      console.log( "In router.post(viewPreviousMonth...)" );
+      if ( LOG && LOG_USER ) console.log( "In router.post(viewPreviousMonth...)" );
 
       /* Get current viewingMonth from MongoDB. */
       const mongoRes = await User.findOne(
         { username: req.user.username },
         { viewingMonth: 1, _id: 0 }
       );
-      console.log( mongoRes );
-      console.log( `mongoRes.viewingMonth: ${mongoRes.viewingMonth}` );
-      console.log( `earliestMonth: ${earliestMonth}` );
+      if ( LOG && LOG_USER ) console.log( mongoRes );
+      if ( LOG && LOG_USER ) console.log( `mongoRes.viewingMonth: ${mongoRes.viewingMonth}` );
+      if ( LOG && LOG_USER ) console.log( `earliestMonth: ${earliestMonth}` );
 
       /* Increment viewingMonth. */
       const currViewingMonth = strToYearMonth( mongoRes.viewingMonth );
       const prevViewingMonth = decrementMonth( currViewingMonth );
-      console.log( `prevViewingMonth: ${prevViewingMonth.year} ${prevViewingMonth.month}` );
+      if ( LOG && LOG_USER ) console.log( `prevViewingMonth: ${prevViewingMonth.year} ${prevViewingMonth.month}` );
       const prevViewingMonthChecked = lessThanOrEqual( strToYearMonth( earliestMonth ), prevViewingMonth ) ? prevViewingMonth : currViewingMonth;
       const prevViewingMonthCheckedStr = yearMonthToStr( prevViewingMonthChecked );
-      console.log( `prevViewingMonthCheckedStr: ${prevViewingMonthCheckedStr}` );
+      if ( LOG && LOG_USER ) console.log( `prevViewingMonthCheckedStr: ${prevViewingMonthCheckedStr}` );
 
       /* Update viewingMonth in User MongoDB database. */
       await User.findOneAndUpdate(
@@ -239,27 +243,27 @@ router.post(
   passport.authenticate( "jwt", { session: false } ),
   async ( req, res ) => {
     try {
-      console.log( "In router.post(viewNextMonth...)" );
+      if ( LOG && LOG_USER ) console.log( "In router.post(viewNextMonth...)" );
 
       /* Get current viewingMonth and latestMonth from MongoDB. */
       const mongoRes = await User.findOne(
         { username: req.user.username },
         { viewingMonth: 1, latestMonth: 1, _id: 0 }
       );
-      console.log( mongoRes );
-      console.log( `mongoRes.viewingMonth: ${mongoRes.viewingMonth}` );
-      console.log( `mongoRes.latestMonth: ${mongoRes.viewingMonth}` );
+      if ( LOG && LOG_USER ) console.log( mongoRes );
+      if ( LOG && LOG_USER ) console.log( `mongoRes.viewingMonth: ${mongoRes.viewingMonth}` );
+      if ( LOG && LOG_USER ) console.log( `mongoRes.latestMonth: ${mongoRes.viewingMonth}` );
 
       /* Increment viewingMonth. */
       const currViewingMonth = strToYearMonth( mongoRes.viewingMonth );
-      console.log( `currViewingMonth.year: ${currViewingMonth.year}, currViewingMonth.month: ${currViewingMonth.month}` );
+      if ( LOG && LOG_USER ) console.log( `currViewingMonth.year: ${currViewingMonth.year}, currViewingMonth.month: ${currViewingMonth.month}` );
       const nextViewingMonth = incrementMonth( currViewingMonth );
-      console.log( `nextViewingMonth.year: ${nextViewingMonth.year}, nextViewingMonth.month: ${nextViewingMonth.month}` );
+      if ( LOG && LOG_USER ) console.log( `nextViewingMonth.year: ${nextViewingMonth.year}, nextViewingMonth.month: ${nextViewingMonth.month}` );
       const latestMonth = strToYearMonth( mongoRes.latestMonth );
-      console.log( `latestMonth.year: ${latestMonth.year}, latestMonth.month: ${latestMonth.month}` );
+      if ( LOG && LOG_USER ) console.log( `latestMonth.year: ${latestMonth.year}, latestMonth.month: ${latestMonth.month}` );
       const nextViewingMonthChecked = lessThanOrEqual( nextViewingMonth, latestMonth ) ? nextViewingMonth : currViewingMonth;
       const nextViewingMonthCheckedStr = yearMonthToStr( nextViewingMonthChecked );
-      console.log( `nextViewingMonthCheckedStr: ${nextViewingMonthCheckedStr}` );
+      if ( LOG && LOG_USER ) console.log( `nextViewingMonthCheckedStr: ${nextViewingMonthCheckedStr}` );
 
       /* Update viewingMonth in User MongoDB database. */
       await User.findOneAndUpdate(
@@ -296,7 +300,7 @@ router.post(
       /* Try incrementing latestMonth to incLatestMonth. */
       const latestMonth = strToYearMonth( mongoRes.latestMonth );
       const incLatestMonth = incrementMonth( latestMonth );
-      console.log( `In router.post(/forwardOneMonth, ...), incLatestMonth = ${incLatestMonth}` );
+      if ( LOG && LOG_USER ) console.log( `In router.post(/forwardOneMonth, ...), incLatestMonth = ${incLatestMonth}` );
       const currYearMonth = getCurrYearMonth();
       const incLatestMonthChecked = lessThanOrEqual( incLatestMonth, currYearMonth ) ? incLatestMonth : latestMonth;
       const incLatestMonthCheckedStr = yearMonthToStr( incLatestMonthChecked );

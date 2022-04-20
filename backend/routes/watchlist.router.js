@@ -4,6 +4,7 @@ const router = require( 'express' ).Router();
 
 const LOG = ( process.env.LOG == 'true' ) ? true : false;
 const LOG_WATCHLIST_ROUTER = ( process.env.LOG_WATCHLIST_ROUTER == 'true' ) ? true : false;
+const LOG_WATCHLIST_ROUTER_GET_WATCHLIST = ( process.env.LOG_WATCHLIST_ROUTER_GET_WATCHLIST == 'true' ) ? true : false;
 
 const currMonth = '2022-03';  // TODO: change to dynamically request from MongoDB
 
@@ -41,10 +42,13 @@ router.post( '/deleteTickerFromWatchlist', async ( req, res ) => {
     }
 
     Ticker
-      .deleteOne( { userID: req.user._id, tickerSymbol: req.body.ticker } )
+      .deleteMany( { userId: req.user._id, tickerSymbol: req.body.ticker, inPortfolio: false } )
       .then( tickerSymbol => {
         res.json( tickerSymbol );
-        if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( `Deleted from MongoDB ${tickerSymbol}.` );
+        if ( LOG && LOG_WATCHLIST_ROUTER ) {
+          console.log( `Ticker.deleteMany(userID: req.user._id = ${req.user._id}, tickerSymbol: req.body.ticker = ${req.body.ticker}, inPortfolio = false)` );
+          console.log( `Deleted from MongoDB ${tickerSymbol}.` );
+        }
       } )
       .catch( err => res.status( 400 ).json( { Error: err } ) );
   } catch ( err ) {
@@ -55,10 +59,10 @@ router.post( '/deleteTickerFromWatchlist', async ( req, res ) => {
 
 router.get( '/getWatchlist', async ( req, res ) => {
   const tickers = await Ticker.find( { userId: req.user._id, inPortfolio: false } ).select( 'tickerSymbol -_id' );
-  console.log( `tickers: ${tickers}` );
+  if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( `tickers: ${tickers}` );
   let processedRes = [];
   for ( let ticker of tickers ) {
-    console.log( `ticker: ${ticker}` );
+    if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( `ticker: ${ticker}` );
     let filteredRes = await axios
       .get(
         'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
@@ -68,7 +72,7 @@ router.get( '/getWatchlist', async ( req, res ) => {
         process.env.VANTAGE_KEY
       )
       .then( apiRes => {
-        if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( apiRes );
+        if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( apiRes );
         const filteredRes = {};
         for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
           if ( property.slice( 0, 7 ) === currMonth ) {
