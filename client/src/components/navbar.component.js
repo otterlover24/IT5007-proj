@@ -195,9 +195,9 @@ export default function Login(props) {
             <button onClick={viewPreviousQuarter}>View Previous Quarter</button>
           )}
 
-          {allMonthsReady && <h6 style={{ color: "light-grey" }}>Viewing Month: {viewingMonth}</h6>}
+          {allMonthsReady && <h6 style={{ color: "light-grey" }}>Viewing Quarter: {viewingMonth}</h6>}
           
-          {allMonthsReady && <h6 style={{ color: "dark-grey" }}>Latest Month: {latestMonth}</h6>}
+          {allMonthsReady && <h6 style={{ color: "dark-grey" }}>Latest Quarter: {latestMonth}</h6>}
 
           {allMonthsReady && (
             <button onClick={viewNextQuarter}>View Next Quarter</button>

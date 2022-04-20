@@ -36,7 +36,7 @@ const incrementMonth = ( currYearMonth ) => {
 
 const incrementQuarter = (currYearMonth) => {
   return incrementMonth(
-    incrmentMonth(
+    incrementMonth(
       incrementMonth(
         currYearMonth
       )

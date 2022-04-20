@@ -25,9 +25,9 @@ router.post( '/addTickerToWatchlist', async ( req, res ) => {
       .save()
       .then( tickerSymbol => {
         res.json( tickerSymbol );
-        if ( LOG && LOW_WATCHLIST_ROUTER ) console.log( tickerSymbol );
+        if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( tickerSymbol );
       } )
-      .catch( err => res.status( 400 ).json( { Error: err } ) );
+      // .catch( err => res.status( 400 ).json( { Error: err } ) );
   } catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
 
