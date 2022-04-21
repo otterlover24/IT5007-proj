@@ -16,29 +16,28 @@ import News from "./components/news.component";
 function App() {
   const [ loggedIn, setLoggedIn ] = useState( false );
   useEffect( () => {
-    const checkLoggedIn = async () => {
-      if (localStorage.getItem('jwt')) {
-
-      Axios( {
-        method: 'get',
-        url: 'http://localhost:5000/api/users/isAuthenticated',
-        headers: {
-          'Authorization': localStorage.getItem( 'jwt' ),
-        }
-      } ).then( res => {
-        console.log( res.data );
-        setLoggedIn( res );
-      } )
-        .catch( err => {
-          localStorage.removeItem( 'jwt' );
-        } );
-      }
-
-    };
     checkLoggedIn();
-
-
   }, [] );
+
+  const checkLoggedIn = async () => {
+    if (localStorage.getItem('jwt')) {
+
+    Axios( {
+      method: 'get',
+      url: 'http://localhost:5000/api/users/isAuthenticated',
+      headers: {
+        'Authorization': localStorage.getItem( 'jwt' ),
+      }
+    } ).then( res => {
+      console.log( res.data );
+      setLoggedIn( res );
+    } )
+      .catch( err => {
+        localStorage.removeItem( 'jwt' );
+      } );
+    }
+  };
+  
   return (
     <Router>
       <div className="container-fluid">
