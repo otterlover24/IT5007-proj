@@ -1,5 +1,7 @@
-let Transaction = require('../models/transaction.model');
+const LOG = ( process.env.LOG == 'true' ) ? true : false;
+const LOG_TRADE_ROUTER = ( process.env.LOG_TRADE_ROUTER == 'true' ) ? true : false;
 
+let Trade = require('../models/trade.model');
 const router = require('express').Router();
 
 
@@ -8,8 +10,12 @@ router.get('/getHistory', async (req, res) => {
   return res.json(transactions);
 });
 
-router.post('/addTransaction', async (req, res) => {
+router.post('/submitTrade', async (req, res) => {
   try {
+    if (LOG && LOG_TRADE_ROUTER) {
+      console.log("Received request at /submitTrade, req.body: ", req.body);
+    }
+
     let { transactionTitle, transactionAmount, transactionDate, transactionType } = req.body;
     if (!transactionTitle || !transactionType || !transactionAmount || !transactionDate) {
       return res.status(400).json({ Error: "Not all fields have been entered" });

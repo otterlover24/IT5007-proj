@@ -7,8 +7,6 @@ import { Container, Col, Row, Table } from "react-bootstrap";
 
 export default function Trade() {
   const [tickerToAdd, setTickerToAdd] = useState();
-  const [tickerToDelete, setTickerToDelete] = useState();
-  const [watchlist, setWatchlist] = useState();
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -20,6 +18,7 @@ export default function Trade() {
             Authorization: localStorage.getItem("jwt"),
           },
         }).catch(err => {
+          console.log(err);
           window.location = "/";
           localStorage.removeItem("jwt");
         });
@@ -28,39 +27,17 @@ export default function Trade() {
       }
     };
     checkLoggedIn();
-
-    displayWatchlist();
-    console.log("test");
   }, []);
 
-  const displayWatchlist = async () => {
-    console.log(`in displayWatchlist`);
 
-    /* Get watchlist from server */
-    await Axios({
-      method: "get",
-      url: "http://localhost:5000/api/protected/watchlist/getWatchlist",
-      headers: {
-        Authorization: localStorage.getItem("jwt"),
-      },
-    }).then(res => {
-      console.log(res.data);
-      setWatchlist(res.data);
-    });
-  };
-
-  useEffect(() => {
-    console.log(watchlist);
-  }, [watchlist]);
-
-  const onAddTickerSubmit = async e => {
+  const onTradeSubmit = async e => {
     try {
       e.preventDefault();
       e.target.reset();
 
       await Axios({
         method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/addTicker",
+        url: "http://localhost:5000/api/protected/trade/submitTrade",
         headers: {
           Authorization: localStorage.getItem("jwt"),
         },
@@ -68,34 +45,13 @@ export default function Trade() {
           ticker: tickerToAdd,
         },
       }).then(res => {
-        console.log(`Sent ${res} to /api/protected/watchlist/addTicker`);
+        console.log(`Sent ${res} to /api/protected/trade/submitTrade`);
       });
     } catch (err) {
       console.error(err);
     }
   };
 
-  const onDeleteTickerSubmit = async e => {
-    try {
-      e.preventDefault();
-      e.target.reset();
-
-      await Axios({
-        method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/deleteTicker",
-        headers: {
-          Authorization: localStorage.getItem("jwt"),
-        },
-        data: {
-          ticker: tickerToDelete,
-        },
-      }).then(res => {
-        console.log(`Sent ${res} to /api/protected/watchlist/deleteTicker`);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   return (
     <Container>
@@ -107,7 +63,7 @@ export default function Trade() {
                 Buy or Sell a Security by Ticker
               </h5>
 
-              <form onSubmit={onAddTickerSubmit} className="form-signin">
+              <form onSubmit={onTradeSubmit} className="form-signin">
                 <div className="form-group">
                   <label htmlFor="inputTicker">Ticker</label>
                   <input

@@ -50,6 +50,9 @@
 ## TS TODO
 - General
 	- {DONE} Implements log levels to limit console.log output.  
+	- Error handling:
+		- Too many requests: `if (apiRes.data.Note)`
+		- Error in request: `if apiRes.date["Error Message"])`
 - Components / pages
 	- Navbar
 		- Responsive

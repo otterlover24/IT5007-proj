@@ -2,34 +2,34 @@ const mongoose=require('mongoose');
 
 const Schema=mongoose.Schema;
 
-const transactionSchema=new Schema({
+const tradeSchema=new Schema({
 userId:{
     type:String,
     required:true,
     trim:true
 
 },
-transactionTitle:{
+tradeTitle:{
     type:String,
     required:true,
     trim:true,
   
 },
-transactionType:{
+tradeType:{
     type:String,
     required:true,
     trim:true,
 },
-transactionAmount:{
+tradeAmount:{
     type:Number,
     required:true,
     trim:true,
 },
-transactionDate:{
+tradeDate:{
     type:Date,
     required:true,
 }
 });
 
-const Transaction=mongoose.model('Transaction',transactionSchema);
-module.exports=Transaction;
+const Trade=mongoose.model('Trade',tradeSchema);
+module.exports=Trade;

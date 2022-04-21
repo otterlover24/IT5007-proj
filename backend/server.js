@@ -14,7 +14,6 @@ app.use(cors());
 app.use(bodyparser.json());
 app.use(passport.initialize());
 
-
 require('./config/passport')(passport);
 
 const uri=process.env.MONGODB_URI;
@@ -24,23 +23,17 @@ connection.once('open',()=>{
     console.log("Mongo database connection established successfully");
 });
 
-
 const usersRouter = require('./routes/users');
 app.use('/api/users',usersRouter);
 
-const vantageApiRouter = require('./routes/vantage-api.router');
-app.use('/api/protected/vantage-api',passport.authenticate('jwt',{session:false}),vantageApiRouter);
-
-const incomeRouter=require('./routes/transaction.router');
-app.use('/api/protected/income',passport.authenticate('jwt',{session:false}),incomeRouter);
+const tradeRouter=require('./routes/trade.router');
+app.use('/api/protected/trade',passport.authenticate('jwt',{session:false}),tradeRouter);
 
 const watchlistRouter = require('./routes/watchlist.router');
 app.use('/api/protected/watchlist', passport.authenticate('jwt', {session:false}), watchlistRouter);
 
 const newsRouter = require('./routes/news.router');
 app.use('/api/protected/news', passport.authenticate('jwt', {session:false}), newsRouter);
-
-
 
 app.listen(port,()=>{
     console.log('Server is running on port: '+port);
