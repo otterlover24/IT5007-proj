@@ -6,30 +6,30 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Container, Col, Row, Table } from "react-bootstrap";
 
 export default function Trade() {
-  const [tickerSymbol, setTickerSymbol] = useState();
-  const [quantity, setQuantity] = useState();
-  const [direction, setDirection] = useState();
+  const [ tickerSymbol, setTickerSymbol ] = useState();
+  const [ quantity, setQuantity ] = useState();
+  const [ direction, setDirection ] = useState();
 
-  useEffect(() => {
+  useEffect( () => {
     const checkLoggedIn = async () => {
-      if (localStorage.getItem("jwt")) {
-        Axios({
+      if ( localStorage.getItem( "jwt" ) ) {
+        Axios( {
           method: "get",
           url: "http://localhost:5000/api/users/isAuthenticated",
           headers: {
-            Authorization: localStorage.getItem("jwt"),
+            Authorization: localStorage.getItem( "jwt" ),
           },
-        }).catch(err => {
-          console.log(err);
+        } ).catch( err => {
+          console.log( err );
           window.location = "/";
-          localStorage.removeItem("jwt");
-        });
+          localStorage.removeItem( "jwt" );
+        } );
       } else {
         window.location = "/";
       }
     };
     checkLoggedIn();
-  }, []);
+  }, [] );
 
 
   const onTradeSubmit = async e => {
@@ -37,22 +37,24 @@ export default function Trade() {
       e.preventDefault();
       e.target.reset();
 
-      await Axios({
+      await Axios( {
         method: "post",
         url: "http://localhost:5000/api/protected/trade/submitTrade",
         headers: {
-          Authorization: localStorage.getItem("jwt"),
+          Authorization: localStorage.getItem( "jwt" ),
         },
         data: {
           tickerSymbol: tickerSymbol,
           quantity: quantity,
           direction: direction,
         },
-      }).then(res => {
-        console.log(`Sent ${res} to /api/protected/trade/submitTrade`);
-      });
-    } catch (err) {
-      console.error(err);
+      } ).then( res => {
+        console.log( "Received from /api/protected/trade/submitTrade, res.data: \n", res.data );
+      }
+      );
+
+    } catch ( err ) {
+      console.log( "Caught error in onTradeSubmit, printing err:\n", err );
     }
   };
 
@@ -67,7 +69,7 @@ export default function Trade() {
                 Buy or Sell a Security by Ticker
               </h5>
 
-              <form onSubmit={onTradeSubmit} className="form-signin">
+              <form onSubmit={ onTradeSubmit } className="form-signin">
                 <div className="form-group">
                   <label htmlFor="inputTicker">Ticker</label>
                   <input
@@ -75,7 +77,7 @@ export default function Trade() {
                     type="text"
                     className="form-control"
                     placeholder="Ticker"
-                    onChange={e => setTickerSymbol(e.target.value)}
+                    onChange={ e => setTickerSymbol( e.target.value ) }
                   />
                 </div>
 
@@ -86,13 +88,13 @@ export default function Trade() {
                     type="number"
                     className="form-control"
                     placeholder="Quantity"
-                    onChange={e => setQuantity(e.target.value)}
+                    onChange={ e => setQuantity( e.target.value ) }
                   />
                 </div>
 
                 <div className="form-group">
-                  <input type="radio" name="tradeDirection" value="Buy" onChange={e => setDirection(e.target.value)}/> Buy
-                  <input type="radio" name="tradeDirection" value="Sell" onChange={e => setDirection(e.target.value)}/> Sell
+                  <input type="radio" name="tradeDirection" value="Buy" onChange={ e => setDirection( e.target.value ) } /> Buy
+                  <input type="radio" name="tradeDirection" value="Sell" onChange={ e => setDirection( e.target.value ) } /> Sell
                 </div>
 
                 <button
