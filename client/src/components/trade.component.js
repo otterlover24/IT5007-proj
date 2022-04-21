@@ -6,7 +6,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Container, Col, Row, Table } from "react-bootstrap";
 
 export default function Trade() {
-  const [tickerToAdd, setTickerToAdd] = useState();
+  const [tickerSymbol, setTickerSymbol] = useState();
+  const [quantity, setQuantity] = useState();
+  const [direction, setDirection] = useState();
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -42,7 +44,9 @@ export default function Trade() {
           Authorization: localStorage.getItem("jwt"),
         },
         data: {
-          ticker: tickerToAdd,
+          tickerSymbol: tickerSymbol,
+          quantity: quantity,
+          direction: direction,
         },
       }).then(res => {
         console.log(`Sent ${res} to /api/protected/trade/submitTrade`);
@@ -71,7 +75,7 @@ export default function Trade() {
                     type="text"
                     className="form-control"
                     placeholder="Ticker"
-                    onChange={e => setTickerToAdd(e.target.value)}
+                    onChange={e => setTickerSymbol(e.target.value)}
                   />
                 </div>
 
@@ -82,13 +86,13 @@ export default function Trade() {
                     type="number"
                     className="form-control"
                     placeholder="Quantity"
-                    onChange={e => setTickerToAdd(e.target.value)}
+                    onChange={e => setQuantity(e.target.value)}
                   />
                 </div>
 
                 <div className="form-group">
-                  <input type="radio" name="tradeDirection" value="Buy" /> Buy
-                  <input type="radio" name="tradeDirection" value="Sell" /> Sell
+                  <input type="radio" name="tradeDirection" value="Buy" onChange={e => setDirection(e.target.value)}/> Buy
+                  <input type="radio" name="tradeDirection" value="Sell" onChange={e => setDirection(e.target.value)}/> Sell
                 </div>
 
                 <button
