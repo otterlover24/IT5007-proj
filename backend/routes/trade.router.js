@@ -43,7 +43,12 @@ router.post( '/submitTrade', async ( req, res ) => {
           console.log( "newTrade.save() successful." );
           console.log( "trade: \n", trade );
         }
-        res.json( trade );
+        if (trade.tickerSymbol === "TESTFAILURE") {
+          res.status(400).json({Error: "TESTFAILURE returns failure"});
+        }
+        if (trade.tickerSymbol !== "TESTFAILURE") {
+          res.json( {message: "success"} );
+        }
       } )
       .catch( err => {
         if ( LOG && LOG_TRADE_ROUTER ) {

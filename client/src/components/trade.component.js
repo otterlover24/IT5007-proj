@@ -50,11 +50,15 @@ export default function Trade() {
         },
       } ).then( res => {
         console.log( "Received from /api/protected/trade/submitTrade, res.data: \n", res.data );
+        if (res.data.message === "success") {
+          alert("Trade successful!");
+        }
       }
       );
 
     } catch ( err ) {
       console.log( "Caught error in onTradeSubmit, printing err:\n", err );
+      alert("Trade failed!");
     }
   };
 
