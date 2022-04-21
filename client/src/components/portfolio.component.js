@@ -129,12 +129,14 @@ export default function Portfolio() {
             </thead>
 
             <tbody>
-              <tr>
-                <td>2014-07-30</td>
-                <td>AAPL</td>
-                <td>BUY</td>
-                <td>20,000</td>
-              </tr>
+            {trades ? trades.map(trade => (
+                <tr>
+                  <td>{trade.yearMonth}</td>
+                  <td>{trade.tickerSymbol}</td>
+                  <td>{trade.direction}</td>
+                  <td>{trade.quantity}</td>
+                </tr>
+              )) : <></>}
             </tbody>
 
           </Table>

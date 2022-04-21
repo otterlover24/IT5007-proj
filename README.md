@@ -77,11 +77,14 @@
 			- {DONE} Mock data
 			- Real data from MongoDB
 		- Table of holdings and value for each security and total
-		- **{TODO} Table of transactions & overall P&L**
-			- frontend `portfolio.component.js`
-				- Request for transaction history
-					- In portfolio.router.js, `async function displayTranactions()`
-						- useEffect with empty dependency list to call `displayTransactions()` on load.
+		- {DONE} Table of transactions
+			- {DONE} Request for transaction history
+				- useEffect with empty dependency list to call `displayTransactions()` on load.
+				- In portfolio.router.js, `async function displayTranactions()`
+			- {DONE} Display transactions
+		- Current holdings table
+		- P&L chart
+			- 
 			- backend
 				- Provide full transaction history
 	- /trade
