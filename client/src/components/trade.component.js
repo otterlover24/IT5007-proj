@@ -5,10 +5,11 @@ import "../components/component.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { Container, Col, Row, Table } from "react-bootstrap";
 
-export default function Trade(props) {
+export default function Trade( props ) {
   const [ tickerSymbol, setTickerSymbol ] = useState();
   const [ quantity, setQuantity ] = useState();
   const [ direction, setDirection ] = useState();
+  const [ price, setPrice ] = useState();
 
   useEffect( () => {
     console.log( "trade.component.js useEffect []" );
@@ -51,13 +52,13 @@ export default function Trade(props) {
           quantity: quantity,
           direction: direction,
         },
-      } ).then( res => {
-        console.log( "Received from /api/protected/trade/submitTrade, res.data: \n", res.data );
-        if ( res.data.message === "success" ) {
-          alert( "Trade successful!" );
-        }
-      }
-      );
+      } )
+        .then( res => {
+          console.log( "Received from /api/protected/trade/submitTrade, res.data: \n", res.data );
+          if ( res.data.message === "success" ) {
+            alert( "Trade successful!" );
+          }
+        } );
 
     } catch ( err ) {
       console.log( "Caught error in onTradeSubmit, printing err:\n", err );
@@ -65,6 +66,32 @@ export default function Trade(props) {
     }
   };
 
+  const handleGetQuote = async e => {
+    try {
+
+      await Axios( {
+        method: "post",
+        url: "http://localhost:5000/api/protected/trade/getQuote",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+        data: {
+          tickerSymbol: tickerSymbol,
+        },
+      } )
+        .then( res => {
+          console.log( "Received from /api/protected/trade/getQuote, res.data: \n", res.data );
+          if ( res.data.message === "success" ) {
+            alert( "Get Quote Successful!" );
+          }
+        } );
+
+    } 
+    catch ( err ) {
+      console.log( "Caught error in handleGetQuote, printing err:\n", err );
+      alert( "Get Quote Failed!" );
+    }
+  };
 
   return (
     <Container>
@@ -85,6 +112,24 @@ export default function Trade(props) {
                     className="form-control"
                     placeholder="Ticker"
                     onChange={ e => setTickerSymbol( e.target.value ) }
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleGetQuote}
+                  className="btn btn-lg btn-secondary btn-block text-uppercase input-expense-btn"
+                >
+                  Get Quote
+                </button>
+
+                <div className="form-group">
+                  <label htmlFor="inputPrice">Price</label>
+                  <input
+                    id="inputPrice"
+                    type="number"
+                    className="form-control"
+                    value={price}
                   />
                 </div>
 

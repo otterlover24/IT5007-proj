@@ -1,6 +1,8 @@
 const LOG = ( process.env.LOG == 'true' ) ? true : false;
 const LOG_TRADE_ROUTER = ( process.env.LOG_TRADE_ROUTER == 'true' ) ? true : false;
+const LOG_TRADE_ROUTER_GET_QUOTE = ( process.env.LOG_TRADE_ROUTER_GET_QUOTE == 'true' ) ? true : false;
 
+const axios = require( 'axios' );
 let Trade = require( '../models/trade.model' );
 const router = require( 'express' ).Router();
 
@@ -43,11 +45,11 @@ router.post( '/submitTrade', async ( req, res ) => {
           console.log( "newTrade.save() successful." );
           console.log( "trade: \n", trade );
         }
-        if (trade.tickerSymbol === "TESTFAILURE") {
-          res.status(400).json({Error: "TESTFAILURE returns failure"});
+        if ( trade.tickerSymbol === "TESTFAILURE" ) {
+          res.status( 400 ).json( { Error: "TESTFAILURE returns failure" } );
         }
-        if (trade.tickerSymbol !== "TESTFAILURE") {
-          res.json( {message: "success"} );
+        if ( trade.tickerSymbol !== "TESTFAILURE" ) {
+          res.json( { message: "success" } );
         }
       } )
       .catch( err => {
@@ -55,8 +57,8 @@ router.post( '/submitTrade', async ( req, res ) => {
           console.log( "newTrade.save() threw error:" );
           console.log( "err: \n", err );
         }
-        res.status( 400 ).json( { Error: err } ) 
-      });
+        res.status( 400 ).json( { Error: err } );
+      } );
   } catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
 
@@ -64,5 +66,52 @@ router.post( '/submitTrade', async ( req, res ) => {
 
 } );
 
+
+router.post( '/getQuote', async ( req, res ) => {
+  try {
+    if ( LOG && LOG_TRADE_ROUTER ) {
+      console.log( "req.user: ", req.user );
+      console.log( "userId: ", req.user._id );
+      console.log( "Received request at /getQuote, req.body: ", req.body );
+    }
+
+
+    let { tickerSymbol } = req.body;
+    if ( !tickerSymbol ) {
+      return res.status( 400 ).json( { Error: "Not all fields for submitting trade have been entered." } );
+    }
+
+    let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
+      tickerSymbol +
+      '&datatype=json' +
+      '&apikey=' +
+      process.env.VANTAGE_KEY;
+
+    if ( LOG && LOG_TRADE_ROUTER ) {
+      console.log( "tickerSymbol: ", tickerSymbol );
+      console.log( "apiUrl: ", apiUrl );
+    }
+
+
+    let filteredRes = await axios
+      .get(apiUrl)
+      .then(apiRes => {
+        console.log("apiRes: ", apiRes);
+        return apiRes;
+      });
+
+    if ( LOG && LOG_TRADE_ROUTER ) {
+      console.log( "filteredRes: ", filteredRes );
+    }
+   
+    return res.json(filteredRes);
+  }
+
+  catch ( err ) {
+    return res.status( 500 ).json( { Error: err } );
+
+  }
+
+} );
 
 module.exports = router;

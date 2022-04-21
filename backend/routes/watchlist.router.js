@@ -20,7 +20,7 @@ router.post( '/addTickerToWatchlist', async ( req, res ) => {
       tickerSymbol: ticker,
       inPortfolio: false
     } );
-    
+
     let tickerDoc = await Ticker.findOneAndUpdate(
       {
         userId: req.user._id,
@@ -33,10 +33,10 @@ router.post( '/addTickerToWatchlist', async ( req, res ) => {
         upsert: true
       }
     );
-    if (LOG && LOG_WATCHLIST_ROUTER) {
-      console.log("tickerDoc: ", tickerDoc);
+    if ( LOG && LOG_WATCHLIST_ROUTER ) {
+      console.log( "tickerDoc: ", tickerDoc );
     }
-    res.status(200);
+    res.status( 200 );
 
   } catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
@@ -73,13 +73,17 @@ router.get( '/getWatchlist', async ( req, res ) => {
   let processedRes = [];
   for ( let ticker of tickers ) {
     if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( `ticker: ${ticker}` );
+    let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
+      ticker.tickerSymbol +
+      '&datatype=json' +
+      '&apikey=' +
+      process.env.VANTAGE_KEY;
+    if (LOG && LOG_WATCHLIST_ROUTER) {
+      console.log("apiUrl: ", apiUrl);
+    }
     let filteredRes = await axios
       .get(
-        'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
-        ticker.tickerSymbol +
-        '&datatype=json' +
-        '&apikey=' +
-        process.env.VANTAGE_KEY
+        apiUrl  
       )
       .then( apiRes => {
         if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( apiRes );
@@ -91,6 +95,7 @@ router.get( '/getWatchlist', async ( req, res ) => {
         }
         return filteredRes;
       } );
+
     if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( `filteredRes: ${filteredRes}` );
     processedRes.push( filteredRes );
   }

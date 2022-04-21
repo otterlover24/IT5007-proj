@@ -4,38 +4,38 @@ import '../App.css';
 import Axios from 'axios';
 
 export default function Register() {
-    const [username, setUsername] = useState();
-    const [password, setPassword] = useState();
-    const [confirmPassword, setConfirmPassword] = useState();
-    const [error, setError] = useState();
-    const [modalShow, setModalShow] = useState(false);
+    const [ username, setUsername ] = useState();
+    const [ password, setPassword ] = useState();
+    const [ confirmPassword, setConfirmPassword ] = useState();
+    const [ error, setError ] = useState();
+    const [ modalShow, setModalShow ] = useState( false );
 
 
-    useEffect(() => {
+    useEffect( () => {
         const checkLoggedIn = async () => {
-            if (localStorage.getItem('jwt')) {
+            if ( localStorage.getItem( 'jwt' ) ) {
 
-                Axios({
+                Axios( {
                     method: 'get',
                     url: 'http://localhost:5000/api/users/isAuthenticated',
                     headers: {
-                        'Authorization': localStorage.getItem('jwt'),
+                        'Authorization': localStorage.getItem( 'jwt' ),
                     }
-                }).then(res => {
+                } ).then( res => {
                     window.location = '/app';
 
-                }).catch(err => {
-                    localStorage.removeItem('jwt');
+                } ).catch( err => {
+                    localStorage.removeItem( 'jwt' );
 
                     window.location = '/register';
-                });
+                } );
             }
-        }
+        };
         checkLoggedIn();
 
-    }, []);
+    }, [] );
 
-    const onSubmit = async (e) => {
+    const onSubmit = async ( e ) => {
 
         try {
             e.preventDefault();
@@ -44,28 +44,50 @@ export default function Register() {
                 username,
                 password,
                 confirmPassword
-            }
+            };
 
-            const userRes = await Axios.post("http://localhost:5000/api/users/register", registerUser);
+            const userRes = await Axios.post( "http://localhost:5000/api/users/register", registerUser );
             const userId = userRes.data.user._id;
-            console.log("After register form submission, server returned user: ", userRes);
-            
+            console.log( "After register form submission, server returned user: ", userRes );
+
             /* Automatic login. */
             const loginUser = {
                 username,
                 password,
 
-            }
-            const loginRes = await Axios.post("http://localhost:5000/api/users/login", loginUser);
-            localStorage.setItem('jwt', loginRes.data.token);
+            };
+            const loginRes = await Axios.post( "http://localhost:5000/api/users/login", loginUser );
+            localStorage.setItem( 'jwt', loginRes.data.token );
+
+            /* Start off with USD $1,000,000 */
+            await Axios( {
+                method: "post",
+                url: "http://localhost:5000/api/protected/trade/submitTrade",
+                headers: {
+                    Authorization: localStorage.getItem( "jwt" ),
+                },
+                data: {
+                    tickerSymbol: "US-DOLLAR",
+                    quantity: 1000000,
+                    direction: "buy",
+                },
+            } )
+                .then( res => {
+                    console.log( "Received from /api/protected/trade/submitTrade, res.data: \n", res.data );
+                    if ( res.data.message === "success" ) {
+                        console.log( "US-DOLLAR $1M balance initialization successful." );
+                    }
+                } );
+
+            /* Redirect page to main app */
             window.location = '/app';
-            
-        } 
-        
-        catch (err) {
-            alert("Error: ", err.response.data.Error);
+
         }
-    }
+
+        catch ( err ) {
+            alert( `Error: ${err.response.data.Error}` );
+        }
+    };
 
 
     return (
@@ -75,18 +97,18 @@ export default function Register() {
                     <div className="card-body">
 
                         <h5 className="card-title text-center">Register</h5>
-                        <form onSubmit={onSubmit} className="form-signin">
+                        <form onSubmit={ onSubmit } className="form-signin">
                             <div className="form-group">
                                 <label htmlFor="inputEmail">Username</label>
-                                <input type="text" className="form-control" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+                                <input type="text" className="form-control" placeholder="Username" onChange={ ( e ) => setUsername( e.target.value ) } />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="inputEmail">Password</label>
-                                <input type="password" className="form-control" placeholder="Password (Min 8 characters)" onChange={(e) => setPassword(e.target.value)} />
+                                <input type="password" className="form-control" placeholder="Password (Min 8 characters)" onChange={ ( e ) => setPassword( e.target.value ) } />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="inputEmail">Confirm Password</label>
-                                <input type="password" className="form-control" placeholder="Re-enter Password" onChange={(e) => setConfirmPassword(e.target.value)} />
+                                <input type="password" className="form-control" placeholder="Re-enter Password" onChange={ ( e ) => setConfirmPassword( e.target.value ) } />
                             </div>
                             <div className="form-group">
                                 <button className="btn btn-lg btn-primary btn-block text-uppercase signin-btn" type="submit">Register</button>
