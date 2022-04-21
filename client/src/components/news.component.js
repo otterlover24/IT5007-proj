@@ -12,53 +12,50 @@ import {
 
 export default function News() {
 
-  const [newsList, setNewsList] = useState();
-  
-  useEffect(() => {
-    const checkLoggedIn = async () => {
-      if (localStorage.getItem("jwt")) {
-        Axios({
-          method: "get",
-          url: "http://localhost:5000/api/users/isAuthenticated",
-          headers: {
-            Authorization: localStorage.getItem("jwt"),
-          },
-        }).catch(err => {
-          window.location = "/";
-          localStorage.removeItem("jwt");
-        });
-      } else {
-        window.location = "/";
-      }
-    };
-    checkLoggedIn();
+  const [ newsList, setNewsList ] = useState();
 
+  useEffect( () => {
+    checkLoggedIn();
     displayNews();
-    console.log("test");
-  }, []);
-  
+  }, [] );
+
+  useEffect( () => {
+    console.log( newsList );
+  }, [ newsList ] );
+
+  const checkLoggedIn = async () => {
+    if ( localStorage.getItem( "jwt" ) ) {
+      Axios( {
+        method: "get",
+        url: "http://localhost:5000/api/users/isAuthenticated",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+      } ).catch( err => {
+        window.location = "/";
+        localStorage.removeItem( "jwt" );
+      } );
+    } else {
+      window.location = "/";
+    }
+  };
+
   const displayNews = async () => {
-    console.log(`in displayWatchlist`);
+    console.log( `in displayWatchlist` );
 
     /* Get watchlist from server */
-    await Axios({
+    await Axios( {
       method: "get",
       url: "http://localhost:5000/api/protected/news/getNews",
       headers: {
-        Authorization: localStorage.getItem("jwt"),
+        Authorization: localStorage.getItem( "jwt" ),
       },
-    }).then(res => {
-      console.log(res.data);
-      setNewsList(res.data);
-    });
+    } ).then( res => {
+      console.log( res.data );
+      setNewsList( res.data );
+    } );
   };
 
-  useEffect(() => {
-    console.log(newsList);
-  }, [newsList]);
-
-
-  
   return (
     <Container>
 
@@ -73,18 +70,18 @@ export default function News() {
                 <th>Title</th>
               </tr>
             </thead>
-            
+
             <tbody>
-                <tr>
-                  <td>AAPL</td>
-                  <td>Earnings</td>
-                  <td>2020Q4 10-K statement</td>
-                </tr>
-                <tr>
-                  <td>AAPL</td>
-                  <td>News</td>
-                  <td>Rumors abound of new Apple car to rival Tesla.</td>
-                </tr>
+              <tr>
+                <td>AAPL</td>
+                <td>Earnings</td>
+                <td>2020Q4 10-K statement</td>
+              </tr>
+              <tr>
+                <td>AAPL</td>
+                <td>News</td>
+                <td>Rumors abound of new Apple car to rival Tesla.</td>
+              </tr>
             </tbody>
 
           </Table>

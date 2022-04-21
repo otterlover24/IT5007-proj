@@ -63,7 +63,7 @@
 	- /watchlist
 		- {PARTLY DONE} Quotation of security as at `viewingMonth`
 			- {DONE} Add ticker to watchlist of user
-				- **{TODO} Ensure no duplicates by using Mongoose `findOneAndUpdate()` using `upsert` option.**
+				- {DONE} Ensure no duplicates by using Mongoose `findOneAndUpdate()` using `upsert` option.
 			- Check that ticker is valid
 			- {DONE} Delete ticker from watchlist of user
 			- Display current price of stocks on watchlist
@@ -72,12 +72,18 @@
 				- {DONE} Send API results to client at specific time point
 				- {DONE} Display in table on client end in `watchlist.component.js`
 				- {TODO} Buttons for adding or deleting to watchlist should also edit `watchlist` via setState and re-render table.
-	- /porfolio
+	- /portfolio
 		- Line chart for net worth over time
 			- {DONE} Mock data
 			- Real data from MongoDB
 		- Table of holdings and value for each security and total
-		- Table of transactions & overall P&L
+		- **{TODO} Table of transactions & overall P&L**
+			- frontend `portfolio.component.js`
+				- Request for transaction history
+					- In portfolio.router.js, `async function displayTranactions()`
+						- useEffect with empty dependency list to call `displayTransactions()` on load.
+			- backend
+				- Provide full transaction history
 	- /trade
 		- Form to buy or sell a specific ticker at market price
 	- /news
@@ -86,7 +92,6 @@
 		- See list of headlines, which link to articles
 			- Articles may be new report, or data such as earnings, analyst rating etc
   
-- Create watchlist
 
 
 - Simulate time step
@@ -110,7 +115,7 @@
 					- {HYPOTHESIS} _id not in user.model
 						- {SOLUTION} search using uersname 
 		- Buttons to forward `latestMonth` and to alter `viewingMonth` on navbar
-		- **{TODO} Change time-step to quarter**
+		- {DONE} Change time-step to quarter
 			- Change navbar buttons, function names, and API endpoints only.
 	- /watchlist page display adjusted monthly closing price as at month
 - Transactions

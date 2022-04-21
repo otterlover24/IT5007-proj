@@ -12,46 +12,63 @@ import {
 import { Line } from "react-chartjs-2";
 
 export default function Portfolio() {
-  const [netWorthData, setNetWorthData] = useState({
-    labels: ["2014-06", "2014-07", "2014-08", "2014-09"],
+  const [ netWorthData, setNetWorthData ] = useState( {
+    labels: [ "2014-06", "2014-07", "2014-08", "2014-09" ],
     datasets: [
       {
         label: "Net Worth",
-        data: [10000, 20000, 40000, 35000],
+        data: [ 10000, 20000, 40000, 35000 ],
         lineTension: 0,
       }
     ]
-  });
+  } );
 
-  useEffect(() => {
-    console.log("portfolio.component.js useEffect []");
+  const [ trades, setTrades ] = useState( [] );
 
-    const checkLoggedIn = async () => {
-      if (localStorage.getItem("jwt")) {
-        Axios({
-          method: "get",
-          url: "http://localhost:5000/api/users/isAuthenticated",
-          headers: {
-            Authorization: localStorage.getItem("jwt"),
-          },
-        }).catch(err => {
-          console.error(err);
-          window.location = "/";
-          localStorage.removeItem("jwt");
-        });
-      } else {
-        window.location = "/";
-      }
-    };
+  useEffect( () => {
+    console.log( "portfolio.component.js useEffect []" );
     checkLoggedIn();
+    displayTrades();
+  }, [] );
 
-  }, []);
-  
+
+  const checkLoggedIn = async () => {
+    if ( localStorage.getItem( "jwt" ) ) {
+      Axios( {
+        method: "get",
+        url: "http://localhost:5000/api/users/isAuthenticated",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+      } ).catch( err => {
+        console.error( err );
+        window.location = "/";
+        localStorage.removeItem( "jwt" );
+      } );
+    } else {
+      window.location = "/";
+    }
+  };
 
 
-  
 
-  
+  const displayTrades = async () => {
+    console.log( `in displayTrades` );
+
+    /* Get watchlist from server */
+    await Axios( {
+      method: "post",
+      url: "http://localhost:5000/api/protected/portfolio/getTrades",
+      headers: {
+        Authorization: localStorage.getItem( "jwt" ),
+      },
+    } ).then( res => {
+      console.log( "displayTrades received res.data from server: \n", res.data );
+      setTrades( res.data );
+    } );
+
+  };
+
   return (
     <Container>
       <Row>
@@ -59,8 +76,8 @@ export default function Portfolio() {
           <div className="card expense-input-card">
             <div className="card-body">
               <h5>Net Worth Chart</h5>
-              <div style={{width: 500}}>
-                <Line data={netWorthData} />
+              <div style={ { width: 500 } }>
+                <Line data={ netWorthData } />
               </div>
 
 
@@ -83,15 +100,15 @@ export default function Portfolio() {
                 <th>Profit (Loss)</th>
               </tr>
             </thead>
-            
+
             <tbody>
-                <tr>
-                  <td>AAPL</td>
-                  <td>20,000</td>
-                  <td>$134.00</td>
-                  <td>$174.00</td>
-                  <td>$800,000</td>
-                </tr>
+              <tr>
+                <td>AAPL</td>
+                <td>20,000</td>
+                <td>$134.00</td>
+                <td>$174.00</td>
+                <td>$800,000</td>
+              </tr>
             </tbody>
 
           </Table>
@@ -110,14 +127,14 @@ export default function Portfolio() {
                 <th>Amount</th>
               </tr>
             </thead>
-            
+
             <tbody>
-                <tr>
-                  <td>2014-07-30</td>
-                  <td>AAPL</td>
-                  <td>BUY</td>
-                  <td>20,000</td>
-                </tr>
+              <tr>
+                <td>2014-07-30</td>
+                <td>AAPL</td>
+                <td>BUY</td>
+                <td>20,000</td>
+              </tr>
             </tbody>
 
           </Table>
