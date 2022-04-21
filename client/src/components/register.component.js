@@ -51,21 +51,19 @@ export default function Register() {
             console.log("After register form submission, server returned user: ", userRes);
             
             /* Automatic login. */
-
             const loginUser = {
                 username,
                 password,
 
             }
             const loginRes = await Axios.post("http://localhost:5000/api/users/login", loginUser);
-
             localStorage.setItem('jwt', loginRes.data.token);
-           
             window.location = '/app';
-            // window.location = '/login';
-        } catch (err) {
-            setError(err.response.data.Error);
-            setModalShow(true);
+            
+        } 
+        
+        catch (err) {
+            alert("Error: ", err.response.data.Error);
         }
     }
 
