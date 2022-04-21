@@ -11,34 +11,35 @@ import {
 } from "react-bootstrap";
 
 
-export default function Watchlist() {
+export default function Watchlist(props) {
 
   const [tickerToAdd, setTickerToAdd] = useState();
   const [tickerToDelete, setTickerToDelete] = useState();
   const [watchlist, setWatchlist] = useState();
   
   useEffect(() => {
-    const checkLoggedIn = async () => {
-      if (localStorage.getItem("jwt")) {
-        Axios({
-          method: "get",
-          url: "http://localhost:5000/api/users/isAuthenticated",
-          headers: {
-            Authorization: localStorage.getItem("jwt"),
-          },
-        }).catch(err => {
-          window.location = "/";
-          localStorage.removeItem("jwt");
-        });
-      } else {
-        window.location = "/";
-      }
-    };
     checkLoggedIn();
-
     displayWatchlist();
-    console.log("test");
+    console.log("props.viewingMonth: \n", props.viewingMonth);
+
   }, []);
+
+  const checkLoggedIn = async () => {
+    if (localStorage.getItem("jwt")) {
+      Axios({
+        method: "get",
+        url: "http://localhost:5000/api/users/isAuthenticated",
+        headers: {
+          Authorization: localStorage.getItem("jwt"),
+        },
+      }).catch(err => {
+        window.location = "/";
+        localStorage.removeItem("jwt");
+      });
+    } else {
+      window.location = "/";
+    }
+  };
   
   const displayWatchlist = async () => {
     console.log(`in displayWatchlist`);
