@@ -61,7 +61,7 @@ export default function Portfolio( props ) {
             }
           }
         );
-        console.log("After looping, trades: \n", trades);
+        console.log("After looping, quarterlyHoldings: \n", quarterlyHoldings);
     },
     [ trades ]
   );

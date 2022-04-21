@@ -30,6 +30,7 @@
 	- Use `fetch` instead of `Axios` for API calls.
 	- Use `HashRouter` instead of `react-router-dom`.
 	- Use single GraphQL endpoint instead of interacting with multiple endpoints.
+	
 	- Use another charting library instead of `chart.js`.
 
 ## TS notes
@@ -54,6 +55,9 @@
 		- Too many requests: `if (apiRes.data.Note)`
 		- Error in request: `if apiRes.date["Error Message"])`
 - Components / pages
+	- Register
+		- Backend
+			- Start off with USD$1M when registering.
 	- Navbar
 		- Responsive
 		- Change page
@@ -84,11 +88,11 @@
 			- {DONE} Display transactions
 		- Current holdings table
 		- P&L chart
-			- 
 			- backend
-				- Provide full transaction history
+				- {DONE} Provide full transaction history
 	- /trade
 		- Form to buy or sell a specific ticker at market price
+		- **{TODO} Get quote for price at time of trade and store alongside trade history.**
 	- /news
 		- Form to edit subscription
 		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
@@ -120,7 +124,7 @@
 		- Buttons to forward `latestMonth` and to alter `viewingMonth` on navbar
 		- {DONE} Change time-step to quarter
 			- Change navbar buttons, function names, and API endpoints only.
-		- **{TODO} App to pass time-variables to all props.**
+		- {DONE} App to pass time-variables to all props.
 	- /watchlist page display adjusted monthly closing price as at month
 - Transactions
 	- Buy
