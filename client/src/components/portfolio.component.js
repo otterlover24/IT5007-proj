@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 
-export default function Portfolio() {
+export default function Portfolio(props) {
   const [ netWorthData, setNetWorthData ] = useState( {
     labels: [ "2014-06", "2014-07", "2014-08", "2014-09" ],
     datasets: [
@@ -28,6 +28,8 @@ export default function Portfolio() {
   useEffect( 
     () => {
       console.log( "portfolio.component.js useEffect []" );
+      console.log("portfolio.component props.viewingMonth: ", props.viewingMonth);
+      console.log("portfolio.component props.latestMonth: ", props.latestMonth);
       checkLoggedIn();
       displayTrades();
     }, 

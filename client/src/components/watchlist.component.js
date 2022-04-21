@@ -20,7 +20,9 @@ export default function Watchlist(props) {
   useEffect(() => {
     checkLoggedIn();
     displayWatchlist();
+    console.log("props.beginMonth: \n", props.beginMonth);
     console.log("props.viewingMonth: \n", props.viewingMonth);
+    console.log("props.latestMonth: \n", props.latestMonth);
 
   }, []);
 

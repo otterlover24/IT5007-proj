@@ -106,18 +106,94 @@ function App() {
     }
   };
 
+  const viewPreviousQuarter = async () => {
+    console.log( "In viewPreviousMonth()" );
+    try {
+      await Axios( {
+        method: "post",
+        url: "http://localhost:5000/api/users/viewPreviousQuarter",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+      } ).then( res => {
+        console.log( res.data );
+        setViewingMonth( res.data.prevViewingMonth );
+      } );
+    } catch ( err ) {
+      console.error( err );
+    }
+  };
+
+  const viewNextQuarter = async () => {
+    console.log( "In viewNextMonth()" );
+    try {
+      await Axios( {
+        method: "post",
+        url: "http://localhost:5000/api/users/viewNextQuarter",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+      } ).then( res => {
+        console.log( res.data );
+        setViewingMonth( res.data.nextViewingMonth );
+      } );
+    } catch ( err ) {
+      console.error( err );
+    }
+  };
+
+  const forwardOneQuarter = async () => {
+    console.log( "In forwardOneQuarter()" );
+    try {
+      await Axios( {
+        method: "post",
+        url: "http://localhost:5000/api/users/forwardOneQuarter",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+      } ).then( res => {
+        console.log( res.data );
+        setGetMonthVariablesFlag( !getMonthVariablesFlag );
+      } );
+    } catch ( err ) {
+      console.error( err );
+    }
+  };
+
+
   return (
     <Router>
       <div className="container-fluid">
-        <Navbar isAuthenticated={ loggedIn } />
+        <Navbar
+          isAuthenticated={ loggedIn }
+          allMonthsReady={ allMonthsReady }
+          beginMonth={ beginMonth }
+          viewingMonth={ viewingMonth }
+          latestMonth={ latestMonth }
+          viewPreviousQuarter={ viewPreviousQuarter }
+          viewNextQuarter={ viewNextQuarter }
+          forwardOneQuarter={ forwardOneQuarter }
+        />
 
         <Switch>
           <Route path="/" exact component={ LandingPage } />
           <Route path="/login" exact component={ Login } />
           <Route path="/register" exact component={ Register } />
           <Route path="/trade" exact component={ Trade } />
-          <Route path="/portfolio" exact component={ Portfolio } />
-          <Route path="/watchlist" exact render={ props => <Watchlist viewingMonth={viewingMonth}/> } />
+          <Route path="/portfolio" exact render={ props =>
+            <Portfolio
+              beginMonth={ beginMonth }
+              viewingMonth={ viewingMonth }
+              latestMonth={ latestMonth }
+            /> }
+          />
+          <Route path="/watchlist" exact render={ props =>
+            <Watchlist
+              beginMonth={ beginMonth }
+              viewingMonth={ viewingMonth }
+              latestMonth={ latestMonth }
+            /> }
+          />
           <Route path="/news" exact component={ News } />
         </Switch>
       </div>
