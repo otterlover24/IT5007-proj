@@ -179,7 +179,13 @@ function App() {
           <Route path="/" exact component={ LandingPage } />
           <Route path="/login" exact component={ Login } />
           <Route path="/register" exact component={ Register } />
-          <Route path="/trade" exact component={ Trade } />
+          <Route path="/trade" exact render={ props =>
+            <Trade
+              beginMonth={ beginMonth }
+              viewingMonth={ viewingMonth }
+              latestMonth={ latestMonth }
+            /> }
+          />
           <Route path="/portfolio" exact render={ props =>
             <Portfolio
               beginMonth={ beginMonth }
@@ -194,7 +200,13 @@ function App() {
               latestMonth={ latestMonth }
             /> }
           />
-          <Route path="/news" exact component={ News } />
+          <Route path="/news" exact component={ props =>
+            <News
+              beginMonth={ beginMonth }
+              viewingMonth={ viewingMonth }
+              latestMonth={ latestMonth }
+            /> }
+          />
         </Switch>
       </div>
     </Router>

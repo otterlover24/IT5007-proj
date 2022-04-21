@@ -10,11 +10,14 @@ import {
   Table,
 } from "react-bootstrap";
 
-export default function News() {
+export default function News( props ) {
 
   const [ newsList, setNewsList ] = useState();
 
   useEffect( () => {
+    console.log( "news.component.js useEffect []" );
+    console.log( "news.component props.viewingMonth: ", props.viewingMonth );
+    console.log( "news.component props.latestMonth: ", props.latestMonth );
     checkLoggedIn();
     displayNews();
   }, [] );

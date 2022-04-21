@@ -5,32 +5,35 @@ import "../components/component.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { Container, Col, Row, Table } from "react-bootstrap";
 
-export default function Trade() {
+export default function Trade(props) {
   const [ tickerSymbol, setTickerSymbol ] = useState();
   const [ quantity, setQuantity ] = useState();
   const [ direction, setDirection ] = useState();
 
   useEffect( () => {
-    const checkLoggedIn = async () => {
-      if ( localStorage.getItem( "jwt" ) ) {
-        Axios( {
-          method: "get",
-          url: "http://localhost:5000/api/users/isAuthenticated",
-          headers: {
-            Authorization: localStorage.getItem( "jwt" ),
-          },
-        } ).catch( err => {
-          console.log( err );
-          window.location = "/";
-          localStorage.removeItem( "jwt" );
-        } );
-      } else {
-        window.location = "/";
-      }
-    };
+    console.log( "trade.component.js useEffect []" );
+    console.log( "trade.component props.viewingMonth: ", props.viewingMonth );
+    console.log( "trade.component props.latestMonth: ", props.latestMonth );
     checkLoggedIn();
   }, [] );
 
+  const checkLoggedIn = async () => {
+    if ( localStorage.getItem( "jwt" ) ) {
+      Axios( {
+        method: "get",
+        url: "http://localhost:5000/api/users/isAuthenticated",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+      } ).catch( err => {
+        console.log( err );
+        window.location = "/";
+        localStorage.removeItem( "jwt" );
+      } );
+    } else {
+      window.location = "/";
+    }
+  };
 
   const onTradeSubmit = async e => {
     try {
@@ -50,15 +53,15 @@ export default function Trade() {
         },
       } ).then( res => {
         console.log( "Received from /api/protected/trade/submitTrade, res.data: \n", res.data );
-        if (res.data.message === "success") {
-          alert("Trade successful!");
+        if ( res.data.message === "success" ) {
+          alert( "Trade successful!" );
         }
       }
       );
 
     } catch ( err ) {
       console.log( "Caught error in onTradeSubmit, printing err:\n", err );
-      alert("Trade failed!");
+      alert( "Trade failed!" );
     }
   };
 
