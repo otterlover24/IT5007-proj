@@ -25,12 +25,27 @@ export default function Portfolio() {
 
   const [ trades, setTrades ] = useState( [] );
 
-  useEffect( () => {
-    console.log( "portfolio.component.js useEffect []" );
-    checkLoggedIn();
-    displayTrades();
-  }, [] );
+  useEffect( 
+    () => {
+      console.log( "portfolio.component.js useEffect []" );
+      checkLoggedIn();
+      displayTrades();
+    }, 
+    [] 
+  );
 
+  useEffect(
+    () => {
+      console.log("In useEffect for [trades]");
+      trades.slice().reverse()
+        .forEach(
+          function(trade) {
+           console.log(trade) ;
+          }
+        )
+    },
+    [trades]
+  );
 
   const checkLoggedIn = async () => {
     if ( localStorage.getItem( "jwt" ) ) {
@@ -49,8 +64,6 @@ export default function Portfolio() {
       window.location = "/";
     }
   };
-
-
 
   const displayTrades = async () => {
     console.log( `in displayTrades` );

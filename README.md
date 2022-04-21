@@ -120,6 +120,7 @@
 		- Buttons to forward `latestMonth` and to alter `viewingMonth` on navbar
 		- {DONE} Change time-step to quarter
 			- Change navbar buttons, function names, and API endpoints only.
+		- **{TODO} App to pass time-variables to all props.**
 	- /watchlist page display adjusted monthly closing price as at month
 - Transactions
 	- Buy

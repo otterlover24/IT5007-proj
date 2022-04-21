@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Axios from 'axios';
 import './App.css';
 import Navbar from "./components/navbar.component";
@@ -14,44 +14,44 @@ import Trade from "./components/trade.component";
 import News from "./components/news.component";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-useEffect(() => {
-  const checkLoggedIn = async () => {
-    // if (localStorage.getItem('jwt')) {
+  const [ loggedIn, setLoggedIn ] = useState( false );
+  useEffect( () => {
+    const checkLoggedIn = async () => {
+      if (localStorage.getItem('jwt')) {
 
-        Axios({
-            method: 'get',
-            url: 'http://localhost:5000/api/users/isAuthenticated',
-            headers: {
-                'Authorization': localStorage.getItem('jwt'),
-            }
-        }).then(res=>{
-          console.log(res.data);
-          setLoggedIn(res);
-        })
-        .catch(err => {
-            localStorage.removeItem('jwt');
-        });
-    // }
+      Axios( {
+        method: 'get',
+        url: 'http://localhost:5000/api/users/isAuthenticated',
+        headers: {
+          'Authorization': localStorage.getItem( 'jwt' ),
+        }
+      } ).then( res => {
+        console.log( res.data );
+        setLoggedIn( res );
+      } )
+        .catch( err => {
+          localStorage.removeItem( 'jwt' );
+        } );
+      }
 
-}
-checkLoggedIn();
+    };
+    checkLoggedIn();
 
 
-}, []);
+  }, [] );
   return (
     <Router>
       <div className="container-fluid">
-        <Navbar isAuthenticated={loggedIn} />
+        <Navbar isAuthenticated={ loggedIn } />
 
         <Switch>
-          <Route path="/" exact component={LandingPage} />
-          <Route path="/login" exact component={Login} />
-          <Route path="/register" exact component={Register} />
-          <Route path="/trade" exact component={Trade} />
-          <Route path="/portfolio" exact component={Portfolio} />
-          <Route path="/watchlist" exact component={Watchlist} />
-          <Route path="/news" exact component={News} />
+          <Route path="/" exact component={ LandingPage } />
+          <Route path="/login" exact component={ Login } />
+          <Route path="/register" exact component={ Register } />
+          <Route path="/trade" exact component={ Trade } />
+          <Route path="/portfolio" exact component={ Portfolio } />
+          <Route path="/watchlist" exact component={ Watchlist } />
+          <Route path="/news" exact component={ News } />
         </Switch>
       </div>
     </Router>
