@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 
-export default function Portfolio(props) {
+export default function Portfolio( props ) {
   const [ netWorthData, setNetWorthData ] = useState( {
     labels: [ "2014-06", "2014-07", "2014-08", "2014-09" ],
     datasets: [
@@ -24,29 +24,46 @@ export default function Portfolio(props) {
   } );
 
   const [ trades, setTrades ] = useState( [] );
+  const [ quarterlyHoldings, setHoldings ] = useState( {} );
 
-  useEffect( 
+  useEffect(
     () => {
       console.log( "portfolio.component.js useEffect []" );
-      console.log("portfolio.component props.viewingMonth: ", props.viewingMonth);
-      console.log("portfolio.component props.latestMonth: ", props.latestMonth);
+      console.log( "portfolio.component props.viewingMonth: ", props.viewingMonth );
+      console.log( "portfolio.component props.latestMonth: ", props.latestMonth );
       checkLoggedIn();
       displayTrades();
-    }, 
-    [] 
+    },
+    []
   );
 
   useEffect(
     () => {
-      console.log("In useEffect for [trades]");
+      console.log( "In useEffect for [trades]" );
       trades.slice().reverse()
         .forEach(
-          function(trade) {
-           console.log(trade) ;
+          function ( trade ) {
+            console.log( trade );
+            let direction = trade.direction === "buy" ? 1 : -1;
+            if ( !( trade.yearMonth in quarterlyHoldings ) ) {
+              quarterlyHoldings[ trade.yearMonth ] = {
+                [ trade.tickerSymbol ]: direction * trade.quantity
+              };
+            }
+            if ( trade.yearMonth in quarterlyHoldings ) {
+              if ( trade.tickerSymbol in quarterlyHoldings[ trade.yearMonth ] ) {
+
+                quarterlyHoldings[ trade.yearMonth ][ trade.tickerSymbol ] += direction * trade.quantity;
+              }
+              if ( !( trade.tickerSymbol in quarterlyHoldings[ trade.yearMonth ] ) ) {
+                quarterlyHoldings[ trade.yearMonth ][ trade.tickerSymbol ] = direction * trade.quantity;
+              }
+            }
           }
-        )
+        );
+        console.log("After looping, trades: \n", trades);
     },
-    [trades]
+    [ trades ]
   );
 
   const checkLoggedIn = async () => {
@@ -144,14 +161,14 @@ export default function Portfolio(props) {
             </thead>
 
             <tbody>
-            {trades ? trades.map(trade => (
+              { trades ? trades.map( trade => (
                 <tr>
-                  <td>{trade.yearMonth}</td>
-                  <td>{trade.tickerSymbol}</td>
-                  <td>{trade.direction}</td>
-                  <td>{trade.quantity}</td>
+                  <td>{ trade.yearMonth }</td>
+                  <td>{ trade.tickerSymbol }</td>
+                  <td>{ trade.direction }</td>
+                  <td>{ trade.quantity }</td>
                 </tr>
-              )) : <></>}
+              ) ) : <></> }
             </tbody>
 
           </Table>
