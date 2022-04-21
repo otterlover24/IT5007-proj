@@ -94,17 +94,24 @@ router.post( '/getQuote', async ( req, res ) => {
 
 
     let filteredRes = await axios
-      .get(apiUrl)
-      .then(apiRes => {
-        console.log("apiRes: ", apiRes);
-        return apiRes;
-      });
+      .get( apiUrl )
+      .then( apiRes => {
+        for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
+          console.log( "property: ", property );
+          console.log( "property.slice(0, 7): ", property.slice( 0, 7 ) );
+          console.log( "req.user.latestMonth: ", req.user.latestMonth );
+          if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
+            return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
+          }
+        }
+        return;
+      } );
 
     if ( LOG && LOG_TRADE_ROUTER ) {
       console.log( "filteredRes: ", filteredRes );
     }
-   
-    return res.json(filteredRes);
+
+    return res.json( filteredRes );
   }
 
   catch ( err ) {
