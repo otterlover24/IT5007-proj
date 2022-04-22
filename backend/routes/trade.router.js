@@ -83,7 +83,7 @@ router.post( '/submitTrade', async (req, res) => {
           yearMonth: req.user.latestMonth,
           tickerSymbol: "US-DOLLAR",
           price: 1.0,
-          quantity: -directionSign * price * quantity,
+          quantity: price * quantity,
           direction: ( direction === "BUY" ) ? "SELL" : "Buy",
         }
       );

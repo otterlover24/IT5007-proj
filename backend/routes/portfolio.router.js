@@ -21,9 +21,34 @@ router.post( '/getTrades', async ( req, res ) => {
         }
       );
     if (LOG && LOG_PORTFOLIO_ROUTER) {
-      console.log("In /getTrades, received trades from DB: \n", trades);
+      console.log("In portfolio.router /getTrades, received trades from DB: \n", trades);
     }
-    return res.json( trades );
+
+    const holdings = {};
+    trades
+      .slice()
+      .reverse()
+      .forEach((trade) => {
+        console.log("Iterating trade: ", trade);
+        let directionSign = (trade.direction === "BUY") ? 1 : -1;
+        if (trade.tickerSymbol in holdings) {
+          holdings[trade.tickerSymbol ] += directionSign * trade.quantity;
+        }
+        if (!(trade.tickerSymbol in holdings)) {
+          holdings[trade.tickerSymbol ] = directionSign * trade.quantity;
+        }
+      })
+    
+      if (LOG && LOG_PORTFOLIO_ROUTER) {
+        console.log("holdings: ", holdings);
+      }
+      
+      let collatedData = {
+        trades: trades,
+        holdings: holdings
+      };
+
+    return res.json( collatedData );
   }
   catch ( err ) {
     if ( LOG && LOG_PORTFOLIO_ROUTER ) {
