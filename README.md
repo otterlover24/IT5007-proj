@@ -89,13 +89,24 @@
 				- useEffect with empty dependency list to call `displayTransactions()` on load.
 				- In portfolio.router.js, `async function displayTranactions()`
 			- {DONE} Display transactions
-		- Current holdings table
+		- **{TODO} Current holdings table**
+			- Backend: portfolio.router.js
+				- Compute holdings for each month from beginMonth to latestMonth.
+					- Use transaction history to compute delta from previous month.
+					- Update every time latestMonth changes or new trade arrives.
+						- Use middleware
+							- Test passing parameters at the end of trade first, then refactor to separate module.
+					- Also get market price as of that month.
+				- Send holdings as per viewingMonth to frontend.
+			- Frontend
+				- Display current holdings table as per viewingMonth.
+				- Remove `Average Purchase Price` and `Profit (Loss)` columns
 		- P&L chart
 			- backend
 				- {DONE} Provide full transaction history
 	- /trade
 		- Form to buy or sell a specific ticker at market price
-		- **{TODO} Get quote for price at time of trade and store alongside trade history.**
+		- {DONE} Get quote for price at time of trade and store alongside trade history.
 	- /news
 		- Form to edit subscription
 		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
