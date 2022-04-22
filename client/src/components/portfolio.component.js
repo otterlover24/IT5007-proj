@@ -44,7 +44,7 @@ export default function Portfolio( props ) {
         .forEach(
           function ( trade ) {
             console.log( trade );
-            let direction = trade.direction === "buy" ? 1 : -1;
+            let direction = trade.direction === "BUY" ? 1 : -1;
             if ( !( trade.yearMonth in quarterlyHoldings ) ) {
               quarterlyHoldings[ trade.yearMonth ] = {
                 [ trade.tickerSymbol ]: direction * trade.quantity

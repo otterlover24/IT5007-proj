@@ -21,9 +21,22 @@ router.post( '/submitTrade', async ( req, res ) => {
     }
 
 
+    /* Input parsing and validation. */
     let { tickerSymbol, price, quantity, direction } = req.body;
     if ( !tickerSymbol || !price || !quantity || !direction ) {
       return res.status( 400 ).json( { Error: "Not all fields for submitting trade have been entered." } );
+    }
+    if ( !( direction === "BUY" || direction === "SELL" ) ) {
+      return res.status( 400 ).json( { Error: "Direction field must be BUY or SELL." } );
+    }
+    let directionSign = ( direction === "BUY" ) ? 1 : -1;
+    try {
+      price = parseInt( price );
+      quantity = parseInt( quantity );
+    }
+    catch ( err ) {
+      console.log( "Error in router.post(/submitTrade,...) while input parsing and validation", err );
+      return res.status( 400 ).json( { Error: "Error parsing input price or quantity for trade." } );
     }
 
     let newTrade = new Trade(
@@ -32,10 +45,11 @@ router.post( '/submitTrade', async ( req, res ) => {
         yearMonth: req.user.latestMonth,
         tickerSymbol,
         price,
-        quantity: parseInt( quantity ),
+        quantity,
         direction,
       }
     );
+
     if ( LOG && LOG_TRADE_ROUTER ) {
       console.log( "newTrade: ", newTrade );
     }
@@ -47,10 +61,7 @@ router.post( '/submitTrade', async ( req, res ) => {
           console.log( "trade: \n", trade );
         }
         if ( trade.tickerSymbol === "TESTFAILURE" ) {
-          res.status( 400 ).json( { Error: "TESTFAILURE returns failure" } );
-        }
-        if ( trade.tickerSymbol !== "TESTFAILURE" ) {
-          res.json( { message: "success" } );
+          return res.status( 400 ).json( { Error: "TESTFAILURE returns failure" } );
         }
       } )
       .catch( err => {
@@ -58,10 +69,45 @@ router.post( '/submitTrade', async ( req, res ) => {
           console.log( "newTrade.save() threw error:" );
           console.log( "err: \n", err );
         }
-        res.status( 400 ).json( { Error: err } );
+        return res.status( 400 ).json( { Error: err } );
       } );
-  } 
-  
+
+    /* Record offsetting change to cash balance. */
+    let newTradeCash = new Trade(
+      {
+        userId: req.user._id,
+        yearMonth: req.user.latestMonth,
+        tickerSymbol: "US-DOLLAR",
+        price: 1.0,
+        quantity: -directionSign * price * quantity,
+        direction: ( direction === "BUY" ) ? "SELL" : "Buy",
+      }
+    );
+
+    newTradeCash.save()
+      .then( trade => {
+        if ( LOG && LOG_TRADE_ROUTER ) {
+          console.log( "newTradeCash.save() successful." );
+          console.log( "newTradeCash: \n", newTradeCash );
+        }
+        if ( trade.tickerSymbol === "TESTFAILURE" ) {
+          return res.status( 400 ).json( { Error: "TESTFAILURE returns failure" } );
+        }
+        if ( trade.tickerSymbol !== "TESTFAILURE" ) {
+          return res.json( { message: "success" } );
+        }
+      } )
+      .catch( err => {
+        if ( LOG && LOG_TRADE_ROUTER ) {
+          console.log( "newTradeCash.save() threw error:" );
+          console.log( "err: \n", err );
+        }
+        return res.status( 400 ).json( { Error: err } );
+      } );
+
+
+  }
+
   catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
   }

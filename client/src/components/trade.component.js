@@ -151,8 +151,8 @@ export default function Trade( props ) {
                 </div>
 
                 <div className="form-group">
-                  <input type="radio" name="tradeDirection" value="Buy" onChange={ e => setDirection( e.target.value ) } /> Buy
-                  <input type="radio" name="tradeDirection" value="Sell" onChange={ e => setDirection( e.target.value ) } /> Sell
+                  <input type="radio" name="tradeDirection" value="BUY" onChange={ e => setDirection( e.target.value ) } /> Buy
+                  <input type="radio" name="tradeDirection" value="SELL" onChange={ e => setDirection( e.target.value ) } /> Sell
                 </div>
 
                 <button
