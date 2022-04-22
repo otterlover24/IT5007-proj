@@ -54,7 +54,7 @@ export default function Portfolio( props ) {
   //     // setViewingMonthHoldings({...initialViewingMonthHoldings});    // Clear state to avoid accumulating previous holdings.
   //     setViewingMonthHoldings(prevViewingMonthHoldings => new Object);    // Clear state to avoid accumulating previous holdings.
   //     console.log("In useEffect for [trades], after resetting viewingMonthHoldings: ", viewingMonthHoldings);
-      
+
   //     trades
   //       .slice()    // create a copy
   //       .reverse()  // Start from earliest to latest
@@ -113,19 +113,23 @@ export default function Portfolio( props ) {
     console.log( `in displayTrades` );
 
     /* Get watchlist from server */
-    await Axios( {
+    let res = await Axios( {
       method: "post",
       url: "http://localhost:5000/api/protected/portfolio/getTrades",
       headers: {
         Authorization: localStorage.getItem( "jwt" ),
       },
-    } ).then( res => {
-      console.log( "displayTrades received res.data from server: \n", res.data );
-      setTrades( res.data.trades );
-      setViewingMonthHoldings(res.data.holdings);
     } );
 
+    console.log( "displayTrades received res.data from server: \n", res.data );
+    await setTrades( res.data.trades );
+    await setViewingMonthHoldings( res.data.holdings );
+
     /* Get market price for viewingMonthHoldings */
+    for ( let tickerSymbol in viewingMonthHoldings ) {
+      console.log( "tickerSymbol: ", tickerSymbol );
+      console.log( "viewingMonthHoldings[tickerSymbol]: ", viewingMonthHoldings[ tickerSymbol ] );
+    }
 
   };
 
