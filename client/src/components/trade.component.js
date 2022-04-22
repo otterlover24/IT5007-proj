@@ -49,6 +49,7 @@ export default function Trade( props ) {
         },
         data: {
           tickerSymbol: tickerSymbol,
+          price: price,
           quantity: quantity,
           direction: direction,
         },
@@ -60,9 +61,16 @@ export default function Trade( props ) {
           }
         } );
 
-    } catch ( err ) {
+    }
+
+    catch ( err ) {
       console.log( "Caught error in onTradeSubmit, printing err:\n", err );
       alert( "Trade failed!" );
+    }
+
+    finally {
+      /* Price field to avoid confusion. */
+      setPrice( null );
     }
   };
 
@@ -81,12 +89,10 @@ export default function Trade( props ) {
       } )
         .then( res => {
           console.log( "Received from /api/protected/trade/getQuote, res.data: \n", res.data );
-          if ( res.data.message === "success" ) {
-            alert( "Get Quote Successful!" );
-          }
+          setPrice( res.data );
         } );
 
-    } 
+    }
     catch ( err ) {
       console.log( "Caught error in handleGetQuote, printing err:\n", err );
       alert( "Get Quote Failed!" );
@@ -100,7 +106,7 @@ export default function Trade( props ) {
           <div className="card expense-input-card">
             <div className="card-body">
               <h5 className="card-title text-center">
-                Buy or Sell a Security by Ticker
+                Trade Security at { props.latestMonth }
               </h5>
 
               <form onSubmit={ onTradeSubmit } className="form-signin">
@@ -117,7 +123,7 @@ export default function Trade( props ) {
 
                 <button
                   type="button"
-                  onClick={handleGetQuote}
+                  onClick={ handleGetQuote }
                   className="btn btn-lg btn-secondary btn-block text-uppercase input-expense-btn"
                 >
                   Get Quote
@@ -129,7 +135,7 @@ export default function Trade( props ) {
                     id="inputPrice"
                     type="number"
                     className="form-control"
-                    value={price}
+                    value={ price }
                   />
                 </div>
 

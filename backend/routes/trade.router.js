@@ -21,18 +21,19 @@ router.post( '/submitTrade', async ( req, res ) => {
     }
 
 
-    let { tickerSymbol, quantity, direction } = req.body;
-    if ( !tickerSymbol || !quantity || !direction ) {
+    let { tickerSymbol, price, quantity, direction } = req.body;
+    if ( !tickerSymbol || !price || !quantity || !direction ) {
       return res.status( 400 ).json( { Error: "Not all fields for submitting trade have been entered." } );
     }
 
     let newTrade = new Trade(
       {
         userId: req.user._id,
-        tickerSymbol,
-        direction,
-        quantity: parseInt( quantity ),
         yearMonth: req.user.latestMonth,
+        tickerSymbol,
+        price,
+        quantity: parseInt( quantity ),
+        direction,
       }
     );
     if ( LOG && LOG_TRADE_ROUTER ) {
@@ -59,9 +60,10 @@ router.post( '/submitTrade', async ( req, res ) => {
         }
         res.status( 400 ).json( { Error: err } );
       } );
-  } catch ( err ) {
+  } 
+  
+  catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
-
   }
 
 } );
