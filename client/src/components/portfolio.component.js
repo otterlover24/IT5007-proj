@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "../App.css";
 import Axios from "axios";
 import "../components/component.css";
@@ -11,31 +11,26 @@ import {
 } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 
-export default function Portfolio( props ) {
-  const [ netWorthData, setNetWorthData ] = useState( {
-    labels: [ "2014-06", "2014-07", "2014-08", "2014-09" ],
-    datasets: [
-      {
-        label: "Net Worth",
-        data: [ 10000, 20000, 40000, 35000 ],
-        lineTension: 0,
-      }
-    ]
-  } );
+class Portfolio extends React.Component {
 
-  const [ trades, setTrades ] = useState( [] );
-  const [ viewingMonthHoldings, setViewingMonthHoldings ] = useState( {} );
+  constructor( props ) {
+    super( props );
+    this.state = {
+      trades: [],
+      viewingMonthHoldings: {},
+    };
+  }
 
-  useEffect(
-    () => {
-      console.log( "portfolio.component.js useEffect []" );
-      console.log( "portfolio.component props.viewingMonth: ", props.viewingMonth );
-      console.log( "portfolio.component props.latestMonth: ", props.latestMonth );
-      checkLoggedIn();
-      displayTrades();
-    },
-    []
-  );
+  async componentDidMount() {
+    console.log( "portfolio.component.js: executing componentDidMount" );
+    this.checkLoggedIn();
+    await this.displayTrades();
+    console.log( "In componentDidMount, this.state.trade: ", this.state.trade );
+  }
+
+
+
+
 
   // useEffect(
   //   () => {
@@ -91,7 +86,7 @@ export default function Portfolio( props ) {
   //   [ trades ]
   // );
 
-  const checkLoggedIn = async () => {
+  checkLoggedIn = async () => {
     if ( localStorage.getItem( "jwt" ) ) {
       Axios( {
         method: "get",
@@ -109,7 +104,7 @@ export default function Portfolio( props ) {
     }
   };
 
-  const displayTrades = async () => {
+  displayTrades = async () => {
     console.log( `in displayTrades` );
 
     /* Get watchlist from server */
@@ -122,91 +117,79 @@ export default function Portfolio( props ) {
     } );
 
     console.log( "displayTrades received res.data from server: \n", res.data );
-    await setTrades( res.data.trades );
-    await setViewingMonthHoldings( res.data.holdings );
+    this.setState({trades: res.data.trades, viewMonthlyHoldings: res.data.holdings});
+
 
     /* Get market price for viewingMonthHoldings */
-    for ( let tickerSymbol in viewingMonthHoldings ) {
+    for ( let tickerSymbol in this.state.viewingMonthHoldings ) {
       console.log( "tickerSymbol: ", tickerSymbol );
-      console.log( "viewingMonthHoldings[tickerSymbol]: ", viewingMonthHoldings[ tickerSymbol ] );
+      console.log( "viewingMonthHoldings[tickerSymbol]: ", this.state.viewingMonthHoldings[ tickerSymbol ] );
     }
 
   };
 
-  return (
-    <Container>
-      <Row>
-        <Col xs="12" md="6">
-          <div className="card expense-input-card">
-            <div className="card-body">
-              <h5>Net Worth Chart</h5>
-              <div style={ { width: 500 } }>
-                <Line data={ netWorthData } />
-              </div>
+  render() {
+    return (
+      <Container>
 
-
-
-            </div>
-          </div>
-        </Col>
-      </Row>
-
-      <Row>
-        <h5>Current Holdings</h5>
-        <Col xs="12">
-          <Table id="holdingsTable" striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th>Quantity</th>
-                <th>Current Market Price</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td>AAPL</td>
-                <td>20,000</td>
-                <td>$134.00</td>
-                <td>$174.00</td>
-                <td>$800,000</td>
-              </tr>
-            </tbody>
-
-
-          </Table>
-        </Col>
-      </Row>
-
-      <Row>
-        <h5>Transaction History</h5>
-        <Col xs="12">
-          <Table id="transactionHistoryTable" striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Ticker</th>
-                <th>Direction</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              { trades ? trades.map( trade => (
+        <Row>
+          <h5>Current Holdings</h5>
+          <Col xs="12">
+            <Table id="holdingsTable" striped bordered hover responsive>
+              <thead>
                 <tr>
-                  <td>{ trade.yearMonth }</td>
-                  <td>{ trade.tickerSymbol }</td>
-                  <td>{ trade.direction }</td>
-                  <td>{ trade.quantity }</td>
+                  <th>Ticker</th>
+                  <th>Quantity</th>
+                  <th>Current Market Price</th>
+                  <th>Value</th>
                 </tr>
-              ) ) : <></> }
-            </tbody>
+              </thead>
 
-          </Table>
-        </Col>
-      </Row>
+              <tbody>
+                <tr>
+                  <td>AAPL</td>
+                  <td>20,000</td>
+                  <td>$134.00</td>
+                  <td>$174.00</td>
+                  <td>$800,000</td>
+                </tr>
+              </tbody>
 
-    </Container>
-  );
+
+            </Table>
+          </Col>
+        </Row>
+
+        <Row>
+          <h5>Transaction History</h5>
+          <Col xs="12">
+            <Table id="transactionHistoryTable" striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Ticker</th>
+                  <th>Direction</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                { this.state.trades ? this.state.trades.map( trade => (
+                  <tr>
+                    <td>{ trade.yearMonth }</td>
+                    <td>{ trade.tickerSymbol }</td>
+                    <td>{ trade.direction }</td>
+                    <td>{ trade.quantity }</td>
+                  </tr>
+                ) ) : <></> }
+              </tbody>
+
+            </Table>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
 }
+
+export default Portfolio;
