@@ -58,6 +58,9 @@ export default function Register() {
             const loginRes = await Axios.post( "http://localhost:5000/api/users/login", loginUser );
             localStorage.setItem( 'jwt', loginRes.data.token );
 
+            /* Redirect page to main app */
+            window.location = '/app';
+
             /* Start off with USD $1,000,000 */
             await Axios( {
                 method: "post",
@@ -69,7 +72,7 @@ export default function Register() {
                     tickerSymbol: "US-DOLLAR",
                     quantity: 1000000,
                     price: 1.0,
-                    direction: "buy",
+                    direction: "BUY",
                 },
             } )
                 .then( res => {
@@ -78,9 +81,6 @@ export default function Register() {
                         console.log( "US-DOLLAR $1M balance initialization successful." );
                     }
                 } );
-
-            /* Redirect page to main app */
-            window.location = '/app';
 
         }
 

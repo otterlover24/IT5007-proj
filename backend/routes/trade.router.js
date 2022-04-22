@@ -72,46 +72,49 @@ router.post( '/submitTrade', async ( req, res ) => {
         return res.status( 400 ).json( { Error: err } );
       } );
 
-    /* Record offsetting change to cash balance. */
-    let newTradeCash = new Trade(
-      {
-        userId: req.user._id,
-        yearMonth: req.user.latestMonth,
-        tickerSymbol: "US-DOLLAR",
-        price: 1.0,
-        quantity: -directionSign * price * quantity,
-        direction: ( direction === "BUY" ) ? "SELL" : "Buy",
-      }
-    );
+    /* 
+    Record offsetting change to cash balance.
+      - Don't do so for ticker US-DOLLAR used for balance initialization.
+     */
+    if ( tickerSymbol !== "US-DOLLAR" ) {
+      let newTradeCash = new Trade(
+        {
+          userId: req.user._id,
+          yearMonth: req.user.latestMonth,
+          tickerSymbol: "US-DOLLAR",
+          price: 1.0,
+          quantity: -directionSign * price * quantity,
+          direction: ( direction === "BUY" ) ? "SELL" : "Buy",
+        }
+      );
 
-    newTradeCash.save()
-      .then( trade => {
-        if ( LOG && LOG_TRADE_ROUTER ) {
-          console.log( "newTradeCash.save() successful." );
-          console.log( "newTradeCash: \n", newTradeCash );
-        }
-        if ( trade.tickerSymbol === "TESTFAILURE" ) {
-          return res.status( 400 ).json( { Error: "TESTFAILURE returns failure" } );
-        }
-        if ( trade.tickerSymbol !== "TESTFAILURE" ) {
-          return res.json( { message: "success" } );
-        }
-      } )
-      .catch( err => {
-        if ( LOG && LOG_TRADE_ROUTER ) {
-          console.log( "newTradeCash.save() threw error:" );
-          console.log( "err: \n", err );
-        }
-        return res.status( 400 ).json( { Error: err } );
-      } );
-
+      newTradeCash.save()
+        .then( trade => {
+          if ( LOG && LOG_TRADE_ROUTER ) {
+            console.log( "newTradeCash.save() successful." );
+            console.log( "newTradeCash: \n", newTradeCash );
+          }
+          if ( trade.tickerSymbol === "TESTFAILURE" ) {
+            return res.status( 400 ).json( { Error: "TESTFAILURE returns failure" } );
+          }
+          if ( trade.tickerSymbol !== "TESTFAILURE" ) {
+            return res.json( { message: "success" } );
+          }
+        } )
+        .catch( err => {
+          if ( LOG && LOG_TRADE_ROUTER ) {
+            console.log( "newTradeCash.save() threw error:" );
+            console.log( "err: \n", err );
+          }
+          return res.status( 400 ).json( { Error: err } );
+        } );
+    }
 
   }
 
   catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
   }
-
 } );
 
 
