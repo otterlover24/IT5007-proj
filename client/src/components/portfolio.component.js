@@ -24,8 +24,7 @@ export default function Portfolio( props ) {
   } );
 
   const [ trades, setTrades ] = useState( [] );
-  const initialViewingMonthHoldings = {};
-  const [ viewingMonthHoldings, setViewingMonthHoldings ] = useState( initialViewingMonthHoldings );
+  const [ viewingMonthHoldings, setViewingMonthHoldings ] = useState( {} );
 
   useEffect(
     () => {
@@ -123,8 +122,10 @@ export default function Portfolio( props ) {
     } ).then( res => {
       console.log( "displayTrades received res.data from server: \n", res.data );
       setTrades( res.data.trades );
-
+      setViewingMonthHoldings(res.data.holdings);
     } );
+
+    /* Get market price for viewingMonthHoldings */
 
   };
 
@@ -154,9 +155,8 @@ export default function Portfolio( props ) {
               <tr>
                 <th>Ticker</th>
                 <th>Quantity</th>
-                <th>Average Purchase Price</th>
                 <th>Current Market Price</th>
-                <th>Profit (Loss)</th>
+                <th>Value</th>
               </tr>
             </thead>
 
@@ -169,6 +169,7 @@ export default function Portfolio( props ) {
                 <td>$800,000</td>
               </tr>
             </tbody>
+
 
           </Table>
         </Col>
