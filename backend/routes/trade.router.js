@@ -10,12 +10,6 @@ const router = require( 'express' ).Router();
 
 
 
-
-router.get( '/getHistory', async ( req, res ) => {
-  const transactions = await Transaction.find( { userId: req.user._id } );
-  return res.json( transactions );
-} );
-
 router.post( '/submitTrade', async (req, res) => {
   try {
     if ( LOG && LOG_TRADE_ROUTER ) {

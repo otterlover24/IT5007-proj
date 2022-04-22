@@ -24,7 +24,8 @@ export default function Portfolio( props ) {
   } );
 
   const [ trades, setTrades ] = useState( [] );
-  const [ viewingMonthHoldings, setViewingMonthHoldings ] = useState( {} );
+  const initialViewingMonthHoldings = {};
+  const [ viewingMonthHoldings, setViewingMonthHoldings ] = useState( initialViewingMonthHoldings );
 
   useEffect(
     () => {
@@ -39,8 +40,22 @@ export default function Portfolio( props ) {
 
   useEffect(
     () => {
-      console.log( "In useEffect for [trades, props.viewingMonth]" );
-      setViewingMonthHoldings(new Array());    // To ensure correctness when changing viewingQuarter
+      console.log( "portfolio.component.js useEffect [props.viewingMonth]" );
+      console.log( "portfolio.component props.viewingMonth: ", props.viewingMonth );
+      console.log( "portfolio.component props.latestMonth: ", props.latestMonth );
+      checkLoggedIn();
+      displayTrades();
+    },
+    [props.viewingMonth]
+  );
+
+  useEffect(
+    () => {
+
+      // setViewingMonthHoldings({...initialViewingMonthHoldings});    // Clear state to avoid accumulating previous holdings.
+      setViewingMonthHoldings(prevViewingMonthHoldings => new Object());    // Clear state to avoid accumulating previous holdings.
+      console.log("In useEffect for [trades], after resetting viewingMonthHoldings: ", viewingMonthHoldings);
+      
       trades
         .slice()    // create a copy
         .reverse()  // Start from earliest to latest
@@ -50,11 +65,14 @@ export default function Portfolio( props ) {
             if ( trade.yearMonth <= props.viewingMonth ) {
               let direction = trade.direction === "BUY" ? 1 : -1;
               let updatedViewingMonthHoldings = viewingMonthHoldings;
+              console.log("trade: ", trade);
+              console.log("viewingMonthsHoldings before updating for current trade: ", viewingMonthHoldings);
 
               if ( !( trade.tickerSymbol in viewingMonthHoldings ) ) {
                 /* Symbol is not in viewingMonthHolding's property, create symbol*/
                 updatedViewingMonthHoldings[ trade.tickerSymbol ] = direction * trade.quantity;
                 setViewingMonthHoldings( updatedViewingMonthHoldings );
+                console.log("viewingMonthHoldings after update for ticker not in: ", viewingMonthHoldings);
                 return;   // Can't use continue in forEach loop.
               }
 
@@ -62,6 +80,7 @@ export default function Portfolio( props ) {
                 /* Symbol is not in viewingMonthHolding's property, increment or decrement.*/
                 updatedViewingMonthHoldings[ trade.tickerSymbol ] += direction * trade.quantity;
                 setViewingMonthHoldings( updatedViewingMonthHoldings );
+                console.log("viewingMonthHoldings after update for ticker not in: ", viewingMonthHoldings);
                 return;   // Can't use continue in forEach loop.
               }
             }
@@ -70,7 +89,7 @@ export default function Portfolio( props ) {
       console.log( "props.viewingMonth", props.viewingMonth );
       console.log( "After looping, viewingMonthHoldings: \n", viewingMonthHoldings );
     },
-    [ trades, props.viewingMonth ]
+    [ trades ]
   );
 
   const checkLoggedIn = async () => {

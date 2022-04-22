@@ -10,7 +10,9 @@ router.post( '/getTrades', async ( req, res ) => {
     const trades = await Trade
       .find(
         {
-          userId: req.user._id
+          userId: req.user._id,
+          yearMonth: {$lte: req.user.viewingMonth}
+          
         }
       )
       .sort(
