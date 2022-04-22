@@ -47,7 +47,7 @@
 	- ccc / ccc11111
 		- `latestMonth` not aligned to quarter
 	- ddd / ddd11111
-  
+	- rrr / rrr11111
 ## TS TODO
 - General
 	- {DONE} Implements log levels to limit console.log output.  

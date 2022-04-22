@@ -54,7 +54,6 @@ export default function Register() {
             const loginUser = {
                 username,
                 password,
-
             };
             const loginRes = await Axios.post( "http://localhost:5000/api/users/login", loginUser );
             localStorage.setItem( 'jwt', loginRes.data.token );
@@ -69,6 +68,7 @@ export default function Register() {
                 data: {
                     tickerSymbol: "US-DOLLAR",
                     quantity: 1000000,
+                    price: 1.0,
                     direction: "buy",
                 },
             } )
