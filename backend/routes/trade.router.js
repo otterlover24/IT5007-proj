@@ -8,7 +8,15 @@ let Trade = require( '../models/trade.model' );
 const router = require( 'express' ).Router();
 
 
-const submitTradeMiddleware = async ( req, res, next ) => {
+
+
+
+router.get( '/getHistory', async ( req, res ) => {
+  const transactions = await Transaction.find( { userId: req.user._id } );
+  return res.json( transactions );
+} );
+
+router.post( '/submitTrade', async (req, res) => {
   try {
     if ( LOG && LOG_TRADE_ROUTER ) {
       console.log( "In submitTradeMiddleware" );
@@ -115,24 +123,7 @@ const submitTradeMiddleware = async ( req, res, next ) => {
   catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
   }
-
-  next();
-};
-
-async function updateHoldings( req, res, next ) {
-  if ( LOG && LOG_TRADE_ROUTER && LOG_UPDATE_HOLDINGS ) {
-    console.log( "In middleware updateHoldings" );
-    console.log( "req.newTradeCashStatus: ", req.newTradeCashStatus );
-    console.log( "Sending req.newTradeCashStatus: ", req.newTradeCashStatus );
-  }
-  res.send( req.newTradeCashStatus );
-}
-router.get( '/getHistory', async ( req, res ) => {
-  const transactions = await Transaction.find( { userId: req.user._id } );
-  return res.json( transactions );
 } );
-
-router.post( '/submitTrade', submitTradeMiddleware, updateHoldings );
 
 
 router.post( '/getQuote', async ( req, res ) => {

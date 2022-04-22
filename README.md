@@ -93,9 +93,12 @@
 			- Backend: portfolio.router.js
 				- Compute holdings for each month from beginMonth to latestMonth.
 					- Use transaction history to compute delta from previous month.
+					- **{TODO}Just do on frontend based on transaction history, then get value of current holding, ignore net worth chart**
 					- Update every time latestMonth changes or new trade arrives.
 						- Use middleware
 							- Test passing parameters at the end of trade first, then refactor to separate module.
+								- BUG: In middleware updateHoldings, res.newTradeCaseStatus is undefined.
+									- Did not await writing to DB.
 					- Also get market price as of that month.
 				- Send holdings as per viewingMonth to frontend.
 			- Frontend
