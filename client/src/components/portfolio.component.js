@@ -24,7 +24,7 @@ export default function Portfolio( props ) {
   } );
 
   const [ trades, setTrades ] = useState( [] );
-  const [ quarterlyHoldings, setHoldings ] = useState( {} );
+  const [ viewingMonthHoldings, setViewingMonthHoldings ] = useState( {} );
 
   useEffect(
     () => {
@@ -39,31 +39,38 @@ export default function Portfolio( props ) {
 
   useEffect(
     () => {
-      console.log( "In useEffect for [trades]" );
-      trades.slice().reverse()
+      console.log( "In useEffect for [trades, props.viewingMonth]" );
+      setViewingMonthHoldings(new Array());    // To ensure correctness when changing viewingQuarter
+      trades
+        .slice()    // create a copy
+        .reverse()  // Start from earliest to latest
         .forEach(
           function ( trade ) {
-            console.log( trade );
-            let direction = trade.direction === "BUY" ? 1 : -1;
-            if ( !( trade.yearMonth in quarterlyHoldings ) ) {
-              quarterlyHoldings[ trade.yearMonth ] = {
-                [ trade.tickerSymbol ]: direction * trade.quantity
-              };
-            }
-            if ( trade.yearMonth in quarterlyHoldings ) {
-              if ( trade.tickerSymbol in quarterlyHoldings[ trade.yearMonth ] ) {
+            /* Only consider trades up to props.viewingMonth */
+            if ( trade.yearMonth <= props.viewingMonth ) {
+              let direction = trade.direction === "BUY" ? 1 : -1;
+              let updatedViewingMonthHoldings = viewingMonthHoldings;
 
-                quarterlyHoldings[ trade.yearMonth ][ trade.tickerSymbol ] += direction * trade.quantity;
+              if ( !( trade.tickerSymbol in viewingMonthHoldings ) ) {
+                /* Symbol is not in viewingMonthHolding's property, create symbol*/
+                updatedViewingMonthHoldings[ trade.tickerSymbol ] = direction * trade.quantity;
+                setViewingMonthHoldings( updatedViewingMonthHoldings );
+                return;   // Can't use continue in forEach loop.
               }
-              if ( !( trade.tickerSymbol in quarterlyHoldings[ trade.yearMonth ] ) ) {
-                quarterlyHoldings[ trade.yearMonth ][ trade.tickerSymbol ] = direction * trade.quantity;
+
+              if ( trade.tickerSymbol in viewingMonthHoldings ) {
+                /* Symbol is not in viewingMonthHolding's property, increment or decrement.*/
+                updatedViewingMonthHoldings[ trade.tickerSymbol ] += direction * trade.quantity;
+                setViewingMonthHoldings( updatedViewingMonthHoldings );
+                return;   // Can't use continue in forEach loop.
               }
             }
           }
         );
-        console.log("After looping, quarterlyHoldings: \n", quarterlyHoldings);
+      console.log( "props.viewingMonth", props.viewingMonth );
+      console.log( "After looping, viewingMonthHoldings: \n", viewingMonthHoldings );
     },
-    [ trades ]
+    [ trades, props.viewingMonth ]
   );
 
   const checkLoggedIn = async () => {
