@@ -1,6 +1,7 @@
 const LOG = ( process.env.LOG == 'true' ) ? true : false;
 const LOG_PORTFOLIO_ROUTER = ( process.env.LOG_PORTFOLIO_ROUTER == 'true' ) ? true : false;
 
+const axios = require( 'axios' );
 let Trade = require( '../models/trade.model' );
 const router = require( 'express' ).Router();
 
@@ -27,41 +28,48 @@ router.post( '/getTrades', async ( req, res ) => {
     const holdings = {};
     const tradesReversed = trades.slice().reverse();
     for ( let trade of tradesReversed ) {
-      console.log( "Iterating trade: ", trade );
-      /* Get market price as at req.user.viewingMonth */
+      console.log( "Iterating trade.tickerSymbol: ", trade.tickerSymbol );
+      console.log( "holdings: ", holdings );
 
+      /* Get market price as at req.user.viewingMonth */
+      let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
+        trade.tickerSymbol +
+        '&datatype=json' +
+        '&apikey=' +
+        process.env.VANTAGE_KEY;
+
+
+
+      let quote = await axios
+        .get( apiUrl )
+        .then( apiRes => {
+          for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
+            console.log( "property: ", property );
+            console.log( "property.slice(0, 7): ", property.slice( 0, 7 ) );
+            console.log( "req.user.latestMonth: ", req.user.latestMonth );
+            if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
+              return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
+            }
+          }
+          return;
+        } );
 
       let directionSign = ( trade.direction === "BUY" ) ? 1 : -1;
       if ( trade.tickerSymbol in holdings ) {
-        holdings[ trade.tickerSymbol ] += directionSign * trade.quantity;
+        console.log("debug holdings[trade.tickerSymbol]: ", holdings[trade.tickerSymbol]);
+        holdings[ trade.tickerSymbol ][ "quantity" ] += directionSign * trade.quantity;
       }
       if ( !( trade.tickerSymbol in holdings ) ) {
-        holdings[ trade.tickerSymbol ] = directionSign * trade.quantity;
+        holdings[ trade.tickerSymbol ] = {
+          tickerSymbol: trade.tickerSymbol,
+          quantity: directionSign * trade.quantity,
+          currentPricePerUnit: quote
+        };
+
       }
     }
 
-    //   /* Get market price as at req.user.viewingMonth. */
-    //   let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
-    //   tickerSymbol +
-    //   '&datatype=json' +
-    //   '&apikey=' +
-    //   process.env.VANTAGE_KEY;
 
-
-
-    // let filteredRes = await axios
-    //   .get( apiUrl )
-    //   .then( apiRes => {
-    //     for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
-    //       console.log( "property: ", property );
-    //       console.log( "property.slice(0, 7): ", property.slice( 0, 7 ) );
-    //       console.log( "req.user.latestMonth: ", req.user.latestMonth );
-    //       if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
-    //         return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
-    //       }
-    //     }
-    //     return;
-    //   } );
 
     if ( LOG && LOG_PORTFOLIO_ROUTER ) {
       console.log( "holdings: ", holdings );
