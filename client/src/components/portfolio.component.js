@@ -60,48 +60,49 @@ export default function Portfolio( props ) {
   //   [props.viewingMonth]
   // );
 
-  // useEffect(
-  //   () => {
+  useEffect(
+    () => {
 
-  //     // setViewingMonthHoldings({...initialViewingMonthHoldings});    // Clear state to avoid accumulating previous holdings.
-  //     setViewingMonthHoldings(prevViewingMonthHoldings => new Object);    // Clear state to avoid accumulating previous holdings.
-  //     console.log("In useEffect for [trades], after resetting viewingMonthHoldings: ", viewingMonthHoldings);
+      // setViewingMonthHoldings({...initialViewingMonthHoldings});    // Clear state to avoid accumulating previous holdings.
+      setViewingMonthHoldings({"US-DOLLAR": 0});    // Clear state to avoid accumulating previous holdings.
+      console.log("In useEffect for [trades], after resetting viewingMonthHoldings: ", viewingMonthHoldings);
 
-  //     trades
-  //       .slice()    // create a copy
-  //       .reverse()  // Start from earliest to latest
-  //       .forEach(
-  //         function ( trade ) {
-  //           /* Only consider trades up to props.viewingMonth */
-  //           if ( trade.yearMonth <= props.viewingMonth ) {
-  //             let direction = trade.direction === "BUY" ? 1 : -1;
-  //             let updatedViewingMonthHoldings = viewingMonthHoldings;
-  //             console.log("trade: ", trade);
-  //             console.log("viewingMonthsHoldings before updating for current trade: ", viewingMonthHoldings);
+      trades
+        .slice()    // create a copy
+        .reverse()  // Start from earliest to latest
+        .forEach(
+          function ( trade ) {
+            /* Only consider trades up to props.viewingMonth */
+            if ( trade.yearMonth <= props.viewingMonth ) {
+              let direction = trade.direction === "BUY" ? 1 : -1;
+              let updatedViewingMonthHoldings = viewingMonthHoldings;
+              console.log("trade: ", trade);
+              console.log("viewingMonthsHoldings before updating for current trade: ", viewingMonthHoldings);
 
-  //             if ( !( trade.tickerSymbol in viewingMonthHoldings ) ) {
-  //               /* Symbol is not in viewingMonthHolding's property, create symbol*/
-  //               updatedViewingMonthHoldings[ trade.tickerSymbol ] = direction * trade.quantity;
-  //               setViewingMonthHoldings( updatedViewingMonthHoldings );
-  //               console.log("viewingMonthHoldings after update for ticker not in: ", viewingMonthHoldings);
-  //               return;   // Can't use continue in forEach loop.
-  //             }
+              if ( !( trade.tickerSymbol in viewingMonthHoldings ) ) {
+                /* Symbol is not in viewingMonthHolding's property, create symbol*/
+                updatedViewingMonthHoldings[ trade.tickerSymbol ] = direction * trade.quantity;
+                setViewingMonthHoldings( updatedViewingMonthHoldings );
+                console.log("viewingMonthHoldings after update for ticker not in: ", viewingMonthHoldings);
+                return;   // Can't use continue in forEach loop.
+              }
 
-  //             if ( trade.tickerSymbol in viewingMonthHoldings ) {
-  //               /* Symbol is not in viewingMonthHolding's property, increment or decrement.*/
-  //               updatedViewingMonthHoldings[ trade.tickerSymbol ] += direction * trade.quantity;
-  //               setViewingMonthHoldings( updatedViewingMonthHoldings );
-  //               console.log("viewingMonthHoldings after update for ticker not in: ", viewingMonthHoldings);
-  //               return;   // Can't use continue in forEach loop.
-  //             }
-  //           }
-  //         }
-  //       );
-  //     console.log( "props.viewingMonth", props.viewingMonth );
-  //     console.log( "After looping, viewingMonthHoldings: \n", viewingMonthHoldings );
-  //   },
-  //   [ trades ]
-  // );
+              if ( trade.tickerSymbol in viewingMonthHoldings ) {
+                /* Symbol is not in viewingMonthHolding's property, increment or decrement.*/
+                updatedViewingMonthHoldings[ trade.tickerSymbol ] += direction * trade.quantity;
+                setViewingMonthHoldings( updatedViewingMonthHoldings );
+                console.log("viewingMonthHoldings after update for ticker not in: ", viewingMonthHoldings);
+                return;   // Can't use continue in forEach loop.
+              }
+            }
+          }
+        );
+      console.log( "props.viewingMonth", props.viewingMonth );
+      console.log("trades: ", trades);
+      console.log( "After looping, viewingMonthHoldings: \n", viewingMonthHoldings );
+    },
+    [ trades ]
+  );
 
   const checkLoggedIn = async () => {
     if ( localStorage.getItem( "jwt" ) ) {
