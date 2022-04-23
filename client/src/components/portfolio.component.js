@@ -35,7 +35,7 @@ export default function Portfolio( props ) {
       checkLoggedIn();
       displayTrades();
     },
-    [props.viewingMonth]
+    [ props.viewingMonth ]
   );
 
   useEffect(
@@ -43,63 +43,9 @@ export default function Portfolio( props ) {
       console.log( "portfolio.component.js useEffect [viewingMonthHoldings]" );
       console.log( "portfolio.component viewingMonthHoldings: ", viewingMonthHoldings );
     },
-    [viewingMonthHoldings]
+    [ viewingMonthHoldings ]
   );
 
-  // useEffect(
-  //   () => {
-  //     console.log( "portfolio.component.js useEffect [props.viewingMonth]" );
-  //     console.log( "portfolio.component props.viewingMonth: ", props.viewingMonth );
-  //     console.log( "portfolio.component props.latestMonth: ", props.latestMonth );
-  //     checkLoggedIn();
-  //     displayTrades();
-  //   },
-  //   [props.viewingMonth]
-  // );
-
-  // useEffect(
-  //   async () => {
-
-  //     // setViewingMonthHoldings({...initialViewingMonthHoldings});    // Clear state to avoid accumulating previous holdings.
-  //     await setViewingMonthHoldings({"US-DOLLAR": 0});    // Clear state to avoid accumulating previous holdings.
-  //     console.log("In useEffect for [trades], after resetting viewingMonthHoldings: ", viewingMonthHoldings);
-
-  //     trades
-  //       .slice()    // create a copy
-  //       .reverse()  // Start from earliest to latest
-  //       .forEach(
-  //         function ( trade ) {
-  //           /* Only consider trades up to props.viewingMonth */
-  //           if ( trade.yearMonth <= props.viewingMonth ) {
-  //             let direction = trade.direction === "BUY" ? 1 : -1;
-  //             let updatedViewingMonthHoldings = viewingMonthHoldings;
-  //             console.log("trade: ", trade);
-  //             console.log("viewingMonthsHoldings before updating for current trade: ", viewingMonthHoldings);
-
-  //             if ( !( trade.tickerSymbol in viewingMonthHoldings ) ) {
-  //               /* Symbol is not in viewingMonthHolding's property, create symbol*/
-  //               updatedViewingMonthHoldings[ trade.tickerSymbol ] = direction * trade.quantity;
-  //               setViewingMonthHoldings( updatedViewingMonthHoldings );
-  //               console.log("viewingMonthHoldings after update for ticker not in: ", viewingMonthHoldings);
-  //               return;   // Can't use continue in forEach loop.
-  //             }
-
-  //             if ( trade.tickerSymbol in viewingMonthHoldings ) {
-  //               /* Symbol is not in viewingMonthHolding's property, increment or decrement.*/
-  //               updatedViewingMonthHoldings[ trade.tickerSymbol ] += direction * trade.quantity;
-  //               setViewingMonthHoldings( updatedViewingMonthHoldings );
-  //               console.log("viewingMonthHoldings after update for ticker not in: ", viewingMonthHoldings);
-  //               return;   // Can't use continue in forEach loop.
-  //             }
-  //           }
-  //         }
-  //       );
-  //     console.log( "props.viewingMonth", props.viewingMonth );
-  //     console.log("trades: ", trades);
-  //     console.log( "After looping, viewingMonthHoldings: \n", viewingMonthHoldings );
-  //   },
-  //   [ trades ]
-  // );
 
   const checkLoggedIn = async () => {
     if ( localStorage.getItem( "jwt" ) ) {
@@ -132,7 +78,7 @@ export default function Portfolio( props ) {
     } ).then( res => {
       console.log( "displayTrades received res.data from server: \n", res.data );
       setTrades( res.data.trades );
-      setViewingMonthHoldings(res.data.viewingMonthHoldings);
+      setViewingMonthHoldings( res.data.holdings );
     } );
 
   };
@@ -141,35 +87,39 @@ export default function Portfolio( props ) {
     <Container>
 
       <Row>
-        <h5>Current Holdings</h5>
+        <h5>Current Holdings as at {props.viewingMonth}</h5>
         <Col xs="12">
           <Table id="holdingsTable" striped bordered hover responsive>
             <thead>
               <tr>
                 <th>Ticker</th>
                 <th>Quantity</th>
-                <th>Average Purchase Price</th>
-                <th>Current Market Price</th>
-                <th>Profit (Loss)</th>
+                <th>Current Price</th>
+                <th>Current Holding Value</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr>
-                <td>AAPL</td>
-                <td>20,000</td>
-                <td>$134.00</td>
-                <td>$174.00</td>
-                <td>$800,000</td>
-              </tr>
+              { viewingMonthHoldings ? Object.keys( viewingMonthHoldings ).map( ( tickerSymbol ) => {
+                return (
+                  <tr>
+                    <td>{ viewingMonthHoldings[ tickerSymbol ].tickerSymbol }</td>
+                    <td>{ viewingMonthHoldings[ tickerSymbol ].quantity }</td>
+                    <td>{ viewingMonthHoldings[ tickerSymbol ].currentPricePerUnit }</td>
+                    <td>{ viewingMonthHoldings[ tickerSymbol ].currentValue }</td>
+                  </tr>
+                );
+              } ) : <></> }
             </tbody>
 
           </Table>
+
+
         </Col>
       </Row>
 
       <Row>
-        <h5>Transaction History</h5>
+        <h5>Transaction History up to {props.viewingMonth}</h5>
         <Col xs="12">
           <Table id="transactionHistoryTable" striped bordered hover responsive>
             <thead>
@@ -191,6 +141,8 @@ export default function Portfolio( props ) {
                 </tr>
               ) ) : <></> }
             </tbody>
+
+
 
           </Table>
         </Col>
