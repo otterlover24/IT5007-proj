@@ -190,36 +190,6 @@ export default function Portfolio( props ) {
             <tbody>
               { trades ? trades.map( trade => (
                 <tr>
-                  <th>Ticker</th>
-                  <th>Quantity</th>
-                  <th>Current Market Price</th>
-                  <th>Value</th>
-                </tr>
-              ) ) : <></> }
-            </tbody>
-
-
-
-          </Table>
-        </Col>
-      </Row>
-
-      <Row>
-        <h5>Transaction History</h5>
-        <Col xs="12">
-          <Table id="transactionHistoryTable" striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Ticker</th>
-                <th>Direction</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              { trades ? trades.map( trade => (
-                <tr>
                   <td>{ trade.yearMonth }</td>
                   <td>{ trade.tickerSymbol }</td>
                   <td>{ trade.direction }</td>
