@@ -1,6 +1,5 @@
 const axios = require( 'axios' );
 const router = require( 'express' ).Router();
-var request = require( 'request' );
 const passport = require( "passport" );
 let Ticker = require( '../models/ticker.model' );
 let User = require( "../models/user.model" );
