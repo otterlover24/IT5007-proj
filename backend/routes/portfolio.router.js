@@ -70,22 +70,27 @@ router.post( '/getTrades', async ( req, res ) => {
         holdings[ trade.tickerSymbol ] = {
           tickerSymbol: trade.tickerSymbol,
           quantity: directionSign * trade.quantity,
-          currentPricePerUnit: parseFloat(quote),
-          currentValue: directionSign * trade.quantity * parseFloat(quote),
+          currentPricePerUnit: parseFloat( quote ),
+          currentValue: directionSign * trade.quantity * parseFloat( quote ),
         };
 
       }
     }
 
-
-
     if ( LOG && LOG_PORTFOLIO_ROUTER ) {
       console.log( "holdings: ", holdings );
     }
 
+    /* Compute total portfolio value. */
+    let portfolioValue = 0.0;
+    for ( let holdingKey in holdings ) {
+      portfolioValue += holdings[holdingKey]["currentValue"];
+    }
+
     let collatedData = {
       trades: trades,
-      holdings: holdings
+      holdings: holdings,
+      portfolioValue: portfolioValue,
     };
 
     return res.json( collatedData );
