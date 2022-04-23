@@ -85,7 +85,7 @@ export default function Register() {
         }
 
         catch ( err ) {
-            alert( `Error: ${err.response.data.Error}` );
+            alert( `Error: ${JSON.stringify(err)}` );
         }
     };
 
