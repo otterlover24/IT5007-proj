@@ -130,21 +130,6 @@ export default function Portfolio( props ) {
 
   return (
     <Container>
-      <Row>
-        <Col xs="12" md="6">
-          <div className="card expense-input-card">
-            <div className="card-body">
-              <h5>Net Worth Chart</h5>
-              <div style={ { width: 500 } }>
-                <Line data={ netWorthData } />
-              </div>
-
-
-
-            </div>
-          </div>
-        </Col>
-      </Row>
 
       <Row>
         <h5>Current Holdings</h5>
