@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../App.css";
 import Axios from "axios";
 import "../components/component.css";
@@ -55,7 +55,7 @@ export default function Portfolio( props ) {
   //     // setViewingMonthHoldings({...initialViewingMonthHoldings});    // Clear state to avoid accumulating previous holdings.
   //     setViewingMonthHoldings(prevViewingMonthHoldings => new Object);    // Clear state to avoid accumulating previous holdings.
   //     console.log("In useEffect for [trades], after resetting viewingMonthHoldings: ", viewingMonthHoldings);
-      
+
   //     trades
   //       .slice()    // create a copy
   //       .reverse()  // Start from earliest to latest
@@ -92,7 +92,7 @@ export default function Portfolio( props ) {
   //   [ trades ]
   // );
 
-  checkLoggedIn = async () => {
+  const checkLoggedIn = async () => {
     if ( localStorage.getItem( "jwt" ) ) {
       Axios( {
         method: "get",
@@ -110,7 +110,7 @@ export default function Portfolio( props ) {
     }
   };
 
-  displayTrades = async () => {
+  const displayTrades = async () => {
     console.log( `in displayTrades` );
 
     /* Get watchlist from server */
@@ -195,53 +195,42 @@ export default function Portfolio( props ) {
                   <th>Current Market Price</th>
                   <th>Value</th>
                 </tr>
-              </thead>
+              ) ) : <></> }
+            </tbody>
 
-              <tbody>
+
+
+          </Table>
+        </Col>
+      </Row>
+
+      <Row>
+        <h5>Transaction History</h5>
+        <Col xs="12">
+          <Table id="transactionHistoryTable" striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Ticker</th>
+                <th>Direction</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              { trades ? trades.map( trade => (
                 <tr>
-                  <td>AAPL</td>
-                  <td>20,000</td>
-                  <td>$134.00</td>
-                  <td>$174.00</td>
-                  <td>$800,000</td>
+                  <td>{ trade.yearMonth }</td>
+                  <td>{ trade.tickerSymbol }</td>
+                  <td>{ trade.direction }</td>
+                  <td>{ trade.quantity }</td>
                 </tr>
-              </tbody>
+              ) ) : <></> }
+            </tbody>
 
-
-            </Table>
-          </Col>
-        </Row>
-
-        <Row>
-          <h5>Transaction History</h5>
-          <Col xs="12">
-            <Table id="transactionHistoryTable" striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Ticker</th>
-                  <th>Direction</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                { this.state.trades ? this.state.trades.map( trade => (
-                  <tr>
-                    <td>{ trade.yearMonth }</td>
-                    <td>{ trade.tickerSymbol }</td>
-                    <td>{ trade.direction }</td>
-                    <td>{ trade.quantity }</td>
-                  </tr>
-                ) ) : <></> }
-              </tbody>
-
-            </Table>
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
+          </Table>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
-
-export default Portfolio;
