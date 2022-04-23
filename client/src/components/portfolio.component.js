@@ -38,6 +38,17 @@ export default function Portfolio( props ) {
     []
   );
 
+  useEffect(
+    () => {
+      console.log( "portfolio.component.js useEffect []" );
+      console.log( "portfolio.component props.viewingMonth: ", props.viewingMonth );
+      console.log( "portfolio.component props.latestMonth: ", props.latestMonth );
+      checkLoggedIn();
+      displayTrades();
+    },
+    [props.viewingMonth]
+  );
+
   // useEffect(
   //   () => {
   //     console.log( "portfolio.component.js useEffect [props.viewingMonth]" );
