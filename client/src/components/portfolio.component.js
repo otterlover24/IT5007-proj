@@ -13,8 +13,8 @@ import {
 export default function Portfolio( props ) {
 
   const [ trades, setTrades ] = useState( [] );
-  const initialViewingMonthHoldings = {};
-  const [ viewingMonthHoldings, setViewingMonthHoldings ] = useState( initialViewingMonthHoldings );
+  const [ viewingMonthHoldings, setViewingMonthHoldings ] = useState( {} );
+  const [ viewingMonthTotalValue, setViewingMonthTotalValue ] = useState( null );
 
   useEffect(
     () => {
@@ -79,15 +79,27 @@ export default function Portfolio( props ) {
       console.log( "displayTrades received res.data from server: \n", res.data );
       setTrades( res.data.trades );
       setViewingMonthHoldings( res.data.holdings );
+      setViewingMonthTotalValue(res.data.portfolioValue);
     } );
 
   };
 
   return (
     <Container>
+      { viewingMonthTotalValue ? (
+            <Row>
+            <h5>Total Portfolio Value As At {props.viewingMonth}: USD${viewingMonthTotalValue}</h5>
+          </Row>
+      ) : (
+        <></>
+      )
+
+
+      }
+
 
       <Row>
-        <h5>Current Holdings as at {props.viewingMonth}</h5>
+        <h5>Current Holdings As Tt {props.viewingMonth}</h5>
         <Col xs="12">
           <Table id="holdingsTable" striped bordered hover responsive>
             <thead>
@@ -132,7 +144,7 @@ export default function Portfolio( props ) {
             </thead>
 
             <tbody>
-              { trades ? trades.map( trade => (
+              { trades ? trades.filter(trade => trade.tickerSymbol !== "US-DOLLAR").map( trade => (
                 <tr>
                   <td>{ trade.yearMonth }</td>
                   <td>{ trade.tickerSymbol }</td>
