@@ -49,7 +49,7 @@ class Portfolio extends React.Component {
   //     // setViewingMonthHoldings({...initialViewingMonthHoldings});    // Clear state to avoid accumulating previous holdings.
   //     setViewingMonthHoldings(prevViewingMonthHoldings => new Object);    // Clear state to avoid accumulating previous holdings.
   //     console.log("In useEffect for [trades], after resetting viewingMonthHoldings: ", viewingMonthHoldings);
-
+      
   //     trades
   //       .slice()    // create a copy
   //       .reverse()  // Start from earliest to latest
@@ -108,23 +108,19 @@ class Portfolio extends React.Component {
     console.log( `in displayTrades` );
 
     /* Get watchlist from server */
-    let res = await Axios( {
+    await Axios( {
       method: "post",
       url: "http://localhost:5000/api/protected/portfolio/getTrades",
       headers: {
         Authorization: localStorage.getItem( "jwt" ),
       },
+    } ).then( res => {
+      console.log( "displayTrades received res.data from server: \n", res.data );
+      setTrades( res.data.trades );
+      setViewingMonthHoldings(res.data.holdings);
     } );
 
-    console.log( "displayTrades received res.data from server: \n", res.data );
-    this.setState({trades: res.data.trades, viewMonthlyHoldings: res.data.holdings});
-
-
     /* Get market price for viewingMonthHoldings */
-    for ( let tickerSymbol in this.state.viewingMonthHoldings ) {
-      console.log( "tickerSymbol: ", tickerSymbol );
-      console.log( "viewingMonthHoldings[tickerSymbol]: ", this.state.viewingMonthHoldings[ tickerSymbol ] );
-    }
 
   };
 
