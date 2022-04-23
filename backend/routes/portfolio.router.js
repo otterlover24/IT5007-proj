@@ -70,7 +70,8 @@ router.post( '/getTrades', async ( req, res ) => {
         holdings[ trade.tickerSymbol ] = {
           tickerSymbol: trade.tickerSymbol,
           quantity: directionSign * trade.quantity,
-          currentPricePerUnit: quote
+          currentPricePerUnit: parseFloat(quote),
+          currentValue: directionSign * trade.quantity * parseFloat(quote),
         };
 
       }
