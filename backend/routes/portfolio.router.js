@@ -11,8 +11,8 @@ router.post( '/getTrades', async ( req, res ) => {
       .find(
         {
           userId: req.user._id,
-          yearMonth: {$lte: req.user.viewingMonth}
-          
+          yearMonth: { $lte: req.user.viewingMonth }
+
         }
       )
       .sort(
@@ -20,33 +20,57 @@ router.post( '/getTrades', async ( req, res ) => {
           "yearMonth": "descending"
         }
       );
-    if (LOG && LOG_PORTFOLIO_ROUTER) {
-      console.log("In portfolio.router /getTrades, received trades from DB: \n", trades);
+    if ( LOG && LOG_PORTFOLIO_ROUTER ) {
+      console.log( "In portfolio.router /getTrades, received trades from DB: \n", trades );
     }
 
     const holdings = {};
-    trades
-      .slice()
-      .reverse()
-      .forEach((trade) => {
-        console.log("Iterating trade: ", trade);
-        let directionSign = (trade.direction === "BUY") ? 1 : -1;
-        if (trade.tickerSymbol in holdings) {
-          holdings[trade.tickerSymbol ] += directionSign * trade.quantity;
-        }
-        if (!(trade.tickerSymbol in holdings)) {
-          holdings[trade.tickerSymbol ] = directionSign * trade.quantity;
-        }
-      })
-    
-      if (LOG && LOG_PORTFOLIO_ROUTER) {
-        console.log("holdings: ", holdings);
+    const tradesReversed = trades.slice().reverse();
+    for ( let trade of tradesReversed ) {
+      console.log( "Iterating trade: ", trade );
+      /* Get market price as at req.user.viewingMonth */
+
+
+      let directionSign = ( trade.direction === "BUY" ) ? 1 : -1;
+      if ( trade.tickerSymbol in holdings ) {
+        holdings[ trade.tickerSymbol ] += directionSign * trade.quantity;
       }
-      
-      let collatedData = {
-        trades: trades,
-        holdings: holdings
-      };
+      if ( !( trade.tickerSymbol in holdings ) ) {
+        holdings[ trade.tickerSymbol ] = directionSign * trade.quantity;
+      }
+    }
+
+    //   /* Get market price as at req.user.viewingMonth. */
+    //   let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
+    //   tickerSymbol +
+    //   '&datatype=json' +
+    //   '&apikey=' +
+    //   process.env.VANTAGE_KEY;
+
+
+
+    // let filteredRes = await axios
+    //   .get( apiUrl )
+    //   .then( apiRes => {
+    //     for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
+    //       console.log( "property: ", property );
+    //       console.log( "property.slice(0, 7): ", property.slice( 0, 7 ) );
+    //       console.log( "req.user.latestMonth: ", req.user.latestMonth );
+    //       if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
+    //         return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
+    //       }
+    //     }
+    //     return;
+    //   } );
+
+    if ( LOG && LOG_PORTFOLIO_ROUTER ) {
+      console.log( "holdings: ", holdings );
+    }
+
+    let collatedData = {
+      trades: trades,
+      holdings: holdings
+    };
 
     return res.json( collatedData );
   }
@@ -72,8 +96,8 @@ router.post( '/updateHoldings', async ( req, res ) => {
           "yearMonth": "descending"
         }
       );
-    if (LOG && LOG_PORTFOLIO_ROUTER) {
-      console.log("In /getTrades, received trades from DB: \n", trades);
+    if ( LOG && LOG_PORTFOLIO_ROUTER ) {
+      console.log( "In /getTrades, received trades from DB: \n", trades );
     }
     return res.json( trades );
   }
