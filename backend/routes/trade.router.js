@@ -30,7 +30,7 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
       console.log( `Found quote for tickerSymbol ${tickerSymbol} in MongoDB.` );
       console.log( "Got from MongoDB dbQuote: ", dbQuote );
     }
-    return dbQuote;
+    return dbQuote.price;
   }
 
   /* 
@@ -108,7 +108,7 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
       console.log( "quoteFromDb: ", quoteFromDb );
     }
 
-    return quoteFromDb;
+    return quoteFromDb.price;
   }
 }
 
