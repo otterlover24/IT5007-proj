@@ -99,7 +99,7 @@ export default function Portfolio( props ) {
 
 
       <Row>
-        <h5>Current Holdings As Tt {props.viewingMonth}</h5>
+        <h5>Current Holdings As At {props.viewingMonth}</h5>
         <Col xs="12">
           <Table id="holdingsTable" striped bordered hover responsive>
             <thead>

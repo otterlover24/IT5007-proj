@@ -47,3 +47,12 @@ const initIncomeStatements = [{
 	netIncome: "1",
 }];
 db.incomestatements.insertMany(initIncomeStatements);
+
+/* quotes colleciton */
+db.quotes.remove({});
+const initQuotes = [{
+	tickerSymbol: "initTickerSymbol",
+	yearMonth: "2014-06",
+	price: "1.0"
+}]
+db.quotes.insertMany(initQuotes);

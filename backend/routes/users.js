@@ -127,21 +127,25 @@ router.post( "/register", async ( req, res ) => {
       return res.status( 400 ).json( { Error: "Not all fields entered" } );
     }
     if ( username.length < 3 ) {
+      console.log("Username is not at least 3 characters long.");
       return res
         .status( 400 )
-        .json( { Error: "Username is not atleast 3 characters long" } );
+        .json( { Error: "Username is not at least 3 characters long." } );
     }
     if ( password.length < 8 ) {
+      console.log("Password is not at least 8 characters long.");
       return res
         .status( 400 )
-        .json( { Error: "Password is not atleast 8 characters long" } );
+        .json( { Error: "Password is not atleast 8 characters long." } );
     }
     if ( password !== confirmPassword ) {
-      return res.status( 400 ).json( { Error: "Passwords do not match" } );
+      console.log("Password confirmation does not match.")
+      return res.status( 400 ).json( { Error: "Password confirmation does not match." } );
     }
 
     const isTaken = await User.findOne( { username: username } );
     if ( isTaken ) {
+      console.log("Username is taken.");
       return res.status( 400 ).json( { Error: "Username is taken" } );
     }
     

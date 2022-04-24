@@ -12,11 +12,7 @@
 - Create a .env file in the backend folder to include the following configuration secrets (you may use the secrets I provided, but please keep the SECRET_KEY and VANTAGE_KEY confidential):
 	- MONGODB_URI: URI of MongoDB database
 	- SECRET: secret key used for password hasing 
-	- VANTAGE_KEY: API key for Alpha Vantage.
-- In `backend` folder, start the server via `node server.js`.
-- In the `client` folder, run `npm start` to compile JSX to JS.
-- Open the website in browser at URI `http://localhost:3000`.
-- In the navbar, click on `Register` link and create new user.
+	- VANTAGE_KEY: API kvbar, click on `Register` link and create new user.
 - Log in as new user via the `Sign in` link on Navbar.
 - You may view the page mockups for News, Trade, Watchlist, Porfolio pages.
 - Watchlist page has been partially implemented. You may enter ticker to add to watchlist. The quotation will then be reflected in the table below. (You may have to refresh the page, I will fix this in the submission.)
@@ -57,6 +53,8 @@
 	- eeeee / eeeee11111
 	- fffff / fffff11111
 	- a / aaa11111
+	- bbb / bbb11111
+	- abc / abc12345
 ## TS TODO
 - General
 	- {DONE} Implements log levels to limit console.log output.  
@@ -99,7 +97,7 @@
 			- Backend: portfolio.router.js
 				- Compute holdings for each month from beginMonth to latestMonth.
 					- Use transaction history to compute delta from previous month.
-					- **{TODO}Just do on frontend based on transaction history, then get value of current holding, ignore net worth chart**
+					- {DONE}Just do on frontend based on transaction history, then get value of current holding, ignore net worth chart
 					- Update every time latestMonth changes or new trade arrives.
 						- Use middleware
 							- Test passing parameters at the end of trade first, then refactor to separate module.
@@ -116,6 +114,13 @@
 	- /trade
 		- Form to buy or sell a specific ticker at market price
 		- {DONE} Get quote for price at time of trade and store alongside trade history.
+		- **{TODO} Create function to try to get quote from database, only fetch from API if not found.**
+			- Create collection for quotes.
+				- {DONE} Create model
+				- {DONE} Init script
+				- Import in trade.router.js
+			- Create function for getting quotes.
+			- Use function in `trade.router.js router.post('/getQuote')` and `portfolio.router.js router.post('/getTrades')`.
 	- /news
 		- Form to edit subscription
 		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
