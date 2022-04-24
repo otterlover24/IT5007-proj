@@ -20,6 +20,9 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
       yearMonth: yearMonth,
     }
   );
+  if (LOG && LOG_TRADE_ROUTER) {
+    console.log(`dbQuote: `, dbQuote);
+  }
 
   /* Got quote from database, return value */
   if ( dbQuote ) {
@@ -37,7 +40,7 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
     - Return quote for yearMonth
   */
   if ( !dbQuote ) {
-    if ( LOG && LOG_PORTFOLIO_ROUTER ) {
+    if ( LOG && LOG_TRADE_ROUTER ) {
       console.log( `Did not find quote for tickerSymbol ${tickerSymbol} in MongoDB. Fetching from API.` );
     }
 
@@ -51,8 +54,12 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
     let filteredRes = await axios
       .get( apiUrl )
       .then( apiRes => {
+        if ( LOG && LOG_TRADE_ROUTER ) {
+          console.log( `apiRes: `, apiRes );
+        }
+    
         for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
-          if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
+          if ( property.slice( 0, 7 ) === yearMonth ) {
             return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
           }
         }
@@ -60,7 +67,7 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
         return null;
       } );
 
-    if ( LOG && LOG_TRADE_ROUTER && LOG_TRADE_ROUTER_GET_QUOTE ) {
+    if ( LOG && LOG_TRADE_ROUTER ) {
       console.log( "filteredRes: ", filteredRes );
     }
 
@@ -203,37 +210,7 @@ router.post( '/getQuote', async ( req, res ) => {
       console.log( `getQuoteWithCaching(${tickerSymbol}, $latestMonth}): `, getQuoteWithCachingRes );
     }
 
-    let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
-      tickerSymbol +
-      '&datatype=json' +
-      '&apikey=' +
-      process.env.VANTAGE_KEY;
-
-    if ( LOG && LOG_TRADE_ROUTER ) {
-      console.log( "tickerSymbol: ", tickerSymbol );
-      console.log( "apiUrl: ", apiUrl );
-    }
-
-
-    let filteredRes = await axios
-      .get( apiUrl )
-      .then( apiRes => {
-        for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
-          console.log( "property: ", property );
-          console.log( "property.slice(0, 7): ", property.slice( 0, 7 ) );
-          console.log( "req.user.latestMonth: ", req.user.latestMonth );
-          if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
-            return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
-          }
-        }
-        return;
-      } );
-
-    if ( LOG && LOG_TRADE_ROUTER && LOG_TRADE_ROUTER_GET_QUOTE ) {
-      console.log( "filteredRes: ", filteredRes );
-    }
-
-    return res.json( filteredRes );
+    return res.json( getQuoteWithCachingRes );
   }
 
   catch ( err ) {
