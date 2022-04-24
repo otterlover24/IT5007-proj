@@ -34,7 +34,7 @@ const incrementMonth = ( currYearMonth ) => {
     { year: currYearMonth.year + 1, month: 1 };
 };
 
-const incrementQuarter = (currYearMonth) => {
+const incrementQuarter = ( currYearMonth ) => {
   return incrementMonth(
     incrementMonth(
       incrementMonth(
@@ -42,7 +42,7 @@ const incrementQuarter = (currYearMonth) => {
       )
     )
   );
-}
+};
 
 const decrementMonth = ( currYearMonth ) => {
   if ( LOG && LOG_USER ) console.log( `In incrementMonth. currYearMonth.year = ${currYearMonth.year}, currYearMonth.month = ${currYearMonth.month}.` );
@@ -52,7 +52,7 @@ const decrementMonth = ( currYearMonth ) => {
     { year: currYearMonth.year - 1, month: 12 };
 };
 
-const decrementQuarter = (currYearMonth) => {
+const decrementQuarter = ( currYearMonth ) => {
   return decrementMonth(
     decrementMonth(
       decrementMonth(
@@ -60,7 +60,7 @@ const decrementQuarter = (currYearMonth) => {
       )
     )
   );
-}
+};
 
 const lessThanOrEqual = ( yearMonth1, yearMonth2 ) => {
   return yearMonth1.year * 100 + yearMonth1.month <= yearMonth2.year * 100 + yearMonth2.month;
@@ -84,7 +84,7 @@ router.get( "/test", ( req, res ) => {
 
 router.post( "/login", async ( req, res ) => {
   try {
-    if (LOG && LOG_USER) {console.log("/login received req: ", req)};
+    if ( LOG && LOG_USER ) { console.log( "/login received req: ", req ); };
     const { username, password } = req.body;
     if ( !username || !password ) {
       return res
@@ -118,6 +118,10 @@ router.post( "/login", async ( req, res ) => {
 
 router.post( "/register", async ( req, res ) => {
   try {
+    if ( LOG && LOG_USER ) {
+      console.log( "router.post(/register, ...) received req.body: ", req.body );
+    }
+
     let { username, password, confirmPassword } = req.body;
     if ( !username || !password || !confirmPassword ) {
       return res.status( 400 ).json( { Error: "Not all fields entered" } );

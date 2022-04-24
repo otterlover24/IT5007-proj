@@ -48,7 +48,7 @@ export default function Register() {
 
             const userRes = await Axios.post( "http://localhost:5000/api/users/register", registerUser );
             const userId = userRes.data.user._id;
-            console.log( "After register form submission, server returned user: ", userRes );
+            console.log( "After register form submission, server returned user: ", userRes.data );
 
             /* Automatic login. */
             const loginUser = {

@@ -56,6 +56,7 @@
 	- ddddd / ddddd11111
 	- eeeee / eeeee11111
 	- fffff / fffff11111
+	- a / aaa11111
 ## TS TODO
 - General
 	- {DONE} Implements log levels to limit console.log output.  
