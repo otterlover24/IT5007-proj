@@ -79,7 +79,7 @@ export default function Portfolio( props ) {
       console.log( "displayTrades received res.data from server: \n", res.data );
       setTrades( res.data.trades );
       setViewingMonthHoldings( res.data.holdings );
-      setViewingMonthTotalValue(res.data.portfolioValue);
+      setViewingMonthTotalValue( res.data.portfolioValue );
     } );
 
   };
@@ -87,9 +87,9 @@ export default function Portfolio( props ) {
   return (
     <Container>
       { viewingMonthTotalValue ? (
-            <Row>
-            <h5>Total Portfolio Value As At {props.viewingMonth}: USD${viewingMonthTotalValue}</h5>
-          </Row>
+        <Row>
+          <h5>Total Portfolio Value As At { props.viewingMonth }: USD${ viewingMonthTotalValue.toFixed( 2 ) }</h5>
+        </Row>
       ) : (
         <></>
       )
@@ -99,7 +99,7 @@ export default function Portfolio( props ) {
 
 
       <Row>
-        <h5>Current Holdings As At {props.viewingMonth}</h5>
+        <h5>Current Holdings As At { props.viewingMonth }</h5>
         <Col xs="12">
           <Table id="holdingsTable" striped bordered hover responsive>
             <thead>
@@ -117,8 +117,8 @@ export default function Portfolio( props ) {
                   <tr>
                     <td>{ viewingMonthHoldings[ tickerSymbol ].tickerSymbol }</td>
                     <td>{ viewingMonthHoldings[ tickerSymbol ].quantity }</td>
-                    <td>{ viewingMonthHoldings[ tickerSymbol ].currentPricePerUnit }</td>
-                    <td>{ viewingMonthHoldings[ tickerSymbol ].currentValue }</td>
+                    <td>{ viewingMonthHoldings[ tickerSymbol ].currentPricePerUnit.toFixed( 2 ) }</td>
+                    <td>{ viewingMonthHoldings[ tickerSymbol ].currentValue.toFixed( 2 ) }</td>
                   </tr>
                 );
               } ) : <></> }
@@ -131,7 +131,7 @@ export default function Portfolio( props ) {
       </Row>
 
       <Row>
-        <h5>Transaction History up to {props.viewingMonth}</h5>
+        <h5>Transaction History up to { props.viewingMonth }</h5>
         <Col xs="12">
           <Table id="transactionHistoryTable" striped bordered hover responsive>
             <thead>
@@ -144,7 +144,7 @@ export default function Portfolio( props ) {
             </thead>
 
             <tbody>
-              { trades ? trades.filter(trade => trade.tickerSymbol !== "US-DOLLAR").map( trade => (
+              { trades ? trades.filter( trade => trade.tickerSymbol !== "US-DOLLAR" ).map( trade => (
                 <tr>
                   <td>{ trade.yearMonth }</td>
                   <td>{ trade.tickerSymbol }</td>
