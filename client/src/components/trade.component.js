@@ -95,7 +95,7 @@ export default function Trade( props ) {
     }
     catch ( err ) {
       console.log( "Caught error in handleGetQuote, printing err:\n", err );
-      alert( "Get Quote Failed!" );
+      alert( "Get Quote failed. Please wait a minute for API quota to reset." );
     }
   };
 

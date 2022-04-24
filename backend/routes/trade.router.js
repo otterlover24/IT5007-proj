@@ -1,116 +1,11 @@
 const LOG = ( process.env.LOG === 'true' ) ? true : false;
 const LOG_TRADE_ROUTER = ( process.env.LOG_TRADE_ROUTER === 'true' ) ? true : false;
-const LOG_TRADE_ROUTER_GET_QUOTE = ( process.env.LOG_TRADE_ROUTER_GET_QUOTE === 'true' ) ? true : false;
-const LOG_UPDATE_HOLDINGS = ( process.env.LOG_UPDATE_HOLDINGS === 'true' ) ? true : false;
 
 const router = require( 'express' ).Router();
-const axios = require( 'axios' );
 let Trade = require( '../models/trade.model' );
-let Quote = require( '../models/quote.model' );
+const { getQuoteWithCaching } = require( './utils/commonDbOps' );
 
 
-async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
-  if ( LOG && LOG_TRADE_ROUTER ) {
-    console.log( `in getQuoteWithCaching(${tickerSymbol}, ${yearMonth})` );
-  }
-
-  let dbQuote = await Quote.findOne(
-    {
-      tickerSymbol: tickerSymbol,
-      yearMonth: yearMonth,
-    }
-  );
-  if ( LOG && LOG_TRADE_ROUTER ) {
-    console.log( `dbQuote: `, dbQuote );
-  }
-
-  /* Got quote from database, return value */
-  if ( dbQuote ) {
-    if ( LOG && LOG_TRADE_ROUTER && LOG_TRADE_ROUTER_GET_QUOTE ) {
-      console.log( `Found quote for tickerSymbol ${tickerSymbol} in MongoDB.` );
-      console.log( "Got from MongoDB dbQuote: ", dbQuote );
-    }
-    return dbQuote.price;
-  }
-
-  /* 
-  No quote from database.
-    - Make call to get quote from API. 
-    - Save all results from API.
-    - Return quote for yearMonth
-  */
-  if ( !dbQuote ) {
-    if ( LOG && LOG_TRADE_ROUTER ) {
-      console.log( `Did not find quote for tickerSymbol ${tickerSymbol} in MongoDB. Fetching from API.` );
-    }
-
-    let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
-      tickerSymbol +
-      '&datatype=json' +
-      '&apikey=' +
-      process.env.VANTAGE_KEY;
-
-
-    /* Save results into quotes collection */
-    let apiRes = await axios
-      .get( apiUrl );
-
-    if ( LOG && LOG_TRADE_ROUTER ) {
-      console.log( `Got apiRes.data['Monthly Adjusted Time Series'] from API: `, apiRes.data[ 'Monthly Adjusted Time Series' ] );
-    }
-
-    for ( let property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
-      if ( LOG && LOG_TRADE_ROUTER ) {
-        console.log( `property: `, property );
-      }
-      let apiYearMonth = property.slice( 0, 7 );
-      let apiPrice = apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
-      let quoteUpdate = {
-        tickerSymbol: tickerSymbol,
-        yearMonth: apiYearMonth,
-        price: parseFloat( apiPrice ),
-      };
-
-      if ( LOG && LOG_TRADE_ROUTER && LOG_TRADE_ROUTER_GET_QUOTE ) {
-        console.log( `Before await Quote.findOneAndUpdate, quoteUpdate: `, quoteUpdate );
-      }
-      let quoteUpdateDoc = await Quote.findOneAndUpdate(
-        {
-          tickerSymbol: tickerSymbol,
-          yearMonth: apiYearMonth,
-        },
-        quoteUpdate,
-        {
-          new: true,
-          upsert: true,
-        }
-      );
-      console.log( "After Quote.findOneAndUpdate" );
-      if ( LOG && LOG_TRADE_ROUTER ) {
-        console.log("After findOneAndUpdate, in braces");
-        console.log( "Updating MongoDB returned quoteUpdateDoc: ", quoteUpdateDoc );
-      }
-
-    }
-
-
-    /* Get relevant result from quotes colleciton */
-    let quoteFromDb = await Quote
-      .findOne(
-        {
-          "tickerSymbol": tickerSymbol,
-          "yearMonth": yearMonth
-        }
-      );
-
-
-    if ( LOG && LOG_TRADE_ROUTER ) {
-      console.log( "quoteFromDb: ", quoteFromDb );
-    }
-
-    return quoteFromDb.price;
-  }
-}
 
 router.post( '/submitTrade', async ( req, res ) => {
   try {
@@ -201,8 +96,8 @@ router.post( '/submitTrade', async ( req, res ) => {
             return res.status( 400 ).json( { Error: "TESTFAILURE returns failure" } );
           }
           if ( trade.tickerSymbol !== "TESTFAILURE" ) {
-            req.newTradeCashStatus = "success";
-            // return res.json( { message: "success" } );
+            // req.newTradeCashStatus = "success";
+            return res.json( { message: "success" } );
           }
         } )
         .catch( err => {
