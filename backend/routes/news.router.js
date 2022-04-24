@@ -121,7 +121,7 @@ router.get(
             }
           );
           if ( LOG && LOG_NEWS_ROUTER && LOG_NEWS_ROUTER_FIND_ONE_AND_UPDATE ) {
-            console.log( "incomeStatmentReports" );
+            console.log( "incomeStatmentReportsDoc" );
             console.log( incomeStatementReportsDoc );
           }
         }

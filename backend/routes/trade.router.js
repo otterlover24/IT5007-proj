@@ -10,8 +10,8 @@ let Quote = require( '../models/quote.model' );
 
 
 async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
-  if (LOG && LOG_TRADE_ROUTER) {
-    console.log(`in getQuoteWithCaching(${tickerSymbol}, ${yearMonth})`);
+  if ( LOG && LOG_TRADE_ROUTER ) {
+    console.log( `in getQuoteWithCaching(${tickerSymbol}, ${yearMonth})` );
   }
 
   let dbQuote = await Quote.findOne(
@@ -20,8 +20,8 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
       yearMonth: yearMonth,
     }
   );
-  if (LOG && LOG_TRADE_ROUTER) {
-    console.log(`dbQuote: `, dbQuote);
+  if ( LOG && LOG_TRADE_ROUTER ) {
+    console.log( `dbQuote: `, dbQuote );
   }
 
   /* Got quote from database, return value */
@@ -51,27 +51,64 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
       process.env.VANTAGE_KEY;
 
 
-    let filteredRes = await axios
-      .get( apiUrl )
-      .then( apiRes => {
-        if ( LOG && LOG_TRADE_ROUTER ) {
-          console.log( `apiRes: `, apiRes );
-        }
-    
-        for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
-          if ( property.slice( 0, 7 ) === yearMonth ) {
-            return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
-          }
-        }
-        /* No matching yearMonth, return null. */
-        return null;
-      } );
+    /* Save results into quotes collection */
+    let apiRes = await axios
+      .get( apiUrl );
 
     if ( LOG && LOG_TRADE_ROUTER ) {
-      console.log( "filteredRes: ", filteredRes );
+      console.log( `Got apiRes.data['Monthly Adjusted Time Series'] from API: `, apiRes.data[ 'Monthly Adjusted Time Series' ] );
     }
 
-    return filteredRes;
+    for ( let property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
+      if ( LOG && LOG_TRADE_ROUTER ) {
+        console.log( `property: `, property );
+      }
+      let apiYearMonth = property.slice( 0, 7 );
+      let apiPrice = apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
+      let quoteUpdate = {
+        tickerSymbol: tickerSymbol,
+        yearMonth: apiYearMonth,
+        price: parseFloat( apiPrice ),
+      };
+
+      if ( LOG && LOG_TRADE_ROUTER && LOG_TRADE_ROUTER_GET_QUOTE ) {
+        console.log( `Before await Quote.findOneAndUpdate, quoteUpdate: `, quoteUpdate );
+      }
+      let quoteUpdateDoc = await Quote.findOneAndUpdate(
+        {
+          tickerSymbol: tickerSymbol,
+          yearMonth: apiYearMonth,
+        },
+        quoteUpdate,
+        {
+          new: true,
+          upsert: true,
+        }
+      );
+      console.log( "After Quote.findOneAndUpdate" );
+      if ( LOG && LOG_TRADE_ROUTER ) {
+        console.log("After findOneAndUpdate, in braces");
+        console.log( "Updating MongoDB returned quoteUpdateDoc: ", quoteUpdateDoc );
+      }
+
+    }
+
+
+    /* Get relevant result from quotes colleciton */
+    let quoteFromDb = await Quote
+      .findOne(
+        {
+          "tickerSymbol": tickerSymbol,
+          "yearMonth": yearMonth
+        }
+      );
+
+
+    if ( LOG && LOG_TRADE_ROUTER ) {
+      console.log( "quoteFromDb: ", quoteFromDb );
+    }
+
+    return quoteFromDb;
   }
 }
 
