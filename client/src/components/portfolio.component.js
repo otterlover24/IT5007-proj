@@ -88,7 +88,7 @@ export default function Portfolio( props ) {
     <Container>
       { viewingMonthTotalValue ? (
         <Row>
-          <h5>Total Portfolio Value As At { props.viewingMonth }: USD${ viewingMonthTotalValue.toFixed( 2 ) }</h5>
+          <h5>Total Portfolio Value As At { props.viewingMonth }: US$ { viewingMonthTotalValue.toFixed( 2 ) }</h5>
         </Row>
       ) : (
         <></>
@@ -106,8 +106,8 @@ export default function Portfolio( props ) {
               <tr>
                 <th>Ticker</th>
                 <th>Quantity</th>
-                <th>Current Price</th>
-                <th>Current Holding Value</th>
+                <th>Current Price (US$)</th>
+                <th>Current Holding Value (US$)</th>
               </tr>
             </thead>
 

@@ -114,13 +114,14 @@
 	- /trade
 		- Form to buy or sell a specific ticker at market price
 		- {DONE} Get quote for price at time of trade and store alongside trade history.
-		- **{TODO} Create function to try to get quote from database, only fetch from API if not found.**
+		- {DONE}} Create function to try to get quote from database, only fetch from API if not found.
 			- Create collection for quotes.
 				- {DONE} Create model
 				- {DONE} Init script
 				- Import in trade.router.js
-			- Create function for getting quotes.
-			- Use function in `trade.router.js router.post('/getQuote')` and `portfolio.router.js router.post('/getTrades')`.
+			- {DONE} Create function for getting quotes.
+			- {DONE} Use function in `trade.router.js router.post('/getQuote')` and `portfolio.router.js router.post('/getTrades')`.
+		- **{TODO} Prevent short selling or borrowing.**
 	- /news
 		- Form to edit subscription
 		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
