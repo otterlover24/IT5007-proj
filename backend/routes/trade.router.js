@@ -3,14 +3,72 @@ const LOG_TRADE_ROUTER = ( process.env.LOG_TRADE_ROUTER === 'true' ) ? true : fa
 const LOG_TRADE_ROUTER_GET_QUOTE = ( process.env.LOG_TRADE_ROUTER_GET_QUOTE === 'true' ) ? true : false;
 const LOG_UPDATE_HOLDINGS = ( process.env.LOG_UPDATE_HOLDINGS === 'true' ) ? true : false;
 
+const router = require( 'express' ).Router();
 const axios = require( 'axios' );
 let Trade = require( '../models/trade.model' );
-const router = require( 'express' ).Router();
+let Quote = require( '../models/quote.model' );
 
 
+async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
+  if (LOG && LOG_TRADE_ROUTER) {
+    console.log(`in getQuoteWithCaching(${tickerSymbol}, ${yearMonth})`);
+  }
+
+  let dbQuote = await Quote.findOne(
+    {
+      tickerSymbol: tickerSymbol,
+      yearMonth: yearMonth,
+    }
+  );
+
+  /* Got quote from database, return value */
+  if ( dbQuote ) {
+    if ( LOG && LOG_TRADE_ROUTER && LOG_TRADE_ROUTER_GET_QUOTE ) {
+      console.log( `Found quote for tickerSymbol ${tickerSymbol} in MongoDB.` );
+      console.log( "Got from MongoDB dbQuote: ", dbQuote );
+    }
+    return dbQuote;
+  }
+
+  /* 
+  No quote from database.
+    - Make call to get quote from API. 
+    - Save all results from API.
+    - Return quote for yearMonth
+  */
+  if ( !dbQuote ) {
+    if ( LOG && LOG_PORTFOLIO_ROUTER ) {
+      console.log( `Did not find quote for tickerSymbol ${tickerSymbol} in MongoDB. Fetching from API.` );
+    }
+
+    let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
+      tickerSymbol +
+      '&datatype=json' +
+      '&apikey=' +
+      process.env.VANTAGE_KEY;
 
 
-router.post( '/submitTrade', async (req, res) => {
+    let filteredRes = await axios
+      .get( apiUrl )
+      .then( apiRes => {
+        for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
+          if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
+            return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
+          }
+        }
+        /* No matching yearMonth, return null. */
+        return null;
+      } );
+
+    if ( LOG && LOG_TRADE_ROUTER && LOG_TRADE_ROUTER_GET_QUOTE ) {
+      console.log( "filteredRes: ", filteredRes );
+    }
+
+    return filteredRes;
+  }
+}
+
+router.post( '/submitTrade', async ( req, res ) => {
   try {
     if ( LOG && LOG_TRADE_ROUTER ) {
       console.log( "In submitTradeMiddleware" );
@@ -122,16 +180,27 @@ router.post( '/submitTrade', async (req, res) => {
 
 router.post( '/getQuote', async ( req, res ) => {
   try {
-    if ( LOG && LOG_TRADE_ROUTER && LOG_TRADE_ROUTER_GET_QUOTE ) {
-      console.log( "req.user: ", req.user );
-      console.log( "userId: ", req.user._id );
-      console.log( "Received request at /getQuote, req.body: ", req.body );
+    if ( LOG && LOG_TRADE_ROUTER ) {
+      console.log(
+        "Received request at /getQuote, req.body.tickerSymbol: ",
+        req.body.tickerSymbol,
+        "req.user.latestMonth: ",
+        req.user.latestMonth
+      );
     }
 
 
     let { tickerSymbol } = req.body;
-    if ( !tickerSymbol ) {
-      return res.status( 400 ).json( { Error: "Not all fields for submitting trade have been entered." } );
+    let { latestMonth } = req.user;
+    if ( !tickerSymbol || !latestMonth ) {
+      console.log( "in router.post(/getQuote): !tickerSymbol || !getLatestMonth" );
+      return res.status( 400 ).json( { Error: "Not all fields for getting quote have been entered." } );
+    }
+
+    const getQuoteWithCachingRes = await getQuoteWithCaching( tickerSymbol, latestMonth );
+    if ( LOG && LOG_TRADE_ROUTER ) {
+
+      console.log( `getQuoteWithCaching(${tickerSymbol}, $latestMonth}): `, getQuoteWithCachingRes );
     }
 
     let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +

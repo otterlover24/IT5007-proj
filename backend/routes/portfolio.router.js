@@ -6,6 +6,7 @@ let Trade = require( '../models/trade.model' );
 const router = require( 'express' ).Router();
 
 
+
 router.post( '/getTrades', async ( req, res ) => {
   try {
     const trades = await Trade
@@ -31,7 +32,11 @@ router.post( '/getTrades', async ( req, res ) => {
       console.log( "Iterating trade.tickerSymbol: ", trade.tickerSymbol );
       console.log( "holdings: ", holdings );
 
-      /* Get market price as at req.user.viewingMonth */
+      /* 
+      Get market price as at req.user.viewingMonth 
+        - Check if data is in MongoDB first.
+        - Only go to API if data is not in MongoDB.
+      */
       let quote;
       if ( trade.tickerSymbol === "US-DOLLAR" ) {
         quote = "1.0";

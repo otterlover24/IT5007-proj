@@ -139,10 +139,12 @@ router.post( "/register", async ( req, res ) => {
     if ( password !== confirmPassword ) {
       return res.status( 400 ).json( { Error: "Passwords do not match" } );
     }
+
     const isTaken = await User.findOne( { username: username } );
     if ( isTaken ) {
       return res.status( 400 ).json( { Error: "Username is taken" } );
     }
+    
     const salt = await bcrypt.genSalt( 12 );
     const hashedPassword = await bcrypt.hash( password, salt );
 
@@ -154,10 +156,18 @@ router.post( "/register", async ( req, res ) => {
       viewingMonth: earliestMonth,
     } );
 
-    newUser
+    if ( LOG && LOG_USER ) {
+      console.log( "newUser: ", newUser );
+    }
+
+    let createdNewUser = await newUser
       .save()
       .then( user => res.json( { user: user } ) )
       .catch( err => res.status( 400 ).json( { Error: err } ) );
+
+    if ( LOG && LOG_USER ) {
+      console.log( "createdNewUser: ", createdNewUser );
+    }
   } catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
   }
