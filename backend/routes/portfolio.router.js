@@ -4,6 +4,7 @@ const LOG_PORTFOLIO_ROUTER = ( process.env.LOG_PORTFOLIO_ROUTER == 'true' ) ? tr
 const axios = require( 'axios' );
 let Trade = require( '../models/trade.model' );
 const router = require( 'express' ).Router();
+const { getQuoteWithCaching } = require( './utils/commonDbOps' );
 
 
 
@@ -42,27 +43,29 @@ router.post( '/getTrades', async ( req, res ) => {
         quote = "1.0";
       }
       if ( trade.tickerSymbol !== "US-DOLLAR" ) {
-        let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
-          trade.tickerSymbol +
-          '&datatype=json' +
-          '&apikey=' +
-          process.env.VANTAGE_KEY;
+        quote = await getQuoteWithCaching( trade.tickerSymbol, req.user.viewingMonth );
+
+        // let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
+        //   trade.tickerSymbol +
+        //   '&datatype=json' +
+        //   '&apikey=' +
+        //   process.env.VANTAGE_KEY;
 
 
 
-        quote = await axios
-          .get( apiUrl )
-          .then( apiRes => {
-            for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
-              console.log( "property: ", property );
-              console.log( "property.slice(0, 7): ", property.slice( 0, 7 ) );
-              console.log( "req.user.latestMonth: ", req.user.latestMonth );
-              if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
-                return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
-              }
-            }
-            return;
-          } );
+        // quote = await axios
+        //   .get( apiUrl )
+        //   .then( apiRes => {
+        //     for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
+        //       console.log( "property: ", property );
+        //       console.log( "property.slice(0, 7): ", property.slice( 0, 7 ) );
+        //       console.log( "req.user.latestMonth: ", req.user.latestMonth );
+        //       if ( property.slice( 0, 7 ) === req.user.latestMonth ) {
+        //         return apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
+        //       }
+        //     }
+        //     return;
+        //   } );
       }
 
 
@@ -89,7 +92,7 @@ router.post( '/getTrades', async ( req, res ) => {
     /* Compute total portfolio value. */
     let portfolioValue = 0.0;
     for ( let holdingKey in holdings ) {
-      portfolioValue += holdings[holdingKey]["currentValue"];
+      portfolioValue += holdings[ holdingKey ][ "currentValue" ];
     }
 
     let collatedData = {
