@@ -46,7 +46,11 @@ router.post( '/submitTrade', async ( req, res ) => {
     }
 
     if ( direction === "BUY" ) {
-
+      let cost = price * quantity;
+      let cash = holdings['US-DOLLAR']['quantity'];
+      if (cash < cost) {
+        return res.status( 400 ).json( { Error: "Insufficient cash." } );
+      } 
     }
 
     if ( direction === "SELL" ) {

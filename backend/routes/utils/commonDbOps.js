@@ -152,13 +152,14 @@ const getHoldings = async ( viewingMonth, trades ) => {
 		let directionSign = ( trade.direction === "BUY" ) ? 1 : -1;
 		if ( trade.tickerSymbol in holdings ) {
 			holdings[ trade.tickerSymbol ][ "quantity" ] += directionSign * trade.quantity;
+			holdings[trade.tickerSymbol]['currentValue'] = parseFloat(quote) * holdings[ trade.tickerSymbol ][ "quantity" ];
 		}
 		if ( !( trade.tickerSymbol in holdings ) ) {
 			holdings[ trade.tickerSymbol ] = {
 				tickerSymbol: trade.tickerSymbol,
 				quantity: directionSign * trade.quantity,
 				currentPricePerUnit: parseFloat( quote ),
-				currentValue: directionSign * trade.quantity * parseFloat( quote ),
+				currentValue: parseFloat(quote) * directionSign * trade.quantity,
 			};
 
 		}
