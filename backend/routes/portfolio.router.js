@@ -10,8 +10,8 @@ const { getQuoteWithCaching, getTrades, getHoldings } = require( './utils/common
 
 router.post( '/getTrades', async ( req, res ) => {
   try {
-    let trades = await getTrades( req );
-    let holdings = await getHoldings( req, trades );
+    let trades = await getTrades( req.user._id, req.user.viewingMonth );
+    let holdings = await getHoldings( req.user.viewingMonth, trades );
 
     /* Compute total portfolio value. */
     let portfolioValue = 0.0;

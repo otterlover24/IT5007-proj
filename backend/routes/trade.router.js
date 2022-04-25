@@ -3,14 +3,14 @@ const LOG_TRADE_ROUTER = ( process.env.LOG_TRADE_ROUTER === 'true' ) ? true : fa
 
 const router = require( 'express' ).Router();
 let Trade = require( '../models/trade.model' );
-const { getQuoteWithCaching } = require( './utils/commonDbOps' );
+const { getQuoteWithCaching, getTrades, getHoldings } = require( './utils/commonDbOps' );
 
 
 
 router.post( '/submitTrade', async ( req, res ) => {
   try {
     if ( LOG && LOG_TRADE_ROUTER ) {
-      console.log( "In submitTradeMiddleware" );
+      console.log( "In submitTrade" );
       console.log( "req.user: ", req.user );
       console.log( "userId: ", req.user._id );
       console.log( "Received request at /submitTrade, req.body: ", req.body );
@@ -20,19 +20,37 @@ router.post( '/submitTrade', async ( req, res ) => {
     /* Input parsing and validation. */
     let { tickerSymbol, price, quantity, direction } = req.body;
     if ( !tickerSymbol || !price || !quantity || !direction ) {
+      console.log("Not all fields for submitting trade have been entered.");
       return res.status( 400 ).json( { Error: "Not all fields for submitting trade have been entered." } );
     }
     if ( !( direction === "BUY" || direction === "SELL" ) ) {
+      console.log("Direction field must be BUY or SELL.");
       return res.status( 400 ).json( { Error: "Direction field must be BUY or SELL." } );
     }
     let directionSign = ( direction === "BUY" ) ? 1 : -1;
     try {
-      price = parseInt( price );
+      price = price;
       quantity = parseInt( quantity );
     }
     catch ( err ) {
       console.log( "Error in router.post(/submitTrade,...) while input parsing and validation", err );
       return res.status( 400 ).json( { Error: "Error parsing input price or quantity for trade." } );
+    }
+
+    /* Check no shorting of cash or ticker. */
+    let trades = await getTrades(req.user._id, req.user.viewingMonth);
+    let holdings = await getHoldings(req.user.viewingMonth, trades);
+    if (LOG && LOG_TRADE_ROUTER) {
+      console.log("in /submitTrade, got trades: ", trades);
+      console.log("In /submitTrade, got holdings: ", holdings);
+    }
+
+    if ( direction === "BUY" ) {
+
+    }
+
+    if ( direction === "SELL" ) {
+
     }
 
     let newTrade = new Trade(

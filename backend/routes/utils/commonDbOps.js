@@ -9,7 +9,7 @@ let Quote = require( '../../models/quote.model' );
 let Trade = require( '../../models/trade.model' );
 
 async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
-	if ( LOG && LOG_UTILS ) {
+	if ( false && LOG && LOG_UTILS ) {
 		console.log( `in getQuoteWithCaching(${tickerSymbol}, ${yearMonth})` );
 	}
 
@@ -19,13 +19,13 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
 			yearMonth: yearMonth,
 		}
 	);
-	if ( LOG && LOG_UTILS ) {
+	if ( false && LOG && LOG_UTILS ) {
 		console.log( `dbQuote: `, dbQuote );
 	}
 
 	/* Got quote from database, return value */
 	if ( dbQuote ) {
-		if ( LOG && LOG_UTILS && LOG_UTILS_GET_QUOTE ) {
+		if ( false && LOG && LOG_UTILS && LOG_UTILS_GET_QUOTE ) {
 			console.log( `Found quote for tickerSymbol ${tickerSymbol} in MongoDB.` );
 			console.log( "Got from MongoDB dbQuote: ", dbQuote );
 		}
@@ -104,66 +104,69 @@ async function getQuoteWithCaching( tickerSymbol, yearMonth ) {
 	}
 }
 
-const getTrades = async ( req ) => {
-  const trades = await Trade
-    .find(
-      {
-        userId: req.user._id,
-        yearMonth: { $lte: req.user.viewingMonth }
+const getTrades = async ( userId, viewingMonth ) => {
+	if ( LOG && LOG_UTILS ) {
+		console.log( `In commonDBOps.getTrades(${userId}, ${viewingMonth})` );
+	}
 
-      }
-    )
-    .sort(
-      {
-        "yearMonth": "descending"
-      }
-    );
-  if ( LOG && LOG_UTILS ) {
-    console.log( "In portfolio.router /getTrades, received trades from DB: \n", trades );
-  }
-  return trades;
+	const trades = await Trade
+		.find(
+			{
+				userId: userId,
+				yearMonth: { $lte: viewingMonth }
+
+			}
+		)
+		.sort(
+			{
+				"yearMonth": "descending"
+			}
+		);
+	if ( LOG && LOG_UTILS ) {
+		console.log( "In portfolio.router /getTrades, received trades from DB: \n", trades );
+	}
+	return trades;
 };
 
-const getHoldings = async ( req, trades ) => {
-  const holdings = {};
-  const tradesReversed = trades.slice().reverse();
-  for ( let trade of tradesReversed ) {
-    console.log( "Iterating trade.tickerSymbol: ", trade.tickerSymbol );
-    console.log( "holdings: ", holdings );
+const getHoldings = async ( viewingMonth, trades ) => {
+	const holdings = {};
+	const tradesReversed = trades.slice().reverse();
+	for ( let trade of tradesReversed ) {
+		console.log( "Iterating trade.tickerSymbol: ", trade.tickerSymbol );
+		console.log( "holdings: ", holdings );
 
-    /* 
-    Get market price as at req.user.viewingMonth 
-      - Check if data is in MongoDB first.
-      - Only go to API if data is not in MongoDB.
-    */
-    let quote;
-    if ( trade.tickerSymbol === "US-DOLLAR" ) {
-      quote = "1.0";
-    }
-    if ( trade.tickerSymbol !== "US-DOLLAR" ) {
-      quote = await getQuoteWithCaching( trade.tickerSymbol, req.user.viewingMonth );
-    }
+		/* 
+		Get market price as at req.user.viewingMonth 
+		  - Check if data is in MongoDB first.
+		  - Only go to API if data is not in MongoDB.
+		*/
+		let quote;
+		if ( trade.tickerSymbol === "US-DOLLAR" ) {
+			quote = "1.0";
+		}
+		if ( trade.tickerSymbol !== "US-DOLLAR" ) {
+			quote = await getQuoteWithCaching( trade.tickerSymbol, viewingMonth );
+		}
 
 
-    let directionSign = ( trade.direction === "BUY" ) ? 1 : -1;
-    if ( trade.tickerSymbol in holdings ) {
-      console.log( "debug holdings[trade.tickerSymbol]: ", holdings[ trade.tickerSymbol ] );
-      holdings[ trade.tickerSymbol ][ "quantity" ] += directionSign * trade.quantity;
-    }
-    if ( !( trade.tickerSymbol in holdings ) ) {
-      holdings[ trade.tickerSymbol ] = {
-        tickerSymbol: trade.tickerSymbol,
-        quantity: directionSign * trade.quantity,
-        currentPricePerUnit: parseFloat( quote ),
-        currentValue: directionSign * trade.quantity * parseFloat( quote ),
-      };
+		let directionSign = ( trade.direction === "BUY" ) ? 1 : -1;
+		if ( trade.tickerSymbol in holdings ) {
+			holdings[ trade.tickerSymbol ][ "quantity" ] += directionSign * trade.quantity;
+		}
+		if ( !( trade.tickerSymbol in holdings ) ) {
+			holdings[ trade.tickerSymbol ] = {
+				tickerSymbol: trade.tickerSymbol,
+				quantity: directionSign * trade.quantity,
+				currentPricePerUnit: parseFloat( quote ),
+				currentValue: directionSign * trade.quantity * parseFloat( quote ),
+			};
 
-    }
-  }
+		}
+	}
 
-  if ( LOG && LOG_UTILS ) {
-    console.log( "holdings: ", holdings );
-  }
-  return holdings;
+	if ( LOG && LOG_UTILS ) {
+		console.log( "holdings: ", holdings );
+	}
+	return holdings;
 };
 module.exports = { getQuoteWithCaching, getTrades, getHoldings };
