@@ -73,6 +73,7 @@ export default function Register() {
                     quantity: 1000000,
                     price: 1.0,
                     direction: "BUY",
+                    isInit: true,
                 },
             } )
                 .then( res => {

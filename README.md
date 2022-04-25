@@ -55,6 +55,8 @@
 	- a / aaa11111
 	- bbb / bbb11111
 	- abc / abc12345
+	- ddd / ddd11111
+	- eee / eee11111
 ## TS TODO
 - General
 	- {DONE} Implements log levels to limit console.log output.  
@@ -93,7 +95,7 @@
 				- useEffect with empty dependency list to call `displayTransactions()` on load.
 				- In portfolio.router.js, `async function displayTranactions()`
 			- {DONE} Display transactions
-		- **{TODO} Current holdings table**
+		- {DONE} Current holdings table
 			- Backend: portfolio.router.js
 				- Compute holdings for each month from beginMonth to latestMonth.
 					- Use transaction history to compute delta from previous month.
@@ -121,14 +123,16 @@
 				- Import in trade.router.js
 			- {DONE} Create function for getting quotes.
 			- {DONE} Use function in `trade.router.js router.post('/getQuote')` and `portfolio.router.js router.post('/getTrades')`.
-		- **{TODO} Prevent short selling or borrowing.**
+		- {DONE} Prevent short selling or borrowing.
 			- Before any recording to database, if BUY, check if cash will go below 0, if SELL, check if security holding will go below 0. If either go below 0, return error message.
-				- Extract the computation of portfolio holdings into util.
+			- Extract the computation of portfolio holdings into util.
+			- {DONE} For registration, exempt check for init-balance.
 	- /news
 		- Form to edit subscription
 		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
 		- See list of headlines, which link to articles
 			- Articles may be new report, or data such as earnings, analyst rating etc
+		- Display list of income statement reports
   
 
 

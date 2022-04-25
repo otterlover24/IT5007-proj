@@ -18,7 +18,7 @@ router.post( '/submitTrade', async ( req, res ) => {
 
 
     /* Input parsing and validation. */
-    let { tickerSymbol, price, quantity, direction } = req.body;
+    let { tickerSymbol, price, quantity, direction, isInit } = req.body;
     if ( !tickerSymbol || !price || !quantity || !direction ) {
       console.log( "Not all fields for submitting trade have been entered." );
       return res.status( 400 ).json( { Error: "Not all fields for submitting trade have been entered." } );
@@ -37,31 +37,34 @@ router.post( '/submitTrade', async ( req, res ) => {
       return res.status( 400 ).json( { Error: "Error parsing input price or quantity for trade." } );
     }
 
-    /* Check no shorting of cash or ticker. */
-    let trades = await getTrades( req.user._id, req.user.viewingMonth );
-    let holdings = await getHoldings( req.user.viewingMonth, trades );
-    if ( LOG && LOG_TRADE_ROUTER ) {
-      console.log( "in /submitTrade, got trades: ", trades );
-      console.log( "In /submitTrade, got holdings: ", holdings );
-    }
+    /* Check no shorting of cash or ticker, except for initializing balance. */
+    if ( !isInit ) {
+      let trades = await getTrades( req.user._id, req.user.viewingMonth );
+      let holdings = await getHoldings( req.user.viewingMonth, trades );
+      if ( LOG && LOG_TRADE_ROUTER ) {
+        console.log( "in /submitTrade, got trades: ", trades );
+        console.log( "In /submitTrade, got holdings: ", holdings );
+      }
 
-    if ( direction === "BUY" ) {
-      let cost = price * quantity;
-      let cash = holdings[ 'US-DOLLAR' ][ 'quantity' ];
-      if ( cash < cost ) {
-        let errMsg = "Insufficient cash.";
-        console.log( "errMsg" );
-        return res.status( 400 ).json( { Error: errMsg } );
+      if ( direction === "BUY" ) {
+        let cost = price * quantity;
+        let cash = holdings[ 'US-DOLLAR' ][ 'quantity' ];
+        if ( cash < cost ) {
+          let errMsg = "Insufficient cash.";
+          console.log( "errMsg" );
+          return res.status( 400 ).json( { Error: errMsg } );
+        }
+      }
+
+      if ( direction === "SELL" ) {
+        if ( quantity > holdings[ tickerSymbol ][ 'quantity' ] ) {
+          let errMsg = "Cannot short a ticker.";
+          console.log( errMsg );
+          return res.status( 400 ).json( { Error: errMsg } );
+        }
       }
     }
 
-    if ( direction === "SELL" ) {
-      if ( quantity > holdings[ tickerSymbol ][ 'quantity' ] ) {
-        let errMsg = "Cannot short a ticker.";
-        console.log( errMsg );
-        return res.status( 400 ).json( { Error: errMsg } );
-      }
-    }
 
     let newTrade = new Trade(
       {

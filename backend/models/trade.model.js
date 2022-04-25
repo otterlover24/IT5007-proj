@@ -3,6 +3,10 @@ const mongoose = require( 'mongoose' );
 const Schema = mongoose.Schema;
 
 const tradeSchema = new Schema( {
+    yearMonth: {
+        type: String,
+        required: true,
+    },
     userId: {
         type: String,
         required: true,
@@ -29,10 +33,11 @@ const tradeSchema = new Schema( {
         required: true,
         trim: true,
     },
-    yearMonth: {
-        type: String,
-        required: true,
+    isInit: {
+        type: Boolean,
+        default: false,
     }
+
 } );
 
 const Trade = mongoose.model( 'Trade', tradeSchema );
