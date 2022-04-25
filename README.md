@@ -132,7 +132,7 @@
 		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
 		- See list of headlines, which link to articles
 			- Articles may be new report, or data such as earnings, analyst rating etc
-		- Display list of income statement reports
+		- **{TODO} Display list of income statement reports**
   
 
 

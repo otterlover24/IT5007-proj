@@ -68,13 +68,23 @@ export default function News( props ) {
           <Table className="newsTable" striped bordered hover responsive>
             <thead>
               <tr>
-                <th>Ticker Symbol</th>
-                <th>Type</th>
+                <th>Date</th>
+                <th>Ticker</th>
                 <th>Title</th>
               </tr>
             </thead>
 
             <tbody>
+              { newsList ? newsList.map( news => (
+                <tr>
+                  <td>{ news.fiscalDateEnding }</td>
+                  <td>{ news.tickerSymbol } </td>
+                  <td>{ news.tickerSymbol } Quarterly Earnings Report </td>
+                </tr>
+              ) ) : <></> }
+            </tbody>
+
+            {/* <tbody>
               <tr>
                 <td>AAPL</td>
                 <td>Earnings</td>
@@ -85,7 +95,7 @@ export default function News( props ) {
                 <td>News</td>
                 <td>Rumors abound of new Apple car to rival Tesla.</td>
               </tr>
-            </tbody>
+            </tbody> */}
 
           </Table>
         </Col>
