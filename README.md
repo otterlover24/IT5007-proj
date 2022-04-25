@@ -122,6 +122,7 @@
 			- {DONE} Create function for getting quotes.
 			- {DONE} Use function in `trade.router.js router.post('/getQuote')` and `portfolio.router.js router.post('/getTrades')`.
 		- **{TODO} Prevent short selling or borrowing.**
+			- Before any recording to database, if BUY, check if cash will go below 0, if SELL, check if security holding will go below 0. If either go below 0, return error message.
 	- /news
 		- Form to edit subscription
 		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
