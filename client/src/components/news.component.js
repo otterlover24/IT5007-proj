@@ -92,19 +92,6 @@ export default function News( props ) {
               ) ) : <></> }
             </tbody>
 
-            {/* <tbody>
-              <tr>
-                <td>AAPL</td>
-                <td>Earnings</td>
-                <td>2020Q4 10-K statement</td>
-              </tr>
-              <tr>
-                <td>AAPL</td>
-                <td>News</td>
-                <td>Rumors abound of new Apple car to rival Tesla.</td>
-              </tr>
-            </tbody> */}
-
           </Table>
         </Col>
       </Row>

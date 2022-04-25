@@ -17,6 +17,10 @@ export default function Newsitem() {
 
   useEffect( () => {
     console.log( "Newsitem's newsdata: ", newsdata );
+    Object.entries( newsdata ).forEach( ( [ key, value ] ) => {
+      console.log( "key: ", key );
+      console.log( "value: ", value );
+    } );
   }, [] );
 
 
@@ -31,31 +35,31 @@ export default function Newsitem() {
           <Table className="newsTable" striped bordered hover responsive>
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Ticker</th>
-                <th>Title</th>
+                <th>Metric</th>
+                <th>Value</th>
               </tr>
             </thead>
 
 
 
             <tbody>
-              <tr>
-                <td>AAPL</td>
-                <td>Earnings</td>
-                <td>2020Q4 10-K statement</td>
-              </tr>
-              <tr>
-                <td>AAPL</td>
-                <td>News</td>
-                <td>Rumors abound of new Apple car to rival Tesla.</td>
-              </tr>
+              { newsdata ? Object.keys( newsdata )
+                .filter( ( key ) => {
+                  return ( key !== "_id" ) &&
+                    ( key !== "__v" );
+                } )
+                .map( ( key, i ) => (
+                  <tr>
+                    <td>{ key }</td>
+                    <td>{ newsdata[ key ] }</td>
+                  </tr>
+                ) ) : <></> }
+
             </tbody>
 
           </Table>
         </Col>
       </Row>
-
-    </Container>
+    </Container >
   );
 }
