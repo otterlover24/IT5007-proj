@@ -9,6 +9,7 @@ import {
   Row,
   Table,
 } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export default function News( props ) {
 
@@ -76,11 +77,18 @@ export default function News( props ) {
 
             <tbody>
               { newsList ? newsList.map( news => (
-                <tr>
-                  <td>{ news.fiscalDateEnding }</td>
-                  <td>{ news.tickerSymbol } </td>
-                  <td>{ news.tickerSymbol } Quarterly Earnings Report </td>
-                </tr>
+                <Link
+                  to={ {
+                    pathname: "/newsitem",
+                    state: { newsdata: news }
+                  } }
+                >
+                  <tr>
+                    <td>{ news.fiscalDateEnding }</td>
+                    <td>{ news.tickerSymbol } </td>
+                    <td>{ news.tickerSymbol } Quarterly Earnings Report </td>
+                  </tr>
+                </Link>
               ) ) : <></> }
             </tbody>
 

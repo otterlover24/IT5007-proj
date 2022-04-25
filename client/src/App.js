@@ -11,6 +11,7 @@ import Portfolio from "./components/portfolio.component";
 import Watchlist from "./components/watchlist.component";
 import Trade from "./components/trade.component";
 import News from "./components/news.component";
+import Newsitem from "./components/newsitem.component";
 
 function App() {
   const [ loggedIn, setLoggedIn ] = useState( false );
@@ -207,6 +208,7 @@ function App() {
               latestMonth={ latestMonth }
             /> }
           />
+          <Route path="/newsitem" exact component={ Newsitem } />
         </Switch>
       </div>
     </Router>

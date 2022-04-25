@@ -133,6 +133,10 @@
 		- See list of headlines, which link to articles
 			- Articles may be new report, or data such as earnings, analyst rating etc
 		- **{TODO} Display list of income statement reports**
+			- {DONE} Display list of quarterly reports
+			- **{TODO} Make row clickable.**
+				- Create route to NewsItem component.
+				- Create link to NewsItem component, with report passed as prop.
   
 
 
