@@ -143,6 +143,8 @@
 				- Create link to NewsItem component, with report passed as prop.
 			- {DONE} Make newsitem have more items and nicer names.
 		- **{TODO} Add quote to top of News page.**
+			- {DONE} Copy displayWatchlist from watchlist.component.js.
+			- **{TODO} Use getQuoteWithCaching.**
   
 
 

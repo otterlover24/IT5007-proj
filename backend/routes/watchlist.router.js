@@ -1,6 +1,7 @@
 const axios = require( 'axios' );
 let Ticker = require( '../models/ticker.model' );
 const router = require( 'express' ).Router();
+const { getQuoteWithCaching } = require( './utils/commonDbOps' );
 
 const LOG = ( process.env.LOG == 'true' ) ? true : false;
 const LOG_WATCHLIST_ROUTER = ( process.env.LOG_WATCHLIST_ROUTER == 'true' ) ? true : false;
@@ -68,38 +69,30 @@ router.post( '/deleteTickerFromWatchlist', async ( req, res ) => {
 } );
 
 router.get( '/getWatchlist', async ( req, res ) => {
-  const tickers = await Ticker.find( { userId: req.user._id, inPortfolio: false } ).select( 'tickerSymbol -_id' );
+  const tickers = await
+    Ticker
+      .find( { userId: req.user._id, inPortfolio: false } )
+      .select( 'tickerSymbol -_id' );
   if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( `tickers: ${tickers}` );
+
   let processedRes = [];
   for ( let ticker of tickers ) {
-    if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( `ticker: ${ticker}` );
-    let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
-      ticker.tickerSymbol +
-      '&datatype=json' +
-      '&apikey=' +
-      process.env.VANTAGE_KEY;
-    if (LOG && LOG_WATCHLIST_ROUTER) {
-      console.log("apiUrl: ", apiUrl);
-    }
-    let filteredRes = await axios
-      .get(
-        apiUrl  
-      )
-      .then( apiRes => {
-        if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( apiRes );
-        const filteredRes = {};
-        for ( const property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
-          if ( property.slice( 0, 7 ) === currMonth ) {
-            filteredRes[ ticker.tickerSymbol ] = apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
-          }
-        }
-        return filteredRes;
-      } );
 
-    if ( LOG && LOG_WATCHLIST_ROUTER ) console.log( `filteredRes: ${filteredRes}` );
+    if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) {
+      console.log( `ticker: ${ticker}` );
+    }
+
+    let apiRes = await getQuoteWithCaching( ticker.tickerSymbol, req.user.viewingMonth );
+    console.log( "Got from getQuoteWithCaching apiRes: ", apiRes );
+
+    const filteredRes = {};
+    filteredRes[ ticker.tickerSymbol ] = apiRes;
     processedRes.push( filteredRes );
+
   }
+
   return res.json( processedRes );
+
 } );
 
 

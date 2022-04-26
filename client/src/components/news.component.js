@@ -25,9 +25,6 @@ export default function News( props ) {
     displayNews();
   }, [] );
 
-  useEffect( () => {
-    console.log( "Updated newsList: ", newsList );
-  }, [ newsList ] );
 
   const checkLoggedIn = async () => {
     if ( localStorage.getItem( "jwt" ) ) {
@@ -66,12 +63,7 @@ export default function News( props ) {
       console.error( "Caught err: ", JSON.stringify( err ) );
       alert( errorMessage );
     }
-
   };
-
-  useEffect( () => {
-    console.log( "Updated watchlist: ", watchlist );
-  }, [ watchlist ] );
 
   const displayNews = async () => {
     console.log( `in displayWatchlist` );
