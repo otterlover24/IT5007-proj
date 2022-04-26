@@ -68,7 +68,8 @@
 		- {DONE} Client prints error message sent from server side Axios.
 		- Too many requests: `if (apiRes.data.Note)`
 		- Error in request: `if apiRes.date["Error Message"])`
-	- {TODO} Replace <Link> in table rows with onClick handler to avoid `index.js:1 Warning: validateDOMNesting(...): <a> cannot appear as a child of <tr>.`
+	- {DONE} Replace <Link> in table rows with onClick handler to avoid `index.js:1 Warning: validateDOMNesting(...): <a> cannot appear as a child of <tr>.`
+		- {DONE} Pass handler function to onClick property of <tr>, and use history.push().
 - Components / pages
 	- Register
 		- Backend

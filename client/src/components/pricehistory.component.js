@@ -9,18 +9,29 @@ import {
   Table,
 } from "react-bootstrap";
 import { useLocation } from 'react-router-dom';
+import {Line} from "react-chartjs-2";
 
 
 export default function Pricehistory() {
   const location = useLocation();
   const { pricehistorydata } = location.state;
+  const [xs, setXs] = useState( [] );
+  const [ys, setYs] = useState( [] );
 
   useEffect( () => {
     console.log( "Pricehistory's pricehistorydata: ", pricehistorydata );
-    // Object.entries( pricehistorydata ).forEach( ( [ key, value ] ) => {
-    //   console.log( "key: ", key );
-    //   console.log( "value: ", value );
-    // } );
+    let xsTmp = [];
+    let ysTmp = [];
+    pricehistorydata
+      .reverse()
+      .map( ( [ yearMonth, price ] ) => {
+        xsTmp.push( yearMonth );
+        ysTmp.push( price );
+      } );
+    console.log( "xsTmp: ", xsTmp );
+    console.log( "ysTmp: ", ysTmp );
+    setXs( xsTmp );
+    setYs( ysTmp );
   }, [] );
 
 
@@ -30,28 +41,67 @@ export default function Pricehistory() {
     <Container>
 
       <Row>
+        <Col xs={ 12 } >
+          <h5>Price History Chart</h5>
+          <div className="history-chart">
+            <Line
+              data={ {
+                labels: xs,
+                datasets: [
+                  {
+                    label: 'Price',
+                    fill: false,
+                    lineTension: 0,
+                    backgroundColor: 'rgba(75,192,192,1)',
+                    borderColor: 'rgba(0,0,0,1)',
+                    borderWidth: 2,
+                    data: ys,
+                  }
+                ]
+              } }
+              options={ {
+                title: {
+                  display: true,
+                  text: 'Monthly Closing Price',
+                  fontSize: 20
+                },
+                legend: {
+                  display: false,
+
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+              } }
+              width={ 600 }
+              height={ 600 }
+              className="charts"
+
+            />
+          </div>
+        </Col>
+      </Row>
+
+
+      <Row>
         <Col xs="12">
-          <h5>Relevant news based on your porfolio holdings and watchlist</h5>
-          <Table className="newsTable" striped bordered hover responsive>
+          <h5>Price History Table</h5>
+          <Table className="priceHistoryTable" striped bordered hover responsive>
             <thead>
               <tr>
-                <th>Metric</th>
-                <th>Value</th>
+                <th>Date</th>
+                <th>Price</th>
               </tr>
             </thead>
 
 
 
             <tbody>
-              { pricehistorydata ? Object.keys( pricehistorydata )
-                .filter( ( key ) => {
-                  return ( key !== "_id" ) &&
-                    ( key !== "__v" );
-                } )
-                .map( ( key, i ) => (
+              { pricehistorydata ? Object
+                .keys( pricehistorydata )
+                .map( key => (
                   <tr>
-                    <td>{ key }</td>
-                    <td>{ pricehistorydata[ key ] }</td>
+                    <td>{ pricehistorydata[ key ][ 0 ] }</td>
+                    <td>{ pricehistorydata[ key ][ 1 ] }</td>
                   </tr>
                 ) ) : <></> }
 
