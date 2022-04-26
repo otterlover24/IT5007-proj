@@ -115,24 +115,25 @@ export default function News( props ) {
     console.log( "Got from /news/getNews, res.data:", res.data );
 
     for ( let newsitem of res.data ) {
-      renameKey( newsitem, 'fiscalDateEnding', 'Date' );
-      renameKey( newsitem, 'tickerSymbol', 'Ticker Symbol' );
-      renameKey( newsitem, 'grossProfit', 'Gross Profit' );
-      renameKey( newsitem, 'netIncome', 'Net Income' );
-      renameKey( newsitem, 'reportedCurrency', 'Reported Currency' );
-      renameKey( newsitem, 'totalRevenue', 'Total Revenue' );
+      renameObjKey( newsitem, 'fiscalDateEnding', 'Date' );
+      renameObjKey( newsitem, 'tickerSymbol', 'Ticker Symbol' );
+      renameObjKey( newsitem, 'grossProfit', 'Gross Profit' );
+      renameObjKey( newsitem, 'netIncome', 'Net Income' );
+      renameObjKey( newsitem, 'reportedCurrency', 'Reported Currency' );
+      renameObjKey( newsitem, 'totalRevenue', 'Total Revenue' );
     }
     setNewsList( res.data );
 
   };
 
-  function renameKey( obj, old_key, new_key ) {
-    // check if old key = new key  
+  function renameObjKey( obj, old_key, new_key ) {
     if ( old_key !== new_key ) {
-      Object.defineProperty( obj, new_key, // modify old key
-        // fetch description from object
-        Object.getOwnPropertyDescriptor( obj, old_key ) );
-      delete obj[ old_key ];                // delete old key
+      Object.defineProperty(
+        obj,
+        new_key,
+        Object.getOwnPropertyDescriptor( obj, old_key )
+      );
+      delete obj[ old_key ];
     }
   }
   return (
