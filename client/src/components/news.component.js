@@ -9,13 +9,14 @@ import {
   Row,
   Table,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 export default function News( props ) {
 
   const [ newsList, setNewsList ] = useState();
   const [ watchlist, setWatchlist ] = useState();
   const [ watchlistHistory, setWatchlistHistory ] = useState( {} );
+  const history = useHistory();
 
   useEffect( () => {
     console.log( "news.component.js useEffect []" );
@@ -86,7 +87,7 @@ export default function News( props ) {
         let tickerSymbol = Object.keys( priceHistory )[ 0 ];
         console.log( "Looping through priceHistory of tickerSymbol: ", tickerSymbol );
         priceHistoryTemp[ tickerSymbol ] = priceHistory[ tickerSymbol ].map( entry => {
-          return entry.price;
+          return [ entry.yearMonth, entry.price ];
         } );
       }
       console.log( "priceHistoryTemp: ", priceHistoryTemp );
@@ -139,7 +140,7 @@ export default function News( props ) {
 
       <Row>
         <Col xs="12">
-          <h5>Watchlist Quotes</h5>
+          <h5>Watchlist Quotes (Click for price history)</h5>
           <Table className="watchlistTable" striped bordered hover responsive>
             <thead>
               <tr>
@@ -150,17 +151,19 @@ export default function News( props ) {
 
             <tbody>
 
-              { watchlist && watchlistHistory ? watchlist.map( currentTicker => (
-                <tr>
-                  <td>{ Object.keys( currentTicker )[ 0 ] }</td>
-                  <Link
-                    to={ {
-                      pathname: "/pricehistory",
-                      state: { pricehistorydata: watchlistHistory[ Object.keys( currentTicker )[ 0 ] ] }
-                    } }
-                  >
-                    <td>{ currentTicker[ Object.keys( currentTicker )[ 0 ] ] }</td>
-                  </Link>
+              { watchlistHistory ? Object.keys( watchlistHistory ).map( currentTicker => (
+                <tr
+                  onClick={ () => {
+                    history.push(
+                      {
+                        pathname: "/pricehistory",
+                        state: { pricehistorydata: watchlistHistory[ currentTicker ] }
+                      }
+                    );
+                  } }
+                >
+                  <td>{ currentTicker }</td>
+                  <td>{ watchlistHistory[ currentTicker ].at( -1 )[ 1 ] }</td>
                 </tr>
               ) ) : <></> }
             </tbody>
@@ -171,7 +174,7 @@ export default function News( props ) {
 
       <Row>
         <Col xs="12">
-          <h5>Relevant news based on your watchlist</h5>
+          <h5>Relevant news based on your watchlist (Click to read news.)</h5>
           <Table className="newsTable" striped bordered hover responsive>
             <thead>
               <tr>
@@ -184,17 +187,20 @@ export default function News( props ) {
             <tbody>
               { newsList ? newsList.map( news => (
 
-                <tr>
+                <tr
+                  onClick={ () => {
+                    history.push(
+                      {
+                        pathname: '/newsitem',
+                        state: { newsdata: news },
+                      }
+                    );
+
+                  } }
+                >
                   <td>{ news[ "Date" ] }</td>
                   <td>{ news[ "Ticker Symbol" ] } </td>
-                  <Link
-                    to={ {
-                      pathname: "/newsitem",
-                      state: { newsdata: news }
-                    } }
-                  >
-                    <td>{ news.tickerSymbol } Quarterly Earnings Report </td>
-                  </Link>
+                  <td>{ news.tickerSymbol } Quarterly Earnings Report </td>
                 </tr>
 
               ) ) : <></> }

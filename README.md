@@ -64,9 +64,11 @@
 ## TS TODO
 - General
 	- {DONE} Implements log levels to limit console.log output.  
-	- Error handling:
+	- {PARTLY_DONE} Error handling:
+		- {DONE} Client prints error message sent from server side Axios.
 		- Too many requests: `if (apiRes.data.Note)`
 		- Error in request: `if apiRes.date["Error Message"])`
+	- {TODO} Replace <Link> in table rows with onClick handler to avoid `index.js:1 Warning: validateDOMNesting(...): <a> cannot appear as a child of <tr>.`
 - Components / pages
 	- Register
 		- Backend
@@ -142,9 +144,9 @@
 				- Create route to NewsItem component.
 				- Create link to NewsItem component, with report passed as prop.
 			- {DONE} Make newsitem have more items and nicer names.
-		- **{TODO} Add quote to top of News page.**
+		- {DONE} Add quote to top of News page.
 			- {DONE} Copy displayWatchlist from watchlist.component.js.
-			- **{TODO} Use getQuoteWithCaching.**
+			- {DONE} Use getQuoteWithCaching.
   
 
 
