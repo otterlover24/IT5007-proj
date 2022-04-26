@@ -1,7 +1,7 @@
 const axios = require( 'axios' );
 let Ticker = require( '../models/ticker.model' );
 const router = require( 'express' ).Router();
-const { getQuoteWithCaching } = require( './utils/commonDbOps' );
+const { getQuoteWithCaching, getQuotesUptoYearMonthWithCaching } = require( './utils/commonDbOps' );
 
 const LOG = ( process.env.LOG == 'true' ) ? true : false;
 const LOG_WATCHLIST_ROUTER = ( process.env.LOG_WATCHLIST_ROUTER == 'true' ) ? true : false;
@@ -92,6 +92,34 @@ router.get( '/getWatchlistQuotes', async ( req, res ) => {
 
     let apiRes = await getQuoteWithCaching( ticker.tickerSymbol, req.user.viewingMonth );
     console.log( "Got from getQuoteWithCaching apiRes: ", apiRes );
+
+    const filteredRes = {};
+    filteredRes[ ticker.tickerSymbol ] = apiRes;
+
+    processedRes.push( filteredRes );
+
+  }
+
+  return res.json( processedRes );
+} );
+
+
+router.get( '/getWatchlistQuotesUptoYearMonth', async ( req, res ) => {
+  
+  const tickers = await Ticker
+    .find( { userId: req.user._id, inPortfolio: false } )
+    .select( 'tickerSymbol -_id' );
+  if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( `tickers: ${tickers}` );
+
+  let processedRes = [];
+  for ( let ticker of tickers ) {
+
+    if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) {
+      console.log( `ticker: ${ticker}` );
+    }
+
+    let apiRes = await getQuotesUptoYearMonthWithCaching( ticker.tickerSymbol, req.user.viewingMonth );
+    console.log( "Got from getQuoteUptoYearMonthWithCaching apiRes: ", apiRes );
 
     const filteredRes = {};
     filteredRes[ ticker.tickerSymbol ] = apiRes;

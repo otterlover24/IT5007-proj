@@ -12,6 +12,7 @@ import Watchlist from "./components/watchlist.component";
 import Trade from "./components/trade.component";
 import News from "./components/news.component";
 import Newsitem from "./components/newsitem.component";
+import Pricehistory from "./components/pricehistory.component";
 
 function App() {
   const [ loggedIn, setLoggedIn ] = useState( false );
@@ -209,6 +210,7 @@ function App() {
             /> }
           />
           <Route path="/newsitem" exact component={ Newsitem } />
+          <Route path="/pricehistory" exact component={ Pricehistory } />
         </Switch>
       </div>
     </Router>

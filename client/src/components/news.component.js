@@ -15,6 +15,7 @@ export default function News( props ) {
 
   const [ newsList, setNewsList ] = useState();
   const [ watchlist, setWatchlist ] = useState();
+  const [ watchlistHistory, setWatchlistHistory ] = useState( {} );
 
   useEffect( () => {
     console.log( "news.component.js useEffect []" );
@@ -22,6 +23,7 @@ export default function News( props ) {
     console.log( "news.component props.latestMonth: ", props.latestMonth );
     checkLoggedIn();
     displayWatchlist();
+    displayWatchlistHistory();
     displayNews();
   }, [] );
 
@@ -65,27 +67,62 @@ export default function News( props ) {
     }
   };
 
+  const displayWatchlistHistory = async () => {
+    console.log( `in displayWatchlistHistory` );
+
+    /* Get watchlist from server */
+    try {
+      let res = await Axios( {
+        method: "get",
+        url: "http://localhost:5000/api/protected/watchlist/getWatchlistQuotesUptoYearMonth",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+      } );
+      console.log( "displayWatchlistHistory got res.data:", res.data );
+      // setWatchlistHistory( res.data );
+      let priceHistoryTemp = {};
+      for ( let priceHistory of res.data ) {
+        let tickerSymbol = Object.keys( priceHistory )[ 0 ];
+        console.log( "Looping through priceHistory of tickerSymbol: ", tickerSymbol );
+        priceHistoryTemp[ tickerSymbol ] = priceHistory[ tickerSymbol ].map( entry => {
+          return entry.price;
+        } );
+      }
+      console.log( "priceHistoryTemp: ", priceHistoryTemp );
+      setWatchlistHistory( priceHistoryTemp );
+    }
+    catch ( err ) {
+      let errorMessage = "While getting watchlist price hisotry from server, an error occurred.";
+      console.error( "Caught err: ", JSON.stringify( err ) );
+      alert( errorMessage );
+    }
+  };
+
   const displayNews = async () => {
     console.log( `in displayWatchlist` );
 
     /* Get watchlist from server */
-    await Axios( {
+    let res = await Axios( {
       method: "get",
       url: "http://localhost:5000/api/protected/news/getNews",
       headers: {
         Authorization: localStorage.getItem( "jwt" ),
       },
-    } ).then( res => {
-      for ( let newsitem of res.data ) {
-        renameKey( newsitem, 'fiscalDateEnding', 'Date' );
-        renameKey( newsitem, 'tickerSymbol', 'Ticker Symbol' );
-        renameKey( newsitem, 'grossProfit', 'Gross Profit' );
-        renameKey( newsitem, 'netIncome', 'Net Income' );
-        renameKey( newsitem, 'reportedCurrency', 'Reported Currency' );
-        renameKey( newsitem, 'totalRevenue', 'Total Revenue' );
-      }
-      setNewsList( res.data );
     } );
+
+    console.log( "Got from /news/getNews, res.data:", res.data );
+
+    for ( let newsitem of res.data ) {
+      renameKey( newsitem, 'fiscalDateEnding', 'Date' );
+      renameKey( newsitem, 'tickerSymbol', 'Ticker Symbol' );
+      renameKey( newsitem, 'grossProfit', 'Gross Profit' );
+      renameKey( newsitem, 'netIncome', 'Net Income' );
+      renameKey( newsitem, 'reportedCurrency', 'Reported Currency' );
+      renameKey( newsitem, 'totalRevenue', 'Total Revenue' );
+    }
+    setNewsList( res.data );
+
   };
 
   function renameKey( obj, old_key, new_key ) {
@@ -113,10 +150,17 @@ export default function News( props ) {
 
             <tbody>
 
-              { watchlist ? watchlist.map( currentTicker => (
+              { watchlist && watchlistHistory ? watchlist.map( currentTicker => (
                 <tr>
                   <td>{ Object.keys( currentTicker )[ 0 ] }</td>
-                  <td>{ currentTicker[ Object.keys( currentTicker )[ 0 ] ] }</td>
+                  <Link
+                    to={ {
+                      pathname: "/pricehistory",
+                      state: { pricehistorydata: watchlistHistory[ Object.keys( currentTicker )[ 0 ] ] }
+                    } }
+                  >
+                    <td>{ currentTicker[ Object.keys( currentTicker )[ 0 ] ] }</td>
+                  </Link>
                 </tr>
               ) ) : <></> }
             </tbody>
