@@ -14,17 +14,19 @@ import { Link } from "react-router-dom";
 export default function News( props ) {
 
   const [ newsList, setNewsList ] = useState();
+  const [ watchlist, setWatchlist ] = useState();
 
   useEffect( () => {
     console.log( "news.component.js useEffect []" );
     console.log( "news.component props.viewingMonth: ", props.viewingMonth );
     console.log( "news.component props.latestMonth: ", props.latestMonth );
     checkLoggedIn();
+    displayWatchlist();
     displayNews();
   }, [] );
 
   useEffect( () => {
-    console.log( newsList );
+    console.log( "Updated newsList: ", newsList );
   }, [ newsList ] );
 
   const checkLoggedIn = async () => {
@@ -44,6 +46,33 @@ export default function News( props ) {
     }
   };
 
+  const displayWatchlist = async () => {
+    console.log( `in displayWatchlist` );
+
+    /* Get watchlist from server */
+    try {
+      let res = await Axios( {
+        method: "get",
+        url: "http://localhost:5000/api/protected/watchlist/getWatchlist",
+        headers: {
+          Authorization: localStorage.getItem( "jwt" ),
+        },
+      } );
+      console.log( "displayWatchlist got res.data:", res.data );
+      setWatchlist( res.data );
+    }
+    catch ( err ) {
+      let errorMessage = "While getting watchlist from server, an error occurred.";
+      console.error( "Caught err: ", JSON.stringify( err ) );
+      alert( errorMessage );
+    }
+
+  };
+
+  useEffect( () => {
+    console.log( "Updated watchlist: ", watchlist );
+  }, [ watchlist ] );
+
   const displayNews = async () => {
     console.log( `in displayWatchlist` );
 
@@ -55,17 +84,14 @@ export default function News( props ) {
         Authorization: localStorage.getItem( "jwt" ),
       },
     } ).then( res => {
-      console.log( "Before renameKey, res.data:", res.data );
-      for (let newsitem of res.data) {
-        renameKey(newsitem, 'fiscalDateEnding', 'Date');
-        renameKey(newsitem, 'tickerSymbol', 'Ticker Symbol');
-        renameKey(newsitem, 'grossProfit', 'Gross Profit');
-        renameKey(newsitem, 'netIncome', 'Net Income');
-        renameKey(newsitem, 'reportedCurrency', 'Reported Currency');
-        renameKey(newsitem, 'totalRevenue', 'Total Revenue');
+      for ( let newsitem of res.data ) {
+        renameKey( newsitem, 'fiscalDateEnding', 'Date' );
+        renameKey( newsitem, 'tickerSymbol', 'Ticker Symbol' );
+        renameKey( newsitem, 'grossProfit', 'Gross Profit' );
+        renameKey( newsitem, 'netIncome', 'Net Income' );
+        renameKey( newsitem, 'reportedCurrency', 'Reported Currency' );
+        renameKey( newsitem, 'totalRevenue', 'Total Revenue' );
       }
-      console.log( "After renameKey, res.data:", res.data );
-
       setNewsList( res.data );
     } );
   };
@@ -84,7 +110,32 @@ export default function News( props ) {
 
       <Row>
         <Col xs="12">
-          <h5>Relevant news based on your porfolio holdings and watchlist</h5>
+          <h5>Watchlist Quotes</h5>
+          <Table className="watchlistTable" striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Ticker Symbol</th>
+                <th>Adjusted Monthly Closing Price</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              { watchlist ? watchlist.map( currentTicker => (
+                <tr>
+                  <td>{ Object.keys( currentTicker )[ 0 ] }</td>
+                  <td>{ currentTicker[ Object.keys( currentTicker )[ 0 ] ] }</td>
+                </tr>
+              ) ) : <></> }
+            </tbody>
+
+          </Table>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col xs="12">
+          <h5>Relevant news based on your watchlist</h5>
           <Table className="newsTable" striped bordered hover responsive>
             <thead>
               <tr>
@@ -98,8 +149,8 @@ export default function News( props ) {
               { newsList ? newsList.map( news => (
 
                 <tr>
-                  <td>{ news["Date"] }</td>
-                  <td>{ news["Ticker Symbol"] } </td>
+                  <td>{ news[ "Date" ] }</td>
+                  <td>{ news[ "Ticker Symbol" ] } </td>
                   <Link
                     to={ {
                       pathname: "/newsitem",
