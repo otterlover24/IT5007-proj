@@ -56,7 +56,7 @@
 	- bbb / bbb11111
 	- abc / abc12345
 	- ddd / ddd11111
-	- eee / eee11111
+
 ## TS TODO
 - General
 	- {DONE} Implements log levels to limit console.log output.  
@@ -134,9 +134,10 @@
 			- Articles may be new report, or data such as earnings, analyst rating etc
 		- **{TODO} Display list of income statement reports**
 			- {DONE} Display list of quarterly reports
-			- **{TODO} Make row clickable.**
+			- {DONE} Make row clickable.
 				- Create route to NewsItem component.
 				- Create link to NewsItem component, with report passed as prop.
+			- **{TODO} Make newsitem have more items and nicer names.**
   
 
 

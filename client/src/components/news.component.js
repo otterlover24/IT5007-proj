@@ -77,18 +77,20 @@ export default function News( props ) {
 
             <tbody>
               { newsList ? newsList.map( news => (
-                <Link
-                  to={ {
-                    pathname: "/newsitem",
-                    state: { newsdata: news }
-                  } }
-                >
-                  <tr>
-                    <td>{ news.fiscalDateEnding }</td>
-                    <td>{ news.tickerSymbol } </td>
+
+                <tr>
+                  <td>{ news.fiscalDateEnding }</td>
+                  <td>{ news.tickerSymbol } </td>
+                  <Link
+                    to={ {
+                      pathname: "/newsitem",
+                      state: { newsdata: news }
+                    } }
+                  >
                     <td>{ news.tickerSymbol } Quarterly Earnings Report </td>
-                  </tr>
-                </Link>
+                  </Link>
+                </tr>
+
               ) ) : <></> }
             </tbody>
 
