@@ -55,11 +55,30 @@ export default function News( props ) {
         Authorization: localStorage.getItem( "jwt" ),
       },
     } ).then( res => {
-      console.log( res.data );
+      console.log( "Before renameKey, res.data:", res.data );
+      for (let newsitem of res.data) {
+        renameKey(newsitem, 'fiscalDateEnding', 'Date');
+        renameKey(newsitem, 'tickerSymbol', 'Ticker Symbol');
+        renameKey(newsitem, 'grossProfit', 'Gross Profit');
+        renameKey(newsitem, 'netIncome', 'Net Income');
+        renameKey(newsitem, 'reportedCurrency', 'Reported Currency');
+        renameKey(newsitem, 'totalRevenue', 'Total Revenue');
+      }
+      console.log( "After renameKey, res.data:", res.data );
+
       setNewsList( res.data );
     } );
   };
 
+  function renameKey( obj, old_key, new_key ) {
+    // check if old key = new key  
+    if ( old_key !== new_key ) {
+      Object.defineProperty( obj, new_key, // modify old key
+        // fetch description from object
+        Object.getOwnPropertyDescriptor( obj, old_key ) );
+      delete obj[ old_key ];                // delete old key
+    }
+  }
   return (
     <Container>
 
@@ -79,8 +98,8 @@ export default function News( props ) {
               { newsList ? newsList.map( news => (
 
                 <tr>
-                  <td>{ news.fiscalDateEnding }</td>
-                  <td>{ news.tickerSymbol } </td>
+                  <td>{ news["Date"] }</td>
+                  <td>{ news["Ticker Symbol"] } </td>
                   <Link
                     to={ {
                       pathname: "/newsitem",
