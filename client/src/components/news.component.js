@@ -50,7 +50,7 @@ export default function News( props ) {
     try {
       let res = await Axios( {
         method: "get",
-        url: "http://localhost:5000/api/protected/watchlist/getWatchlist",
+        url: "http://localhost:5000/api/protected/watchlist/getWatchlistQuotes",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },

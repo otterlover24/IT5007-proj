@@ -65,7 +65,7 @@ router.get(
           tickersWithoutEntryInDb.push( tickerSymbol );
         }
       }
-      allTickers = tickersWithEntryInDb.concat(tickersWithoutEntryInDb);
+      allTickers = tickersWithEntryInDb.concat( tickersWithoutEntryInDb );
 
       if ( LOG && LOG_NEWS_ROUTER ) {
         console.log( `After mongoTickerRes.forEach, tickersWithEntryInDb: ${tickersWithEntryInDb}` );
@@ -98,33 +98,42 @@ router.get(
         - use Mongoose `findOneAndUpdate()` with `upsert` option to avoid duplication or non-existent entry.
       */
       for ( let tickerSymbol of tickersWithoutEntryInDb ) {
-        for ( let quarterlyReport of apiRes[ tickerSymbol ].data.quarterlyReports ) {
-          if ( LOG && LOG_NEWS_ROUTER ) console.log( "quarterlyReport: ", quarterlyReport.fiscalDateEnding, quarterlyReport.grossProfit );
-          let incomeStatementReportUpdate = {
-            tickerSymbol: tickerSymbol,
-            fiscalDateEnding: quarterlyReport.fiscalDateEnding.slice( 0, 7 ),
-            reportedCurrency: quarterlyReport.reportedCurrency,
-            grossProfit: quarterlyReport.grossProfit,
-            totalRevenue: quarterlyReport.totalRevenue,
-            netIncome: quarterlyReport.netIncome
-          };
 
-          let incomeStatementReportsDoc = await IncomeStatement.findOneAndUpdate(
-            {
-              tickerSymbol: incomeStatementReportUpdate.tickerSymbol,
-              fiscalDateEnding: incomeStatementReportUpdate.fiscalDateEnding,
-            },
-            incomeStatementReportUpdate,
-            {
-              new: true,
-              upsert: true
+        if ( apiRes[ tickerSymbol ].data.quarterlyReports ) {
+
+          for ( let quarterlyReport of apiRes[ tickerSymbol ].data.quarterlyReports ) {
+
+            if ( LOG && LOG_NEWS_ROUTER )
+              console.log( "quarterlyReport: ", quarterlyReport.fiscalDateEnding, quarterlyReport.grossProfit );
+
+            let incomeStatementReportUpdate = {
+              tickerSymbol: tickerSymbol,
+              fiscalDateEnding: quarterlyReport.fiscalDateEnding.slice( 0, 7 ),
+              reportedCurrency: quarterlyReport.reportedCurrency,
+              grossProfit: quarterlyReport.grossProfit,
+              totalRevenue: quarterlyReport.totalRevenue,
+              netIncome: quarterlyReport.netIncome
+            };
+
+            let incomeStatementReportsDoc = await IncomeStatement.findOneAndUpdate(
+              {
+                tickerSymbol: incomeStatementReportUpdate.tickerSymbol,
+                fiscalDateEnding: incomeStatementReportUpdate.fiscalDateEnding,
+              },
+              incomeStatementReportUpdate,
+              {
+                new: true,
+                upsert: true
+              }
+            );
+            if ( LOG && LOG_NEWS_ROUTER && LOG_NEWS_ROUTER_FIND_ONE_AND_UPDATE ) {
+              console.log( "incomeStatmentReportsDoc" );
+              console.log( incomeStatementReportsDoc );
             }
-          );
-          if ( LOG && LOG_NEWS_ROUTER && LOG_NEWS_ROUTER_FIND_ONE_AND_UPDATE ) {
-            console.log( "incomeStatmentReportsDoc" );
-            console.log( incomeStatementReportsDoc );
           }
         }
+
+
       }
 
 
@@ -148,8 +157,8 @@ router.get(
             "fiscalDateEnding": "descending",
           }
         )
-      ;
-      if ( LOG && LOG_NEWS_ROUTER ){
+        ;
+      if ( LOG && LOG_NEWS_ROUTER ) {
         console.log( "req.user: ", req.user );
         console.log( "Got tickers from IncomeStatement collection: ", incomeStatementFromDb );
       }
@@ -157,8 +166,8 @@ router.get(
       /* Return to data user. */
       return res.status( 200 ).json( incomeStatementFromDb );
     } catch ( err ) {
-      if (LOG && LOG_NEWS_ROUTER) {
-        console.log("Error in router.get(/getNews, ...): \n", err);
+      if ( LOG && LOG_NEWS_ROUTER ) {
+        console.log( "Error in router.get(/getNews, ...): \n", err );
       }
       return res.status( 500 ).json( { Error: err } );
     }

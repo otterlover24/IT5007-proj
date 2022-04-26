@@ -7,7 +7,6 @@ const LOG = ( process.env.LOG == 'true' ) ? true : false;
 const LOG_WATCHLIST_ROUTER = ( process.env.LOG_WATCHLIST_ROUTER == 'true' ) ? true : false;
 const LOG_WATCHLIST_ROUTER_GET_WATCHLIST = ( process.env.LOG_WATCHLIST_ROUTER_GET_WATCHLIST == 'true' ) ? true : false;
 
-const currMonth = '2022-03';  // TODO: change to dynamically request from MongoDB
 
 router.post( '/addTickerToWatchlist', async ( req, res ) => {
   try {
@@ -37,7 +36,7 @@ router.post( '/addTickerToWatchlist', async ( req, res ) => {
     if ( LOG && LOG_WATCHLIST_ROUTER ) {
       console.log( "tickerDoc: ", tickerDoc );
     }
-    res.status( 200 );
+    res.status( 200 ).json( tickerDoc );
 
   } catch ( err ) {
     return res.status( 500 ).json( { Error: err } );
@@ -69,10 +68,19 @@ router.post( '/deleteTickerFromWatchlist', async ( req, res ) => {
 } );
 
 router.get( '/getWatchlist', async ( req, res ) => {
-  const tickers = await
-    Ticker
-      .find( { userId: req.user._id, inPortfolio: false } )
-      .select( 'tickerSymbol -_id' );
+  const tickers = await Ticker
+    .find( { userId: req.user._id, inPortfolio: false } )
+    .select( 'tickerSymbol -_id' );
+  if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( `tickers: ${tickers}` );
+
+
+  return res.json( tickers );
+} );
+
+router.get( '/getWatchlistQuotes', async ( req, res ) => {
+  const tickers = await Ticker
+    .find( { userId: req.user._id, inPortfolio: false } )
+    .select( 'tickerSymbol -_id' );
   if ( LOG && LOG_WATCHLIST_ROUTER && LOG_WATCHLIST_ROUTER_GET_WATCHLIST ) console.log( `tickers: ${tickers}` );
 
   let processedRes = [];
@@ -87,12 +95,12 @@ router.get( '/getWatchlist', async ( req, res ) => {
 
     const filteredRes = {};
     filteredRes[ ticker.tickerSymbol ] = apiRes;
+
     processedRes.push( filteredRes );
 
   }
 
   return res.json( processedRes );
-
 } );
 
 

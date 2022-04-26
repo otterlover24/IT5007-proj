@@ -16,6 +16,7 @@ export default function Watchlist( props ) {
   const [ tickerToAdd, setTickerToAdd ] = useState();
   const [ tickerToDelete, setTickerToDelete ] = useState();
   const [ watchlist, setWatchlist ] = useState();
+  const [ reloadWatchlist, setReloadWatchlist ] = useState( false );
 
   useEffect( () => {
     checkLoggedIn();
@@ -23,7 +24,6 @@ export default function Watchlist( props ) {
     console.log( "props.beginMonth: \n", props.beginMonth );
     console.log( "props.viewingMonth: \n", props.viewingMonth );
     console.log( "props.latestMonth: \n", props.latestMonth );
-
   }, [] );
 
   const checkLoggedIn = async () => {
@@ -43,6 +43,9 @@ export default function Watchlist( props ) {
     }
   };
 
+  function sleep( ms ) {
+    return new Promise( resolve => setTimeout( resolve, ms ) );
+  }
   const displayWatchlist = async () => {
     console.log( `in displayWatchlist` );
 
@@ -55,21 +58,21 @@ export default function Watchlist( props ) {
           Authorization: localStorage.getItem( "jwt" ),
         },
       } );
-      console.log( res.data );
+      console.log( "Got from /getWatchlist, res.data: ", res.data );
       setWatchlist( res.data );
     }
     catch ( err ) {
       let errorMessage = "While getting watchlist from server, an error occurred.";
-      console.error( "Caught err: ", JSON.stringify(err) );
-      alert(errorMessage);
+      console.error( "Caught err: ", JSON.stringify( err ) );
+      alert( errorMessage );
     }
-
 
   };
 
   useEffect( () => {
-    console.log( watchlist );
-  }, [ watchlist ] );
+    console.log( "reloadWatchlist altered" );
+    displayWatchlist();
+  }, [ reloadWatchlist ] );
 
 
 
@@ -78,7 +81,7 @@ export default function Watchlist( props ) {
       e.preventDefault();
       e.target.reset();
 
-      await Axios( {
+      let res = await Axios( {
         method: "post",
         url: "http://localhost:5000/api/protected/watchlist/addTickerToWatchlist",
         headers: {
@@ -87,9 +90,10 @@ export default function Watchlist( props ) {
         data: {
           ticker: tickerToAdd
         },
-      } ).then( res => {
-        console.log( `Sent ${res} to /api/protected/watchlist/addTickerToWatchlist` );
       } );
+      console.log( `Got from /api/protected/watchlist/addTickerToWatchlist`, res );
+
+      setReloadWatchlist( !reloadWatchlist );
     } catch ( err ) {
       console.error( err );
     }
@@ -100,7 +104,7 @@ export default function Watchlist( props ) {
       e.preventDefault();
       e.target.reset();
 
-      await Axios( {
+      let res = await Axios( {
         method: "post",
         url: "http://localhost:5000/api/protected/watchlist/deleteTickerFromWatchlist",
         headers: {
@@ -109,9 +113,11 @@ export default function Watchlist( props ) {
         data: {
           ticker: tickerToDelete
         },
-      } ).then( res => {
-        console.log( `Sent ${res} to /api/protected/watchlist/deleteTickerFromWatchlist` );
       } );
+      console.log( `Got from /api/protected/watchlist/deleteTickerFromWatchlist`, res );
+
+
+      setReloadWatchlist( !reloadWatchlist );
     } catch ( err ) {
       console.error( err );
     }
@@ -174,7 +180,6 @@ export default function Watchlist( props ) {
             <thead>
               <tr>
                 <th>Ticker Symbol</th>
-                <th>Adjusted Monthly Closing Price</th>
               </tr>
             </thead>
 
@@ -182,8 +187,7 @@ export default function Watchlist( props ) {
 
               { watchlist ? watchlist.map( currentTicker => (
                 <tr>
-                  <td>{ Object.keys( currentTicker )[ 0 ] }</td>
-                  <td>{ currentTicker[ Object.keys( currentTicker )[ 0 ] ] }</td>
+                  <td>{ currentTicker.tickerSymbol }</td>
                 </tr>
               ) ) : <></> }
             </tbody>
