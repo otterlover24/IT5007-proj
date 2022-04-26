@@ -7,8 +7,6 @@ import Axios from 'axios';
 export default function Login() {
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
-    const [error, setError] = useState();
-    const [modalShow, setModalShow] = useState(false);
 
     useEffect(() => {
         const checkLoggedIn = async () => {

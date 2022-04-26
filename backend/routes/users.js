@@ -124,31 +124,43 @@ router.post( "/register", async ( req, res ) => {
 
     let { username, password, confirmPassword } = req.body;
     if ( !username || !password || !confirmPassword ) {
-      return res.status( 400 ).json( { Error: "Not all fields entered" } );
+      let errorMessage = "While registering user, not all fields are entered.";
+      console.error( errorMessage );
+      return res
+        .status( 400 )
+        .send( { errorMessage } );
     }
     if ( username.length < 3 ) {
-      console.log("Username is not at least 3 characters long.");
+      let errorMessage = "While registering user, username is not at least 3 characters long.";
+      console.error( errorMessage );
       return res
         .status( 400 )
-        .json( { Error: "Username is not at least 3 characters long." } );
+        .send( { errorMessage } );
     }
     if ( password.length < 8 ) {
-      console.log("Password is not at least 8 characters long.");
+      let errorMessage = "While registering user, password is not at least 8 characters long.";
+      console.error( errorMessage );
       return res
         .status( 400 )
-        .json( { Error: "Password is not atleast 8 characters long." } );
+        .send( { errorMessage } );
     }
     if ( password !== confirmPassword ) {
-      console.log("Password confirmation does not match.")
-      return res.status( 400 ).json( { Error: "Password confirmation does not match." } );
+      let errorMessage = "While registering user, password confirmation does not match.";
+      console.error( errorMessage );
+      return res
+        .status( 400 )
+        .send( { errorMessage } );
     }
 
     const isTaken = await User.findOne( { username: username } );
     if ( isTaken ) {
-      console.log("Username is taken.");
-      return res.status( 400 ).json( { Error: "Username is taken" } );
+      let errorMessage = "While registering user, username is taken.";
+      console.error( errorMessage );
+      return res
+        .status( 400 )
+        .send( { errorMessage } );
     }
-    
+
     const salt = await bcrypt.genSalt( 12 );
     const hashedPassword = await bcrypt.hash( password, salt );
 

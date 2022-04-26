@@ -7,8 +7,6 @@ export default function Register() {
     const [ username, setUsername ] = useState();
     const [ password, setPassword ] = useState();
     const [ confirmPassword, setConfirmPassword ] = useState();
-    const [ error, setError ] = useState();
-    const [ modalShow, setModalShow ] = useState( false );
 
 
     useEffect( () => {
@@ -36,33 +34,48 @@ export default function Register() {
     }, [] );
 
     const onSubmit = async ( e ) => {
+        e.preventDefault();
+
+        const registerUser = {
+            username,
+            password,
+            confirmPassword
+        };
 
         try {
-            e.preventDefault();
-
-            const registerUser = {
-                username,
-                password,
-                confirmPassword
-            };
-
             const userRes = await Axios.post( "http://localhost:5000/api/users/register", registerUser );
             const userId = userRes.data.user._id;
             console.log( "After register form submission, server returned user: ", userRes.data );
+        }
+        catch ( err ) {
+            console.error( "Caught err: ", JSON.stringify( err ) );
+            alert( `Error: ${err.response.data.errorMessage}` );
+            return;
+        }
 
-            /* Automatic login. */
-            const loginUser = {
-                username,
-                password,
-            };
+
+        /* Automatic login. */
+        const loginUser = {
+            username,
+            password,
+        };
+        try {
             const loginRes = await Axios.post( "http://localhost:5000/api/users/login", loginUser );
             localStorage.setItem( 'jwt', loginRes.data.token );
+        }
+        catch ( err ) {
+            console.error( "Caught err: ", JSON.stringify( err ) );
+            alert( `Error: ${err.response.data.errorMessage}` );
+            return;
+        }
 
-            /* Redirect page to main app */
-            window.location = '/app';
 
-            /* Start off with USD $1,000,000 */
-            await Axios( {
+        /* Redirect page to main app */
+        window.location = '/app';
+
+        /* Start off with USD $1,000,000 */
+        try {
+            let res = await Axios( {
                 method: "post",
                 url: "http://localhost:5000/api/protected/trade/submitTrade",
                 headers: {
@@ -75,19 +88,22 @@ export default function Register() {
                     direction: "BUY",
                     isInit: true,
                 },
-            } )
-                .then( res => {
-                    console.log( "Received from /api/protected/trade/submitTrade, res.data: \n", res.data );
-                    if ( res.data.message === "success" ) {
-                        console.log( "US-DOLLAR $1M balance initialization successful." );
-                    }
-                } );
+            } );
 
+            console.log( "Received from /api/protected/trade/submitTrade, res.data: \n", res.data );
+            if ( res.data.message === "success" ) {
+                console.log( "US-DOLLAR $1M balance initialization successful." );
+            }
         }
-
         catch ( err ) {
-            alert( `Error: ${err}` );
+            console.error( "Caught err: ", JSON.stringify( err ) );
+            alert( `Error: ${err.response.data.errorMessage}` );
+            return;
         }
+
+
+
+
     };
 
 

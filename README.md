@@ -28,6 +28,9 @@
 	- Use single GraphQL endpoint instead of interacting with multiple endpoints.
 	
 	- Use another charting library instead of `chart.js`.
+- To get past CORS error
+  	1. Go to chrome://flags/#block-insecure-private-network-requests
+  	2. Set Block insecure private network requests to Disabled
 
 ## TS notes
 - AlphaVantage API limits
@@ -56,6 +59,7 @@
 	- bbb / bbb11111
 	- abc / abc12345
 	- ddd / ddd11111
+	- eee / eee11111
 
 ## TS TODO
 - General
@@ -132,12 +136,12 @@
 		- Securities in porfolio, watchlist, and aggregate indices automatically in subscription
 		- See list of headlines, which link to articles
 			- Articles may be new report, or data such as earnings, analyst rating etc
-		- **{TODO} Display list of income statement reports**
+		- {DONE} Display list of income statement reports
 			- {DONE} Display list of quarterly reports
 			- {DONE} Make row clickable.
 				- Create route to NewsItem component.
 				- Create link to NewsItem component, with report passed as prop.
-			- **{TODO} Make newsitem have more items and nicer names.**
+			- {DONE} Make newsitem have more items and nicer names.
   
 
 
