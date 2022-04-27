@@ -13,7 +13,7 @@ export default function Login() {
             if (localStorage.getItem('jwt')) {
                 Axios({
                     method: 'get',
-                    url: 'http://localhost:5000/api/users/isAuthenticated',
+                    url: 'http://3.135.31.228:5000/api/users/isAuthenticated',
                     headers: {
                         'Authorization': localStorage.getItem('jwt'),
                     }
@@ -41,7 +41,7 @@ export default function Login() {
                 password,
 
             }
-            const loginRes = await Axios.post("http://localhost:5000/api/users/login", loginUser);
+            const loginRes = await Axios.post("http://3.135.31.228:5000/api/users/login", loginUser);
 
             localStorage.setItem('jwt', loginRes.data.token);
            

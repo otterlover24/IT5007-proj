@@ -22,7 +22,7 @@ export default function Trade( props ) {
     if ( localStorage.getItem( "jwt" ) ) {
       Axios( {
         method: "get",
-        url: "http://localhost:5000/api/users/isAuthenticated",
+        url: "http://3.135.31.228:5000/api/users/isAuthenticated",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -43,7 +43,7 @@ export default function Trade( props ) {
 
       await Axios( {
         method: "post",
-        url: "http://localhost:5000/api/protected/trade/submitTrade",
+        url: "http://3.135.31.228:5000/api/protected/trade/submitTrade",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -79,7 +79,7 @@ export default function Trade( props ) {
 
       await Axios( {
         method: "post",
-        url: "http://localhost:5000/api/protected/trade/getQuote",
+        url: "http://3.135.31.228:5000/api/protected/trade/getQuote",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },

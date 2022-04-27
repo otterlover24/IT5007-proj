@@ -15,7 +15,7 @@ export default function Register() {
 
                 Axios( {
                     method: 'get',
-                    url: 'http://localhost:5000/api/users/isAuthenticated',
+                    url: 'http://3.135.31.228:5000/api/users/isAuthenticated',
                     headers: {
                         'Authorization': localStorage.getItem( 'jwt' ),
                     }
@@ -43,7 +43,7 @@ export default function Register() {
         };
 
         try {
-            const userRes = await Axios.post( "http://localhost:5000/api/users/register", registerUser );
+            const userRes = await Axios.post( "http://3.135.31.228:5000/api/users/register", registerUser );
             const userId = userRes.data.user._id;
             console.log( "After register form submission, server returned user: ", userRes.data );
         }
@@ -60,7 +60,7 @@ export default function Register() {
             password,
         };
         try {
-            const loginRes = await Axios.post( "http://localhost:5000/api/users/login", loginUser );
+            const loginRes = await Axios.post( "http://3.135.31.228:5000/api/users/login", loginUser );
             localStorage.setItem( 'jwt', loginRes.data.token );
         }
         catch ( err ) {
@@ -77,7 +77,7 @@ export default function Register() {
         try {
             let res = await Axios( {
                 method: "post",
-                url: "http://localhost:5000/api/protected/trade/submitTrade",
+                url: "http://3.135.31.228:5000/api/protected/trade/submitTrade",
                 headers: {
                     Authorization: localStorage.getItem( "jwt" ),
                 },

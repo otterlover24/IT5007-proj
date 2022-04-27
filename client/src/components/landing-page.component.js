@@ -10,7 +10,7 @@ export default function HomePage() {
       if (localStorage.getItem("jwt")) {
         Axios({
           method: "get",
-          url: "http://localhost:5000/api/users/isAuthenticated",
+          url: "http://3.135.31.228:5000/api/users/isAuthenticated",
           headers: {
             Authorization: localStorage.getItem("jwt"),
           },

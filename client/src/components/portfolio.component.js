@@ -51,7 +51,7 @@ export default function Portfolio( props ) {
     if ( localStorage.getItem( "jwt" ) ) {
       Axios( {
         method: "get",
-        url: "http://localhost:5000/api/users/isAuthenticated",
+        url: "http://3.135.31.228:5000/api/users/isAuthenticated",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -71,7 +71,7 @@ export default function Portfolio( props ) {
     /* Get watchlist from server */
     await Axios( {
       method: "post",
-      url: "http://localhost:5000/api/protected/portfolio/getTrades",
+      url: "http://3.135.31.228:5000/api/protected/portfolio/getTrades",
       headers: {
         Authorization: localStorage.getItem( "jwt" ),
       },

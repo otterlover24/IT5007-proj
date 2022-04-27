@@ -33,7 +33,7 @@ export default function News( props ) {
     if ( localStorage.getItem( "jwt" ) ) {
       Axios( {
         method: "get",
-        url: "http://localhost:5000/api/users/isAuthenticated",
+        url: "http://3.135.31.228:5000/api/users/isAuthenticated",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -53,7 +53,7 @@ export default function News( props ) {
     try {
       let res = await Axios( {
         method: "get",
-        url: "http://localhost:5000/api/protected/watchlist/getWatchlistQuotes",
+        url: "http://3.135.31.228:5000/api/protected/watchlist/getWatchlistQuotes",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -75,7 +75,7 @@ export default function News( props ) {
     try {
       let res = await Axios( {
         method: "get",
-        url: "http://localhost:5000/api/protected/watchlist/getWatchlistQuotesUptoYearMonth",
+        url: "http://3.135.31.228:5000/api/protected/watchlist/getWatchlistQuotesUptoYearMonth",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -106,7 +106,7 @@ export default function News( props ) {
     /* Get watchlist from server */
     let res = await Axios( {
       method: "get",
-      url: "http://localhost:5000/api/protected/news/getNews",
+      url: "http://3.135.31.228:5000/api/protected/news/getNews",
       headers: {
         Authorization: localStorage.getItem( "jwt" ),
       },

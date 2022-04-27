@@ -47,7 +47,7 @@ function App() {
 
       Axios( {
         method: 'get',
-        url: 'http://localhost:5000/api/users/isAuthenticated',
+        url: 'http://3.135.31.228:5000/api/users/isAuthenticated',
         headers: {
           'Authorization': localStorage.getItem( 'jwt' ),
         }
@@ -72,7 +72,7 @@ function App() {
         */
         await Axios( {
           method: "get",
-          url: "http://localhost:5000/api/users/getBeginMonth",
+          url: "http://3.135.31.228:5000/api/users/getBeginMonth",
           headers: {
             Authorization: localStorage.getItem( "jwt" ),
           },
@@ -83,7 +83,7 @@ function App() {
 
         await Axios( {
           method: "get",
-          url: "http://localhost:5000/api/users/getLatestMonth",
+          url: "http://3.135.31.228:5000/api/users/getLatestMonth",
           headers: {
             Authorization: localStorage.getItem( "jwt" ),
           },
@@ -94,7 +94,7 @@ function App() {
 
         await Axios( {
           method: "get",
-          url: "http://localhost:5000/api/users/getViewingMonth",
+          url: "http://3.135.31.228:5000/api/users/getViewingMonth",
           headers: {
             Authorization: localStorage.getItem( "jwt" ),
           },
@@ -114,7 +114,7 @@ function App() {
     try {
       await Axios( {
         method: "post",
-        url: "http://localhost:5000/api/users/viewPreviousQuarter",
+        url: "http://3.135.31.228:5000/api/users/viewPreviousQuarter",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -132,7 +132,7 @@ function App() {
     try {
       await Axios( {
         method: "post",
-        url: "http://localhost:5000/api/users/viewNextQuarter",
+        url: "http://3.135.31.228:5000/api/users/viewNextQuarter",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -150,7 +150,7 @@ function App() {
     try {
       await Axios( {
         method: "post",
-        url: "http://localhost:5000/api/users/forwardOneQuarter",
+        url: "http://3.135.31.228:5000/api/users/forwardOneQuarter",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },

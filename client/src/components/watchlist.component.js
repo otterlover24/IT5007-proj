@@ -30,7 +30,7 @@ export default function Watchlist( props ) {
     if ( localStorage.getItem( "jwt" ) ) {
       Axios( {
         method: "get",
-        url: "http://localhost:5000/api/users/isAuthenticated",
+        url: "http://3.135.31.228:5000/api/users/isAuthenticated",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -53,7 +53,7 @@ export default function Watchlist( props ) {
     try {
       let res = await Axios( {
         method: "get",
-        url: "http://localhost:5000/api/protected/watchlist/getWatchlist",
+        url: "http://3.135.31.228:5000/api/protected/watchlist/getWatchlist",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -83,7 +83,7 @@ export default function Watchlist( props ) {
 
       let res = await Axios( {
         method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/addTickerToWatchlist",
+        url: "http://3.135.31.228:5000/api/protected/watchlist/addTickerToWatchlist",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
@@ -106,7 +106,7 @@ export default function Watchlist( props ) {
 
       let res = await Axios( {
         method: "post",
-        url: "http://localhost:5000/api/protected/watchlist/deleteTickerFromWatchlist",
+        url: "http://3.135.31.228:5000/api/protected/watchlist/deleteTickerFromWatchlist",
         headers: {
           Authorization: localStorage.getItem( "jwt" ),
         },
