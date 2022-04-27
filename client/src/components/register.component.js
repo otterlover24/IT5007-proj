@@ -20,7 +20,7 @@ export default function Register() {
                         'Authorization': localStorage.getItem( 'jwt' ),
                     }
                 } ).then( res => {
-                    window.location = '/app';
+                    window.location = '/guide';
 
                 } ).catch( err => {
                     localStorage.removeItem( 'jwt' );
@@ -71,7 +71,7 @@ export default function Register() {
 
 
         /* Redirect page to main app */
-        window.location = '/app';
+        window.location = '/guide';
 
         /* Start off with USD $1,000,000 */
         try {

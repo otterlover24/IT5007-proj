@@ -6,9 +6,9 @@ import "../App.css";
 import { Navbar, Nav } from "react-bootstrap";
 import "./component.css";
 
-export default function NavbarComponent(props) {
+export default function NavbarComponent( props ) {
   const logout = () => {
-    localStorage.removeItem("jwt");
+    localStorage.removeItem( "jwt" );
     window.location = "/";
   };
 
@@ -20,67 +20,73 @@ export default function NavbarComponent(props) {
       variant="light"
       className="nav-bar"
     >
-      <Navbar.Brand href={"/"}>Stock Simulator</Navbar.Brand>
+      <Navbar.Brand href={ "/" }>Stock Simulator</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
-          {!props.isAuthenticated && (
+          { !props.isAuthenticated && (
             <Link to="/login" className="nav-link">
               Sign in
             </Link>
-          )}
+          ) }
 
-          {!props.isAuthenticated && (
+          { !props.isAuthenticated && (
             <Link to="/register" className="nav-link">
               Register
             </Link>
-          )}
+          ) }
 
-          {props.isAuthenticated && (
+          { props.isAuthenticated && (
+            <Link to="/Guide" className="nav-link">
+              Guide
+            </Link>
+          ) }
+
+          { props.isAuthenticated && (
             <Link to="/News" className="nav-link">
               News
             </Link>
-          )}
+          ) }
 
-          {props.isAuthenticated && (
+          { props.isAuthenticated && (
             <Link to="/Trade" className="nav-link">
               Trade
             </Link>
-          )}
+          ) }
 
-          {props.isAuthenticated && (
+          { props.isAuthenticated && (
             <Link to="/watchlist" className="nav-link">
               Watchlist
             </Link>
-          )}
+          ) }
 
-          {props.isAuthenticated && (
+          { props.isAuthenticated && (
             <Link to="/Portfolio" className="nav-link">
               Portfolio
             </Link>
-          )}
+          ) }
 
-          {props.isAuthenticated && (
-            <Link to="/" className="nav-link" onClick={logout}>
+          { props.isAuthenticated && (
+            <Link to="/" className="nav-link" onClick={ logout }>
               Sign Out
             </Link>
-          )}
+          ) }
 
-          {props.allMonthsReady && (
-            <button onClick={props.viewPreviousQuarter}>View Previous Quarter</button>
-          )}
+          { props.allMonthsReady && (
+            <button onClick={ props.viewPreviousQuarter }>View Previous Quarter</button>
+          ) }
 
-          {props.allMonthsReady && <h6 style={{ color: "light-grey" }}>Viewing Quarter: {props.viewingMonth}</h6>}
-          
-          {props.allMonthsReady && <h6 style={{ color: "dark-grey" }}>Latest Quarter: {props.latestMonth}</h6>}
+          { props.allMonthsReady && <h6 style={ { color: "light-grey" } }>Viewing Quarter: { props.viewingMonth }</h6> }
 
-          {props.allMonthsReady && (
-            <button onClick={props.viewNextQuarter}>View Next Quarter</button>
-          )}
+          { props.allMonthsReady && <h6 style={ { color: "dark-grey" } }>Latest Quarter: { props.latestMonth }</h6> }
 
-          {props.allMonthsReady && (
-            <button onClick={props.forwardOneQuarter}>Forward One Quarter</button>
-          )}
+          { props.allMonthsReady && (
+            <button onClick={ props.viewNextQuarter }>View Next Quarter</button>
+          ) }
+
+          { props.allMonthsReady && (
+            <button onClick={ props.forwardOneQuarter }>Forward Latest Quarter</button>
+          ) }
         </Nav>
       </Navbar.Collapse>
     </Navbar>

@@ -5,6 +5,7 @@ import './App.css';
 import Navbar from "./components/navbar.component";
 import "bootstrap/dist/css/bootstrap.min.css";
 import LandingPage from "./components/landing-page.component";
+import Guide from "./components/guide.component";
 import Login from "./components/login.component";
 import Register from "./components/register.component";
 import Portfolio from "./components/portfolio.component";
@@ -179,6 +180,7 @@ function App() {
 
         <Switch>
           <Route path="/" exact component={ LandingPage } />
+          <Route path="/guide" exact component={ Guide } />
           <Route path="/login" exact component={ Login } />
           <Route path="/register" exact component={ Register } />
           <Route path="/trade" exact render={ props =>

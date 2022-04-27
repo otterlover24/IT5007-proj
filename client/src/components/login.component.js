@@ -18,7 +18,7 @@ export default function Login() {
                         'Authorization': localStorage.getItem('jwt'),
                     }
                 }).then(res => {
-                    window.location = '/app';
+                    window.location = '/guide';
 
                 }).catch(err => {
                     window.location = '/login';
@@ -45,7 +45,7 @@ export default function Login() {
 
             localStorage.setItem('jwt', loginRes.data.token);
            
-            window.location = '/app';
+            window.location = '/guide';
         } catch (err) {
             alert(err);
         }
