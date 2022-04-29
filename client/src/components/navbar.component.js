@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Button } from "react-bootstrap";
 import Axios from "axios";
 import { Link } from "react-router-dom";
 import "../App.css";
@@ -73,22 +74,36 @@ export default function NavbarComponent( props ) {
           ) }
 
           { props.allMonthsReady && (
-            <button onClick={ props.viewPreviousQuarter }>View Previous Quarter</button>
-          ) }
-
-          { props.allMonthsReady && <h6 style={ { color: "light-grey" } }>Viewing Quarter: { props.viewingMonth }</h6> }
-
-          { props.allMonthsReady && <h6 style={ { color: "dark-grey" } }>Latest Quarter: { props.latestMonth }</h6> }
-
-          { props.allMonthsReady && (
-            <button onClick={ props.viewNextQuarter }>View Next Quarter</button>
+            <Button variant="secondary" onClick={ props.viewPreviousQuarter }>
+              View Previous Quarter
+            </Button>
           ) }
 
           { props.allMonthsReady && (
-            <button onClick={ props.forwardOneQuarter }>Forward Latest Quarter</button>
+            <Button variant="secondary" onClick={ props.viewNextQuarter }>
+              View Next Quarter
+            </Button>
+          ) }
+
+          { props.allMonthsReady && (
+            <Button variant="secondary" onClick={ props.forwardOneQuarter }>
+              Forward Latest Quarter
+            </Button>
+          ) }
+
+          { props.allMonthsReady && (
+            <Navbar.Text>
+              Viewing Quarter: { props.viewingMonth }
+            </Navbar.Text>
+          ) }
+
+          { props.allMonthsReady && (
+            <Navbar.Text>
+              Latest Quarter: { props.latestMonth }
+            </Navbar.Text>
           ) }
         </Nav>
       </Navbar.Collapse>
-    </Navbar>
+    </Navbar >
   );
 }

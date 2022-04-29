@@ -51,3 +51,7 @@ font-weight: bold;
     margin-top:1rem
   }
 }
+
+input[type="radio"]{
+    margin: 10px
+}
