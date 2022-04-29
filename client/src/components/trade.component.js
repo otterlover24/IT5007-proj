@@ -93,7 +93,7 @@ export default function Trade( props ) {
         setPrice( res.data );
       }
       else {
-        alert( `Could not get quote for ticker.` );
+        alert( `Could not get quote for ticker ${tickerSymbol}.` );
       }
 
 
