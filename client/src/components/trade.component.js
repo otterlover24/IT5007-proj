@@ -77,7 +77,7 @@ export default function Trade( props ) {
   const handleGetQuote = async e => {
     try {
 
-      await Axios( {
+      let res = await Axios( {
         method: "post",
         url: "http://3.135.31.228:5000/api/protected/trade/getQuote",
         headers: {
@@ -86,11 +86,16 @@ export default function Trade( props ) {
         data: {
           tickerSymbol: tickerSymbol,
         },
-      } )
-        .then( res => {
-          console.log( "Received from /api/protected/trade/getQuote, res.data: \n", res.data );
-          setPrice( res.data );
-        } );
+      } );
+
+      console.log( "Received from /api/protected/trade/getQuote, res.data: \n", res.data );
+      if ( res.data ) {
+        setPrice( res.data );
+      }
+      else {
+        alert( `Could not get quote for ticker.` );
+      }
+
 
     }
     catch ( err ) {
