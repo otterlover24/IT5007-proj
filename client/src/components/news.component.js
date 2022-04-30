@@ -94,9 +94,10 @@ export default function News( props ) {
       setWatchlistHistory( priceHistoryTemp );
     }
     catch ( err ) {
-      let errorMessage = "While getting watchlist price hisotry from server, an error occurred.";
+      let errorMessage = "While getting watchlist price history from server, API limitation was reached. Please try again in one minute.";
       console.error( "Caught err: ", JSON.stringify( err ) );
       alert( errorMessage );
+      window.location = "/Guide";
     }
   };
 
