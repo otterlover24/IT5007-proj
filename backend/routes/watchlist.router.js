@@ -120,7 +120,7 @@ router.get( '/getWatchlistQuotesUptoYearMonth', async ( req, res ) => {
 
     let apiRes = await getQuotesUptoYearMonthWithCaching( ticker.tickerSymbol, req.user.viewingMonth );
     console.log( "Got from getQuoteUptoYearMonthWithCaching apiRes: ", apiRes );
-    if ( apiRes === undefined || apiRes === null ) {
+    if ( apiRes === undefined || apiRes === null || apiRes.length <= 0) {
       let errorMessage = `Could not retrieve quote for ${ticker.tickerSymbol}`;
       console.error( errorMessage );
       return res
