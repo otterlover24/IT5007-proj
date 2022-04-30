@@ -49,8 +49,13 @@ export default function Register() {
         }
         catch ( err ) {
             console.error( "Caught err: ", JSON.stringify( err ) );
-            alert( `Error: ${err.response.data.errorMessage}` );
-            return;
+            if (err.response.data.errorMessage) {
+                alert( `Error: ${err.response.data.errorMessage}` );
+            }
+            else {
+                alert(`Error while registering. Please try another username.`)
+            }
+
         }
 
 

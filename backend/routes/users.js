@@ -87,13 +87,19 @@ router.post( "/login", async ( req, res ) => {
     if ( LOG && LOG_USER ) { console.log( "/login received req: ", req ); };
     const { username, password } = req.body;
     if ( !username || !password ) {
+      let errorMessage = "Username or password is not submitted.";
+      console.error( errorMessage );
       return res
         .status( 400 )
-        .json( { Error: "Not all fields have been entered" } );
+        .send( { errorMessage } );
     }
     User.findOne( { username: username } ).then( user => {
       if ( !user ) {
-        return res.status( 400 ).json( { Error: "Invalid Login" } );
+        let errorMessage = "Username does not exist.";
+        console.error( errorMessage );
+        return res
+          .status( 400 )
+          .send( { errorMessage } );
       }
       bcrypt.compare( password, user.password ).then( isMatch => {
         if ( isMatch ) {
@@ -107,7 +113,11 @@ router.post( "/login", async ( req, res ) => {
 
           return res.status( 200 ).json( { token, payload } );
         } else {
-          return res.status( 400 ).json( { Error: "Invalid Login" } );
+          let errorMessage = "Password entered is incorrect.";
+          console.error( errorMessage );
+          return res
+            .status( 400 )
+            .send( { errorMessage } );
         }
       } );
     } );

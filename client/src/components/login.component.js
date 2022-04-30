@@ -47,7 +47,14 @@ export default function Login() {
            
             window.location = '/guide';
         } catch (err) {
-            alert(err);
+            console.error("Caught err: ", JSON.stringify(err));
+            if (err.response.data.errorMessage) {
+                alert(err.response.data.errorMessage);
+            }
+            else {
+                alert("Could not login. Username or password is wrong. Please try again.");
+            }
+
         }
     }
 
