@@ -100,9 +100,15 @@ export default function News( props ) {
       setWatchlistHistory( priceHistoryTemp );
     }
     catch ( err ) {
-      let errorMessage = "While getting watchlist price history from server, API limitation was reached. Please try again in one minute.";
       console.error( "Caught err: ", JSON.stringify( err ) );
-      alert( errorMessage );
+      if ( err.response.data.errorMessage ) {
+        alert( err.response.data.errorMessage );
+      }
+      else {
+        let errorMessage = "While getting watchlist price history from server, API limitation was reached. Please try again in one minute.";
+        alert( errorMessage );
+      }
+
       window.location = "/";
     }
   };
