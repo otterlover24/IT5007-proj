@@ -95,8 +95,12 @@ router.post( "/login", async ( req, res ) => {
     }
     User.findOne( { username: username } ).then( user => {
       if ( !user ) {
-        let errorMessage = "Username does not exist.";
-        console.error( errorMessage );
+        /* 
+        For privacy/security considerations, we will not reveal 
+        to users whether an existing username exists.
+        */
+        console.error( "Username does not exist." );
+        let errorMessage = "Username or password is incorrect.";
         return res
           .status( 400 )
           .send( { errorMessage } );
@@ -113,8 +117,8 @@ router.post( "/login", async ( req, res ) => {
 
           return res.status( 200 ).json( { token, payload } );
         } else {
-          let errorMessage = "Password entered is incorrect.";
-          console.error( errorMessage );
+          console.error( "Password entered is incorrect." );
+          let errorMessage = "Username or password is incorrect.";
           return res
             .status( 400 )
             .send( { errorMessage } );

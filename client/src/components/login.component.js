@@ -52,7 +52,7 @@ export default function Login() {
                 alert(err.response.data.errorMessage);
             }
             else {
-                alert("Could not login. Username or password is wrong. Please try again.");
+                alert("Username or password is incorrect.");
             }
 
         }
