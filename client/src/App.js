@@ -17,9 +17,9 @@ import Pricehistory from "./components/pricehistory.component";
 
 function App() {
   const [ loggedIn, setLoggedIn ] = useState( false );
-  const [ beginMonth, setBeginMonth ] = useState();
-  const [ latestMonth, setLatestMonth ] = useState();
-  const [ viewingMonth, setViewingMonth ] = useState();
+  const [ beginMonth, setBeginMonth ] = useState();           // Quarter aligned.
+  const [ latestMonth, setLatestMonth ] = useState();         // Corresponds to "Latest Quarter" on UI.
+  const [ viewingMonth, setViewingMonth ] = useState();       // Corresponds to "Viewing Quarter" on UI
   const [ allMonthsReady, setAllMonthsReady ] = useState();
   const [ getMonthVariablesFlag, setGetMonthVariablesFlag ] = useState( true );
 
@@ -61,6 +61,13 @@ function App() {
     }
   };
 
+  /* 
+  This sets the variables `beginMonth`, `latestMonth`, and `viewingMonth` that are actually 
+  quarterly variables in the current implementation.
+
+  Although the current UI only has quarterly time-steps, it is possible to extend 
+  the simulation to view monthly information.
+  */
   const getMonthVariables = async () => {
     try {
       if ( loggedIn ) {
@@ -69,6 +76,9 @@ function App() {
         /* 
         Get `beginMonth`, `latestMonth`, `viewingMonth` from server's users route's 
         `getBeginMonth`, `getLatestMonth`, `getViewingMonth` respectively.
+
+        The call to /getBeginMonth route on server side is guaranteed to return a quarter-aligned
+        yearMonth.
         */
         await Axios( {
           method: "get",

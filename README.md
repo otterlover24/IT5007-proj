@@ -7,15 +7,29 @@
 		- Interface to search on google, but restrict information date.
 			- Google has such an option.
 ## Deployment Instructions
-- Run code in docker exposing `localhost:3000`.
-- Run `npm install` to install the necessary node packages.
-- Create a .env file in the backend folder to include the following configuration secrets (you may use the secrets I provided, but please keep the SECRET_KEY and VANTAGE_KEY confidential):
-	- MONGODB_URI: URI of MongoDB database
-	- SECRET: secret key used for password hasing 
-	- VANTAGE_KEY: API kvbar, click on `Register` link and create new user.
-- Log in as new user via the `Sign in` link on Navbar.
-- You may view the page mockups for News, Trade, Watchlist, Porfolio pages.
-- Watchlist page has been partially implemented. You may enter ticker to add to watchlist. The quotation will then be reflected in the table below. (You may have to refresh the page, I will fix this in the submission.)
+
+```bash
+// On local machine, connect to AWS EC2 instance via SSH
+ssh -i "it5007key.pem" ubuntu@ec2-3-135-31-228.us-east-2.compute.amazonaws.com
+
+// After SSH connection established, in AWS EC2 instance:
+tmux
+// In pane 1
+git clone https://ghp_XSK4423ySmXIrWGdL4t5EcfnF7hVcD1C
+VjbS@github.com/otterlover24/IT5007-proj.git
+// In pane 2
+sudo mongod
+// In pane 3
+cd ~/IT5007-proj/backend
+npm install
+npm run initMongo
+npm run dev
+// In pane 4
+cd ~/IT5007-proj/client
+npm install
+npm run start
+```
+
 
 ## Notes to Tutor
 - I had tried to learn AlphaVantage API requests, authentication, and charting but failed when I tried to put them together from scratch and that set me back by about a week. To meet this first stage submission deadline, I had to base my work off an existing working project and edit from there. The code here is modifed from a public domain Github project https://github.com/SaenthanP/Finance-Tool. You may also view the git logs to see the original and my subsequent changes.
