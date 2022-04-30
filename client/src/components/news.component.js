@@ -23,7 +23,7 @@ export default function News( props ) {
     console.log( "news.component props.viewingMonth: ", props.viewingMonth );
     console.log( "news.component props.latestMonth: ", props.latestMonth );
     checkLoggedIn();
-    displayWatchlist();
+    // displayWatchlist();
     displayWatchlistHistory();
     displayNews();
   }, [] );
@@ -46,33 +46,33 @@ export default function News( props ) {
     }
   };
 
-  const displayWatchlist = async () => {
-    console.log( `in displayWatchlist` );
+  // const displayWatchlist = async () => {
+  //   console.log( `in displayWatchlist` );
 
-    /* Get watchlist from server */
-    try {
-      let res = await Axios( {
-        method: "get",
-        url: "http://3.135.31.228:5000/api/protected/watchlist/getWatchlistQuotes",
-        headers: {
-          Authorization: localStorage.getItem( "jwt" ),
-        },
-      } );
-      console.log( "displayWatchlist got res.data:", res.data );
-      setWatchlist( res.data );
-    }
-    catch ( err ) {
-      let errorMessage = "While getting watchlist from server, an error occurred.";
-      console.error( "Caught err: ", JSON.stringify( err ) );
-      if ( err.response.data.errorMessage ) {
-        alert( err.response.data.errorMessage );
-      }
-      else {
-        alert( errorMessage );
-      }
+  //   /* Get watchlist from server */
+  //   try {
+  //     let res = await Axios( {
+  //       method: "get",
+  //       url: "http://3.135.31.228:5000/api/protected/watchlist/getWatchlistQuotes",
+  //       headers: {
+  //         Authorization: localStorage.getItem( "jwt" ),
+  //       },
+  //     } );
+  //     console.log( "displayWatchlist got res.data:", res.data );
+  //     setWatchlist( res.data );
+  //   }
+  //   catch ( err ) {
+  //     let errorMessage = "While getting watchlist from server, an error occurred.";
+  //     console.error( "Caught err: ", JSON.stringify( err ) );
+  //     if ( err.response.data.errorMessage ) {
+  //       alert( err.response.data.errorMessage );
+  //     }
+  //     else {
+  //       alert( errorMessage );
+  //     }
 
-    }
-  };
+  //   }
+  // };
 
   const displayWatchlistHistory = async () => {
     console.log( `in displayWatchlistHistory` );
@@ -109,7 +109,6 @@ export default function News( props ) {
         alert( errorMessage );
       }
 
-      window.location = "/";
     }
   };
 

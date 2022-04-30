@@ -135,7 +135,7 @@ async function getQuotesUptoYearMonthWithCaching( tickerSymbol, yearMonth ) {
 		}
 
 		/* Got quote from database, return value */
-		if ( dbQuotes ) {
+		if ( dbQuotes !== undefined && dbQuotes !== null & dbQuotes.length > 0 ) {
 			if ( false && LOG && LOG_UTILS && LOG_UTILS_GET_QUOTE ) {
 				console.log( `Found quote for tickerSymbol ${tickerSymbol} in MongoDB.` );
 				console.log( "Got from MongoDB dbQuote: ", dbQuotes );
@@ -149,70 +149,70 @@ async function getQuotesUptoYearMonthWithCaching( tickerSymbol, yearMonth ) {
 		  - Save all results from API.
 		  - Return quote for yearMonth
 		*/
-		if ( !dbQuotes ) {
-			if ( LOG && LOG_UTILS ) {
-				console.log( `Did not find quote for tickerSymbol ${tickerSymbol} in MongoDB. Fetching from API.` );
+
+		if ( LOG && LOG_UTILS ) {
+			console.log( `Did not find quote for tickerSymbol ${tickerSymbol} in MongoDB. Fetching from API.` );
+		}
+
+		let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
+			tickerSymbol +
+			'&datatype=json' +
+			'&apikey=' +
+			process.env.VANTAGE_KEY;
+
+
+		/* Save results into quotes collection */
+		let apiRes = await axios
+			.get( apiUrl );
+
+		if ( LOG && LOG_UTILS && apiRes.data ) {
+			console.log( `Got apiRes.data['Monthly Adjusted Time Series'] from API: `, apiRes.data[ 'Monthly Adjusted Time Series' ] );
+		}
+
+		for ( let property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
+			if ( false && LOG && LOG_UTILS ) {
+				console.log( `property: `, property );
 			}
+			let apiYearMonth = property.slice( 0, 7 );
+			let apiPrice = apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
+			let quoteUpdate = {
+				tickerSymbol: tickerSymbol,
+				yearMonth: apiYearMonth,
+				price: parseFloat( apiPrice ),
+			};
 
-			let apiUrl = 'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol=' +
-				tickerSymbol +
-				'&datatype=json' +
-				'&apikey=' +
-				process.env.VANTAGE_KEY;
 
-
-			/* Save results into quotes collection */
-			let apiRes = await axios
-				.get( apiUrl );
-
-			if ( LOG && LOG_UTILS && apiRes.data ) {
-				console.log( `Got apiRes.data['Monthly Adjusted Time Series'] from API: `, apiRes.data[ 'Monthly Adjusted Time Series' ] );
-			}
-
-			for ( let property in apiRes.data[ 'Monthly Adjusted Time Series' ] ) {
-				if ( false && LOG && LOG_UTILS ) {
-					console.log( `property: `, property );
-				}
-				let apiYearMonth = property.slice( 0, 7 );
-				let apiPrice = apiRes.data[ 'Monthly Adjusted Time Series' ][ property ][ '5. adjusted close' ];
-				let quoteUpdate = {
+			let quoteUpdateDoc = await Quote.findOneAndUpdate(
+				{
 					tickerSymbol: tickerSymbol,
 					yearMonth: apiYearMonth,
-					price: parseFloat( apiPrice ),
-				};
+				},
+				quoteUpdate,
+				{
+					new: true,
+					upsert: true,
+				}
+			);
 
-
-				let quoteUpdateDoc = await Quote.findOneAndUpdate(
-					{
-						tickerSymbol: tickerSymbol,
-						yearMonth: apiYearMonth,
-					},
-					quoteUpdate,
-					{
-						new: true,
-						upsert: true,
-					}
-				);
-
-			}
-
-
-			/* Get relevant result from quotes collection. */
-			let quoteFromDb = await Quote
-				.find(
-					{
-						"tickerSymbol": tickerSymbol,
-						"yearMonth": { $lte: yearMonth },
-					}
-				);
-
-
-			if ( LOG && LOG_UTILS ) {
-				console.log( "Returning quoteFromDb.price: ", quoteFromDb.price );
-			}
-
-			return quoteFromDb.price;
 		}
+
+
+		/* Get relevant result from quotes collection. */
+		let quoteFromDb = await Quote
+			.find(
+				{
+					"tickerSymbol": tickerSymbol,
+					"yearMonth": { $lte: yearMonth },
+				}
+			);
+
+
+		if ( LOG && LOG_UTILS ) {
+			console.log( "Returning quoteFromDb.price: ", quoteFromDb.price );
+		}
+
+		return quoteFromDb.price;
+
 	}
 	catch ( err ) {
 		return;
