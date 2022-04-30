@@ -64,7 +64,13 @@ export default function News( props ) {
     catch ( err ) {
       let errorMessage = "While getting watchlist from server, an error occurred.";
       console.error( "Caught err: ", JSON.stringify( err ) );
-      alert( errorMessage );
+      if ( err.response.data.errorMessage ) {
+        alert( err.response.data.errorMessage );
+      }
+      else {
+        alert( errorMessage );
+      }
+
     }
   };
 
@@ -97,7 +103,7 @@ export default function News( props ) {
       let errorMessage = "While getting watchlist price history from server, API limitation was reached. Please try again in one minute.";
       console.error( "Caught err: ", JSON.stringify( err ) );
       alert( errorMessage );
-      window.location = "/Guide";
+      window.location = "/";
     }
   };
 
